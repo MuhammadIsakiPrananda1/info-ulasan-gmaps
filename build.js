@@ -42,7 +42,7 @@ if (missing.length > 0) {
   process.exit(1);
 }
 
-// Inject firebase config langsung ke public/*.html (in-place)
+// Inject ke semua html yang butuh firebase config
 const replacements = {
   '__FIREBASE_API_KEY__': getEnv('FIREBASE_API_KEY'),
   '__FIREBASE_AUTH_DOMAIN__': getEnv('FIREBASE_AUTH_DOMAIN'),
@@ -55,6 +55,7 @@ const replacements = {
 const targets = ['index.html', 'cetak.html'];
 for (const f of targets) {
   const fp = path.join(__dirname, 'public', f);
+  if (!fs.existsSync(fp)) continue;
   let html = fs.readFileSync(fp, 'utf8');
   for (const [placeholder, value] of Object.entries(replacements)) {
     html = html.replace(new RegExp(placeholder, 'g'), value);

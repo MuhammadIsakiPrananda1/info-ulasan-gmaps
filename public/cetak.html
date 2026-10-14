@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Cetak QR Kartu Review</title>
-<meta name="robots" content="noindex,nofollow">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
@@ -34,25 +33,10 @@ button{padding:12px 20px;border:none;border-radius:9999px;font-weight:700;cursor
 .alert{padding:12px 16px;border-radius:12px;font-size:13px;margin-bottom:14px;display:none}
 .alert-ok{background:#dcfce7;color:#166534;border:1px solid #bbf7d0}
 .alert-err{background:#fee2e2;color:#991b1b;border:1px solid #fecaca}
-#adminGate{position:fixed;inset:0;background:#f8fafc;z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px}
-.gate-card{background:#fff;border-radius:20px;padding:32px 28px;border:1px solid #e2e8f0;box-shadow:0 20px 40px -15px rgba(15,23,42,.07);width:100%;max-width:360px;text-align:center}
-.gate-card h2{font-size:19px;font-weight:800;margin-bottom:6px}
-.gate-card p{font-size:13px;color:#64748b;margin-bottom:18px}
-.gate-card input{width:100%;margin-bottom:12px}
-.gate-err{font-size:12.5px;color:#991b1b;background:#fee2e2;border:1px solid #fecaca;border-radius:10px;padding:10px;display:none;margin-bottom:12px}
 .toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
 </style>
 </head>
 <body>
-<div id="adminGate">
-<div class="gate-card">
-<h2>Area Admin</h2>
-<p>Masukkan password admin untuk membuka dashboard cetak QR.</p>
-<div class="gate-err" id="gateErr"></div>
-<input type="password" id="adminPw" placeholder="Password admin" autocomplete="off">
-<button class="btn-p" id="gateBtn" style="width:100%">Masuk</button>
-</div>
-</div>
 <div class="wrap">
 <div class="card">
 <h1>Cetak QR Kartu Review</h1>
@@ -87,38 +71,6 @@ const firebaseConfig = {
   appId: "__FIREBASE_APP_ID__",
   measurementId: "__FIREBASE_MEASUREMENT_ID__"
 };
-// Admin gate - password verified server-side via /api/admin-verify
-const gate = document.getElementById("adminGate");
-const gateBtn = document.getElementById("gateBtn");
-const adminPwInput = document.getElementById("adminPw");
-const gateErr = document.getElementById("gateErr");
-if (sessionStorage.getItem("cetak_admin") === "1") gate.style.display = "none";
-async function doLogin() {
-  gateErr.style.display = "none";
-  gateBtn.disabled = true; gateBtn.textContent = "Memeriksa...";
-  try {
-    const r = await fetch("/api/admin-verify", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ password: adminPwInput.value })
-    });
-    const d = await r.json();
-    if (r.ok && d.success) {
-      sessionStorage.setItem("cetak_admin", "1");
-      gate.style.display = "none";
-    } else {
-      gateErr.textContent = "Password salah.";
-      gateErr.style.display = "block";
-    }
-  } catch (e) {
-    gateErr.textContent = "Gagal terhubung ke server.";
-    gateErr.style.display = "block";
-  }
-  gateBtn.disabled = false; gateBtn.textContent = "Masuk";
-}
-gateBtn.addEventListener("click", doLogin);
-adminPwInput.addEventListener("keydown", (e) => { if (e.key === "Enter") doLogin(); });
-
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const BASE_URL = window.location.origin + "/";

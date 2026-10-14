@@ -718,67 +718,19 @@
             }
         });
 
-        // Search places via Server API or Photon OSM fallback
+        // Search places via Server API (full pakai info-ulasan-gmaps.vercel.app)
+        const SEARCH_API_BASE = "https://info-ulasan-gmaps.vercel.app/api/search-places";
+        const RESOLVE_API_BASE = "https://info-ulasan-gmaps.vercel.app/api/resolve-place";
+
         async function fetchPlaceSuggestions(query) {
             if (!query || query.trim().length < 2) return [];
 
-            // 1. Try internal server API first
-            try {
-                const res = await fetch(`/api/search-places?q=${encodeURIComponent(query.trim())}`);
-                if (res.ok) {
-                    const data = await res.json();
-                    if (data.success && Array.isArray(data.results) && data.results.length > 0) {
-                        return data.results;
-                    }
-                }
-            } catch (err) {
-                // Ignore and fallback
+            const res = await fetch(`${SEARCH_API_BASE}?q=${encodeURIComponent(query.trim())}`);
+            if (!res.ok) return [];
+            const data = await res.json();
+            if (data.success && Array.isArray(data.results)) {
+                return data.results;
             }
-
-            // 2. Client-side fallback to Photon (OpenStreetMap places in Indonesia)
-            try {
-                const pRes = await fetch(`https://photon.komoot.io/api/?q=${encodeURIComponent(query.trim() + " Indonesia")}&limit=15&bbox=95,6,141,11`);
-                const pData = await pRes.json();
-                if (pData && pData.features) {
-                    return pData.features.map(f => {
-                        const p = f.properties;
-                        const addressParts = [
-                            p.street,
-                            p.district || p.locality,
-                            p.city,
-                            p.county,
-                            p.state,
-                            "Indonesia"
-                        ].filter(Boolean);
-
-                        return {
-                            name: (p.name || query).toUpperCase(),
-                            address: addressParts.join(", ") || "Indonesia",
-                            placeId: null,
-                            reviewUrl: null
-                        };
-                    });
-                }
-            } catch (err) {
-                console.error("Photon fallback error:", err);
-            }
-
-            // 3. Client-side Nominatim fallback
-            try {
-                const nRes = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query.trim() + " Indonesia")}&countrycodes=id&limit=10&addressdetails=1`);
-                const nData = await nRes.json();
-                if (Array.isArray(nData)) {
-                    return nData.map(place => ({
-                        name: place.display_name.split(",")[0].toUpperCase(),
-                        address: place.display_name,
-                        placeId: null,
-                        reviewUrl: null
-                    }));
-                }
-            } catch (err) {
-                console.error("Nominatim fallback error:", err);
-            }
-
             return [];
         }
 
@@ -786,7 +738,7 @@
         async function resolvePlaceReviewUrl(name, address) {
             const query = `${name} ${address}`.trim();
             try {
-                const res = await fetch(`/api/resolve-place?q=${encodeURIComponent(query)}`);
+                const res = await fetch(`${RESOLVE_API_BASE}?q=${encodeURIComponent(query)}`);
                 if (res.ok) {
                     const data = await res.json();
                     if (data.success && data.reviewUrl) {

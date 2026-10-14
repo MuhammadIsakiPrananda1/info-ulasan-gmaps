@@ -941,18 +941,8 @@
 
                 currentCardData = cardData;
 
-                // Tampilkan redirectState (sama kayak kartu sudah aktif) - BUKAN successState
-                activeCardBadge.textContent = currentCardId;
-                activeShopTitle.textContent = cardData.shopName || "Toko Anda";
-                activeShopAddress.textContent = cardData.address || "Google Maps Review";
-                manualRedirectBtn.href = cardData.destination;
-
-                showView("redirectState");
-
-                // Auto-redirect ke Google Review setelah 2 detik (untuk testing admin)
-                setTimeout(() => {
-                    window.location.replace(cardData.destination);
-                }, 2000);
+                // Langsung redirect ke Google Review setelah aktivasi (tanpa tampilan perantara)
+                window.location.replace(cardData.destination);
 
             } catch (err) {
                 console.error("Activation error:", err);
@@ -992,20 +982,10 @@
 
                 currentCardData = cardSnap.data();
 
-                // KONDISI 1: KARTU SUDAH AKTIF -> AUTO REDIRECT KE GOOGLE MAPS REVIEW
+                // KONDISI 1: KARTU SUDAH AKTIF -> LANGSUNG REDIRECT KE GOOGLE MAPS REVIEW (tanpa tampilan perantara)
                 if (currentCardData.active === true && currentCardData.destination) {
-                    activeCardBadge.textContent = currentCardId;
-                    activeShopTitle.textContent = currentCardData.shopName || "Toko Anda";
-                    activeShopAddress.textContent = currentCardData.address || "Google Maps Review";
-                    manualRedirectBtn.href = currentCardData.destination;
-
-                    showView("redirectState");
-
-                    // Redirect otomatis langsung ke dialog ulasan 5-bintang
-                    setTimeout(() => {
-                        window.location.replace(currentCardData.destination);
-                    }, 1000);
-
+                    // Redirect langsung tanpa menampilkan halaman perantara
+                    window.location.replace(currentCardData.destination);
                     return;
                 }
 

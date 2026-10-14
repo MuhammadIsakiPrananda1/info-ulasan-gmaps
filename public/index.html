@@ -722,10 +722,19 @@
         const SEARCH_API_BASE = "https://info-ulasan-gmaps.vercel.app/api/search-places";
         const RESOLVE_API_BASE = "https://info-ulasan-gmaps.vercel.app/api/resolve-place";
 
+        let searchAbortController = null;
+        const clientCache = new Map();
         async function fetchPlaceSuggestions(query) {
-            if (!query || query.trim().length < 3) return [];
+            const key = query.trim().toLowerCase();
+            if (clientCache.has(key)) return clientCache.get(key);
+            if (!key || key.length < 5) return [];
 
-            const res = await fetch(`${SEARCH_API_BASE}?q=${encodeURIComponent(query.trim())}`);
+            if (searchAbortController) searchAbortController.abort();
+            searchAbortController = new AbortController();
+
+            const res = await fetch(`${SEARCH_API_BASE}?q=${encodeURIComponent(query.trim())}`, {
+                signal: searchAbortController.signal
+            });
             if (res.status === 429) {
                 throw new Error("QUOTA_HABIS");
             }
@@ -736,6 +745,8 @@
             }
             const data = await res.json();
             if (data.success && Array.isArray(data.results)) {
+                if (clientCache.size > 100) clientCache.clear();
+                clientCache.set(key, data.results);
                 return data.results;
             }
             return [];
@@ -762,34 +773,37 @@
             };
         }
 
-        // Handle typing in Nama Bisnis
+        // Handle typing in Nama Bisnis — hemat kuota: tembak hanya saat user berhenti 900ms
         let lastSearchQuery = "";
         shopNameInput.addEventListener("input", () => {
             const query = shopNameInput.value.trim();
             clearTimeout(searchDebounceTimeout);
+            if (searchAbortController) searchAbortController.abort();
 
-            if (query.length < 3 || query === lastSearchQuery) {
-                if (query.length < 3) suggestionsBox.style.display = "none";
+            if (query.length < 5 || query === lastSearchQuery) {
+                if (query.length < 5) suggestionsBox.style.display = "none";
                 searchSpinner.style.display = "none";
                 return;
             }
 
-            searchSpinner.style.display = "flex";
-
             searchDebounceTimeout = setTimeout(async () => {
+                searchSpinner.style.display = "flex";
                 try {
                     const suggestions = await fetchPlaceSuggestions(query);
+                    // Abaikan hasil basi kalau user sudah mengetik lagi
+                    if (shopNameInput.value.trim() !== query) return;
                     lastSearchQuery = query;
                     searchSpinner.style.display = "none";
                     renderSuggestions(suggestions, suggestionsBox, handleSelectPlace);
                 } catch (err) {
+                    if (err.name === "AbortError") return;
                     searchSpinner.style.display = "none";
                     if (err.message === "QUOTA_HABIS") {
                         suggestionsBox.innerHTML = `<div class="suggestion-empty">⚠️ Kuota pencarian Google habis hari ini. Ketik nama bisnis manual lalu Aktifkan — link review tetap dibuat.</div>`;
                         suggestionsBox.style.display = "block";
                     }
                 }
-            }, 600);
+            }, 900);
         });
 
         // Render autocomplete dropdown list
@@ -1027,12 +1041,13 @@
         // Edit business input autocomplete
         editShopNameInput.addEventListener("input", () => {
             const query = editShopNameInput.value.trim();
-            if (query.length < 3) {
+            if (query.length < 5) {
                 editSuggestionsBox.style.display = "none";
                 return;
             }
 
             clearTimeout(searchDebounceTimeout);
+            if (searchAbortController) searchAbortController.abort();
             searchDebounceTimeout = setTimeout(async () => {
                 try {
                     const suggestions = await fetchPlaceSuggestions(query);
@@ -1046,12 +1061,13 @@
                         }
                     });
                 } catch (err) {
+                    if (err.name === "AbortError") return;
                     if (err.message === "QUOTA_HABIS") {
                         editSuggestionsBox.innerHTML = `<div class="suggestion-empty">⚠️ Kuota pencarian habis hari ini.</div>`;
                         editSuggestionsBox.style.display = "block";
                     }
                 }
-            }, 600);
+            }, 900);
         });
 
         saveEditBtn.addEventListener("click", async () => {

@@ -42,11 +42,7 @@ if (missing.length > 0) {
   process.exit(1);
 }
 
-// Read index.html
-const indexPath = path.join(__dirname, 'public', 'index.html');
-let html = fs.readFileSync(indexPath, 'utf8');
-
-// Replace placeholders
+// Inject ke semua html yang butuh firebase config
 const replacements = {
   '__FIREBASE_API_KEY__': getEnv('FIREBASE_API_KEY'),
   '__FIREBASE_AUTH_DOMAIN__': getEnv('FIREBASE_AUTH_DOMAIN'),
@@ -56,12 +52,15 @@ const replacements = {
   '__FIREBASE_APP_ID__': getEnv('FIREBASE_APP_ID'),
   '__FIREBASE_MEASUREMENT_ID__': getEnv('FIREBASE_MEASUREMENT_ID'),
 };
-
-for (const [placeholder, value] of Object.entries(replacements)) {
-  html = html.replace(new RegExp(placeholder, 'g'), value);
+const targets = ['index.html', 'cetak.html'];
+for (const f of targets) {
+  const fp = path.join(__dirname, 'public', f);
+  if (!fs.existsSync(fp)) continue;
+  let html = fs.readFileSync(fp, 'utf8');
+  for (const [placeholder, value] of Object.entries(replacements)) {
+    html = html.replace(new RegExp(placeholder, 'g'), value);
+  }
+  fs.writeFileSync(fp, html);
+  console.log(`✅ Firebase config injected into public/${f}`);
 }
-
-// Write back
-fs.writeFileSync(indexPath, html);
-console.log('✅ Firebase config injected into public/index.html');
 console.log('   Source:', process.env.VERCEL ? 'Vercel Environment Variables' : 'Local .env file');

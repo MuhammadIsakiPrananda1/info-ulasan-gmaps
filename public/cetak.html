@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cetak QR Kartu Review</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Plus Jakarta Sans',sans-serif}
+body{background:#f8fafc;min-height:100vh;padding:24px;color:#0f172a}
+.wrap{max-width:900px;margin:0 auto}
+.card{background:#fff;border-radius:20px;padding:28px;border:1px solid #e2e8f0;box-shadow:0 20px 40px -15px rgba(15,23,42,.07);margin-bottom:20px}
+h1{font-size:22px;font-weight:800;margin-bottom:6px}
+.sub{font-size:13px;color:#64748b;margin-bottom:20px}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:end}
+.field{display:flex;flex-direction:column;gap:6px}
+label{font-size:13px;font-weight:700}
+input{padding:12px 14px;border:1.5px solid #e2e8f0;border-radius:12px;font-size:15px;width:160px;outline:none}
+input:focus{border-color:#0066f5;box-shadow:0 0 0 3px rgba(0,102,245,.16)}
+button{padding:12px 20px;border:none;border-radius:9999px;font-weight:700;cursor:pointer;font-size:14px}
+.btn-p{background:#0066f5;color:#fff;box-shadow:0 4px 16px rgba(0,102,245,.28)}
+.btn-p:disabled{opacity:.6;cursor:not-allowed}
+.btn-o{background:#fff;color:#334155;border:1px solid #e2e8f0}
+.log{font-size:13px;color:#475569;margin-top:14px;line-height:1.6;max-height:150px;overflow-y:auto;background:#f8fafc;border-radius:12px;padding:12px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:16px;margin-top:20px}
+.qr-item{background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:14px;text-align:center}
+.qr-item canvas,.qr-item img{width:100%;height:auto;border-radius:8px}
+.qr-id{font-weight:800;font-size:15px;margin:8px 0 2px;letter-spacing:1px}
+.qr-url{font-size:10px;color:#64748b;word-break:break-all;margin-bottom:8px}
+.dl{font-size:12px;padding:8px 14px;width:100%}
+.alert{padding:12px 16px;border-radius:12px;font-size:13px;margin-bottom:14px;display:none}
+.alert-ok{background:#dcfce7;color:#166534;border:1px solid #bbf7d0}
+.alert-err{background:#fee2e2;color:#991b1b;border:1px solid #fecaca}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="card">
+<h1>Cetak QR Kartu Review</h1>
+<p class="sub">Generate QR baru, otomatis tersimpan ke Firestore (<code>cards/{ID}</code> dengan <code>active:false</code>), lalu download.</p>
+<div id="msgOk" class="alert alert-ok"></div>
+<div id="msgErr" class="alert alert-err"></div>
+<div class="row">
+<div class="field"><label>Jumlah kartu</label><input type="number" id="qty" value="10" min="1" max="100"></div>
+<button class="btn-p" id="genBtn">Generate + Simpan ke Firebase</button>
+</div>
+<div class="toolbar" id="toolbar" style="display:none">
+<button class="btn-o" id="dlAllBtn">Download Semua (ZIP)</button>
+<button class="btn-o" id="copyBtn">Copy Daftar ID</button>
+</div>
+<div class="log" id="log">Siap. Klik generate untuk mulai.</div>
+</div>
+<div class="card" id="resultCard" style="display:none">
+<h1>Hasil QR (<span id="count">0</span>)</h1>
+<p class="sub">Klik download per kartu, atau download semua sebagai ZIP.</p>
+<div class="grid" id="grid"></div>
+</div>
+</div>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+const firebaseConfig = {
+  apiKey: "AIzaSyAt46l97-gXPI3SAWKc6ZgpiTisSG7gmDs",
+  authDomain: "review-gmaps.firebaseapp.com",
+  projectId: "review-gmaps",
+  storageBucket: "review-gmaps.firebasestorage.app",
+  messagingSenderId: "551162625736",
+  appId: "1:551162625736:web:260b1f7c02b3ac72fc6ffd",
+  measurementId: "G-GC50YZR59G"
+};
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const BASE_URL = window.location.origin + "/";
+const CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+function randId(){let s="";for(let i=0;i<6;i++)s+=CHARS[Math.floor(Math.random()*CHARS.length)];return s;}
+const qtyEl=document.getElementById("qty"),genBtn=document.getElementById("genBtn"),
+logEl=document.getElementById("log"),grid=document.getElementById("grid"),
+resultCard=document.getElementById("resultCard"),toolbar=document.getElementById("toolbar"),
+countEl=document.getElementById("count"),msgOk=document.getElementById("msgOk"),msgErr=document.getElementById("msgErr");
+let generated=[];
+function log(t){logEl.innerHTML+=`<br>${t}`;logEl.scrollTop=logEl.scrollHeight;}
+function showOk(t){msgOk.textContent=t;msgOk.style.display="block";setTimeout(()=>msgOk.style.display="none",4000);}
+function showErr(t){msgErr.textContent=t;msgErr.style.display="block";}
+genBtn.addEventListener("click",async()=>{
+  msgErr.style.display="none";
+  const qty=Math.min(100,Math.max(1,parseInt(qtyEl.value)||10));
+  genBtn.disabled=true;genBtn.textContent="Memproses...";
+  grid.innerHTML="";generated=[];resultCard.style.display="block";toolbar.style.display="none";
+  log(`Mulai generate ${qty} kartu...`);
+  let done=0,attempt=0;
+  while(done<qty&&attempt<qty*10){
+    attempt++;
+    const id=randId();
+    try{
+      const ref=doc(db,"cards",id);
+      const snap=await getDoc(ref);
+      if(snap.exists())continue;
+      await setDoc(ref,{destination:"",active:false,createdAt:new Date().toISOString()});
+      const url=BASE_URL+id;
+      generated.push({id,url});
+      done++;
+      log(`[${done}/${qty}] ${id} tersimpan.`);
+      renderOne({id,url});
+    }catch(e){console.error(e);showErr("Gagal simpan: "+e.message);break;}
+  }
+  countEl.textContent=generated.length;
+  if(generated.length)toolbar.style.display="flex";
+  showOk(`${generated.length} QR berhasil dibuat + tersimpan di Firestore.`);
+  genBtn.disabled=false;genBtn.textContent="Generate + Simpan ke Firebase";
+});
+function renderOne({id,url}){
+  const div=document.createElement("div");
+  div.className="qr-item";
+  const cv=document.createElement("canvas");
+  div.appendChild(cv);
+  div.insertAdjacentHTML("beforeend",`<div class="qr-id">${id}</div><div class="qr-url">${url}</div>`);
+  const b=document.createElement("button");
+  b.className="btn-o dl";b.textContent="Download PNG";
+  b.onclick=()=>{const a=document.createElement("a");a.download=id+".png";a.href=cv.toDataURL("image/png");a.click();};
+  div.appendChild(b);
+  grid.appendChild(div);
+  QRCode.toCanvas(cv,url,{width:400,margin:2,errorCorrectionLevel:"H"},e=>{if(e)console.error(e);});
+  countEl.textContent=generated.length;
+}
+document.getElementById("dlAllBtn").addEventListener("click",async()=>{
+  const zip=new JSZip();
+  document.querySelectorAll("#grid .qr-item").forEach(item=>{
+    const id=item.querySelector(".qr-id").textContent;
+    const cv=item.querySelector("canvas");
+    const b64=cv.toDataURL("image/png").split(",")[1];
+    zip.file(id+".png",b64,{base64:true});
+  });
+  zip.file("card-ids.txt",generated.map(g=>g.id).join("\n"));
+  const blob=await zip.generateAsync({type:"blob"});
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);a.download="qr-cards.zip";a.click();
+});
+document.getElementById("copyBtn").addEventListener("click",()=>{
+  navigator.clipboard.writeText(generated.map(g=>g.id).join("\n"));
+  showOk("Daftar ID tersalin.");
+});
+</script>
+</body>
+</html>

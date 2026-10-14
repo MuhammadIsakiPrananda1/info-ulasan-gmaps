@@ -6,6 +6,10 @@
   "framework": null,
   "rewrites": [
     {
+      "source": "/cetak",
+      "destination": "/cetak.html"
+    },
+    {
       "source": "/",
       "destination": "/index.html"
     },

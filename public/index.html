@@ -723,9 +723,12 @@
         const RESOLVE_API_BASE = "https://info-ulasan-gmaps.vercel.app/api/resolve-place";
 
         async function fetchPlaceSuggestions(query) {
-            if (!query || query.trim().length < 2) return [];
+            if (!query || query.trim().length < 3) return [];
 
-            const res = await fetch(`${SEARCH_API_BASE}?q=${encodeURIComponent(query.trim())}`, { cache: "no-store" });
+            const res = await fetch(`${SEARCH_API_BASE}?q=${encodeURIComponent(query.trim())}`);
+            if (res.status === 429) {
+                throw new Error("QUOTA_HABIS");
+            }
             if (!res.ok) {
                 const errData = await res.json().catch(() => null);
                 console.error("search-places API error:", res.status, errData?.error || "");
@@ -760,12 +763,13 @@
         }
 
         // Handle typing in Nama Bisnis
+        let lastSearchQuery = "";
         shopNameInput.addEventListener("input", () => {
             const query = shopNameInput.value.trim();
             clearTimeout(searchDebounceTimeout);
 
-            if (query.length < 2) {
-                suggestionsBox.style.display = "none";
+            if (query.length < 3 || query === lastSearchQuery) {
+                if (query.length < 3) suggestionsBox.style.display = "none";
                 searchSpinner.style.display = "none";
                 return;
             }
@@ -773,10 +777,19 @@
             searchSpinner.style.display = "flex";
 
             searchDebounceTimeout = setTimeout(async () => {
-                const suggestions = await fetchPlaceSuggestions(query);
-                searchSpinner.style.display = "none";
-                renderSuggestions(suggestions, suggestionsBox, handleSelectPlace);
-            }, 250);
+                try {
+                    const suggestions = await fetchPlaceSuggestions(query);
+                    lastSearchQuery = query;
+                    searchSpinner.style.display = "none";
+                    renderSuggestions(suggestions, suggestionsBox, handleSelectPlace);
+                } catch (err) {
+                    searchSpinner.style.display = "none";
+                    if (err.message === "QUOTA_HABIS") {
+                        suggestionsBox.innerHTML = `<div class="suggestion-empty">⚠️ Kuota pencarian Google habis hari ini. Ketik nama bisnis manual lalu Aktifkan — link review tetap dibuat.</div>`;
+                        suggestionsBox.style.display = "block";
+                    }
+                }
+            }, 600);
         });
 
         // Render autocomplete dropdown list
@@ -1014,24 +1027,31 @@
         // Edit business input autocomplete
         editShopNameInput.addEventListener("input", () => {
             const query = editShopNameInput.value.trim();
-            if (query.length < 2) {
+            if (query.length < 3) {
                 editSuggestionsBox.style.display = "none";
                 return;
             }
 
             clearTimeout(searchDebounceTimeout);
             searchDebounceTimeout = setTimeout(async () => {
-                const suggestions = await fetchPlaceSuggestions(query);
-                renderSuggestions(suggestions, editSuggestionsBox, async (place) => {
-                    editShopNameInput.value = place.name;
-                    editSelectedPlace = { ...place };
-                    if (!editSelectedPlace.reviewUrl) {
-                        const resolved = await resolvePlaceReviewUrl(place.name, place.address);
-                        editSelectedPlace.placeId = resolved.placeId;
-                        editSelectedPlace.reviewUrl = resolved.reviewUrl;
+                try {
+                    const suggestions = await fetchPlaceSuggestions(query);
+                    renderSuggestions(suggestions, editSuggestionsBox, async (place) => {
+                        editShopNameInput.value = place.name;
+                        editSelectedPlace = { ...place };
+                        if (!editSelectedPlace.reviewUrl) {
+                            const resolved = await resolvePlaceReviewUrl(place.name, place.address);
+                            editSelectedPlace.placeId = resolved.placeId;
+                            editSelectedPlace.reviewUrl = resolved.reviewUrl;
+                        }
+                    });
+                } catch (err) {
+                    if (err.message === "QUOTA_HABIS") {
+                        editSuggestionsBox.innerHTML = `<div class="suggestion-empty">⚠️ Kuota pencarian habis hari ini.</div>`;
+                        editSuggestionsBox.style.display = "block";
                     }
-                });
-            }, 250);
+                }
+            }, 600);
         });
 
         saveEditBtn.addEventListener("click", async () => {

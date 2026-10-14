@@ -1,0 +1,9 @@
+{
+  "public": "public",
+  "cleanUrls": false,
+  "rewrites": [
+    { "source": "/admin", "destination": "/admin.html" },
+    { "source": "/admin-dashboard", "destination": "/admin-dashboard.html" },
+    { "source": "!(*.html|*.png|*.js|*.css)", "destination": "/index.html" }
+  ]
+}

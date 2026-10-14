@@ -30,3 +30,5 @@ npm-debug.log*
 # Service account keys (NEVER commit!)
 serviceAccountKey.json
 *.json
+.vercel
+.env*

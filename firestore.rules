@@ -4,8 +4,8 @@ service cloud.firestore {
   match /databases/{database}/documents {
     
     match /cards/{cardId} {
-      // Allow any non-empty card ID (supports your 6-char QR codes like ZXSRL7)
-      allow read, write: if cardId.size() > 0;
+      // Allow all read/write - no security, no validation
+      allow read, write: if true;
     }
     
   }

@@ -1,0 +1,1171 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Aktivasi Kartu Review Google Maps</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #0066f5;
+            --primary-hover: #0052cc;
+            --primary-light: #eff6ff;
+            --primary-ring: rgba(0, 102, 245, 0.16);
+            --success: #16a34a;
+            --success-bg: #dcfce7;
+            --danger: #dc2626;
+            --danger-bg: #fee2e2;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text-title: #0f172a;
+            --text-body: #475569;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --border-focus: #0066f5;
+            --shadow-card: 0 20px 40px -15px rgba(15, 23, 42, 0.07), 0 0 1px rgba(15, 23, 42, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-title);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+
+        .card-container {
+            width: 100%;
+            max-width: 440px;
+            background: var(--card-bg);
+            border-radius: 28px;
+            box-shadow: var(--shadow-card);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            padding: 34px 26px 30px;
+            position: relative;
+            overflow: visible;
+        }
+
+        /* TYPOGRAPHY */
+        .title {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--text-title);
+            letter-spacing: -0.4px;
+            margin-bottom: 6px;
+            text-align: left;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.5;
+            margin-bottom: 24px;
+            text-align: left;
+        }
+
+        .subtitle strong {
+            color: var(--text-title);
+            font-weight: 700;
+        }
+
+        /* FORM CONTROLS */
+        .form-group {
+            text-align: left;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #1e293b;
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        input {
+            width: 100%;
+            padding: 13px 16px;
+            border: 1.5px solid var(--border);
+            border-radius: 14px;
+            font-size: 15px;
+            color: var(--text-title);
+            background: #ffffff;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        input:focus {
+            border-color: var(--border-focus);
+            box-shadow: 0 0 0 3px var(--primary-ring);
+        }
+
+        .input-icon-right {
+            position: absolute;
+            right: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--text-muted);
+            background: transparent;
+            border: none;
+            padding: 4px;
+        }
+
+        .input-icon-right:hover {
+            color: var(--text-title);
+        }
+
+        /* AUTOCOMPLETE DROPDOWN */
+        .suggestions-box {
+            position: absolute;
+            top: calc(100% + 6px);
+            left: 0;
+            right: 0;
+            background: #ffffff;
+            border: 1.5px solid #cbd5e1;
+            border-radius: 14px;
+            box-shadow: 0 12px 30px -5px rgba(15, 23, 42, 0.15);
+            max-height: 250px;
+            overflow-y: auto;
+            z-index: 100;
+            display: none;
+        }
+
+        .suggestion-item {
+            padding: 12px 16px;
+            border-bottom: 1px solid #f1f5f9;
+            cursor: pointer;
+            transition: background 0.15s ease;
+            text-align: left;
+        }
+
+        .suggestion-item:last-child {
+            border-bottom: none;
+        }
+
+        .suggestion-item:hover,
+        .suggestion-item.active {
+            background: #f8fafc;
+        }
+
+        .suggestion-name {
+            font-size: 13.5px;
+            font-weight: 700;
+            color: #0f172a;
+            text-transform: uppercase;
+            letter-spacing: 0.2px;
+            margin-bottom: 3px;
+        }
+
+        .suggestion-address {
+            font-size: 12px;
+            color: #64748b;
+            line-height: 1.4;
+        }
+
+        .suggestion-empty {
+            padding: 14px;
+            font-size: 13px;
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        /* SELECTED PLACE BADGE */
+        .selected-place-badge {
+            margin-top: 8px;
+            padding: 10px 14px;
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-radius: 12px;
+            display: none;
+            align-items: flex-start;
+            gap: 10px;
+            text-align: left;
+        }
+
+        .selected-place-badge svg {
+            color: var(--success);
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .selected-place-text {
+            font-size: 12.5px;
+            color: #166534;
+            line-height: 1.4;
+        }
+
+        .selected-place-text strong {
+            display: block;
+            font-size: 13px;
+            color: #14532d;
+            font-weight: 700;
+        }
+
+        .hint {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 6px;
+            display: block;
+            line-height: 1.4;
+        }
+
+        /* BUTTON */
+        .btn-primary {
+            width: 100%;
+            padding: 15px 20px;
+            background: var(--primary);
+            color: #ffffff;
+            border: none;
+            border-radius: 9999px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 4px 16px rgba(0, 102, 245, 0.28);
+            margin-top: 10px;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(0, 102, 245, 0.35);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.65;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-outline {
+            width: 100%;
+            background: transparent;
+            color: var(--text-muted);
+            border: 1px solid var(--border);
+            border-radius: 9999px;
+            font-size: 13px;
+            font-weight: 600;
+            padding: 11px 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: 14px;
+        }
+
+        .btn-outline:hover {
+            background: #f1f5f9;
+            color: var(--text-title);
+        }
+
+        /* ALERTS */
+        .alert {
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-size: 13px;
+            margin-bottom: 18px;
+            display: none;
+            text-align: left;
+            line-height: 1.4;
+        }
+
+        .alert-danger {
+            background: var(--danger-bg);
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+
+        .alert-success {
+            background: var(--success-bg);
+            color: #166534;
+            border: 1px solid #bbf7d0;
+        }
+
+        /* SPINNER */
+        .spinner {
+            width: 36px;
+            height: 36px;
+            border: 3.5px solid #e2e8f0;
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 18px auto;
+        }
+
+        .spinner-sm {
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            border-top-color: #ffffff;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* REDIRECT STATE (KARTU SUDAH AKTIF) */
+        .redirect-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #eff6ff;
+            color: var(--primary);
+            padding: 6px 14px;
+            border-radius: 9999px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            margin-bottom: 16px;
+        }
+
+        .stars-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            font-size: 28px;
+            color: #f59e0b;
+            margin: 10px 0 16px;
+            animation: pulse-stars 1.8s ease-in-out infinite;
+        }
+
+        @keyframes pulse-stars {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.06);
+            }
+        }
+
+        .star-item {
+            display: inline-block;
+            filter: drop-shadow(0 2px 4px rgba(245, 158, 11, 0.3));
+        }
+
+        /* MODAL */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(5px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+            padding: 16px;
+        }
+
+        .modal-card {
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 28px 24px;
+            max-width: 420px;
+            width: 100%;
+            text-align: left;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+
+        .icon-circle {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #eff6ff;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+        }
+
+        .icon-circle.success {
+            background: #dcfce7;
+            color: var(--success);
+        }
+
+        .icon-circle.danger {
+            background: #fee2e2;
+            color: var(--danger);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="card-container">
+
+        <!-- 1. LOADING STATE -->
+        <div id="loadingState" style="text-align: center; padding: 20px 0;">
+            <div class="spinner"></div>
+            <h2 style="font-size: 18px; font-weight: 700; margin-bottom: 6px;">Mengecek Kartu...</h2>
+            <p style="font-size: 13px; color: var(--text-muted);">Memeriksa status kartu fisik Anda...</p>
+        </div>
+
+        <!-- 2. ACTIVATION STATE (TAMPILAN SESUAI REFERENSI GAMBAR) -->
+        <div id="activateState" style="display: none;">
+            <h1 class="title">Aktivasi Kartu</h1>
+            <p class="subtitle">
+                Kode kartu: <strong id="cardIdCode">------</strong>. Isi semua kolom di bawah untuk mengaktifkan kartu.
+            </p>
+
+            <div id="activateAlert" class="alert alert-danger"></div>
+
+            <form id="activateForm" autocomplete="off">
+                <!-- FIELD 1: NAMA BISNIS DENGAN MAPS AUTOCOMPLETE -->
+                <div class="form-group">
+                    <label for="shopNameInput">Nama Bisnis</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="shopNameInput" placeholder="Ketik nama bisnis di Google Maps..." required
+                            autocapitalize="words" autocomplete="off">
+                        <div id="searchSpinner" class="input-icon-right" style="display: none;">
+                            <div class="spinner" style="width: 16px; height: 16px; border-width: 2px; margin: 0;"></div>
+                        </div>
+                    </div>
+
+                    <!-- DROPDOWN HASIL AUTOCOMPLETE -->
+                    <div id="suggestionsBox" class="suggestions-box"></div>
+
+                    <!-- BADGE KONFIRMASI GOOGLE MAPS -->
+                    <div id="selectedPlaceBadge" class="selected-place-badge">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.5">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                        </svg>
+                        <div class="selected-place-text">
+                            <strong id="badgePlaceName">Nama Bisnis</strong>
+                            <span id="badgePlaceAddress">Alamat Lengkap</span>
+                            <div style="font-size: 11.5px; color: #166534; font-weight: 600; margin-top: 3px;">
+                                ⭐ Siap redirect langsung ke Ulasan Bintang 5
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FIELD 2: PIN PENGAMAN -->
+                <div class="form-group">
+                    <label for="pinInput">PIN</label>
+                    <div class="input-wrapper">
+                        <input type="password" id="pinInput" placeholder="Buat PIN 4 angka" maxlength="4"
+                            inputmode="numeric" pattern="[0-9]*" required>
+                        <button type="button" id="togglePinBtn" class="input-icon-right" title="Lihat PIN">
+                            <svg id="eyeIcon" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                        </button>
+                    </div>
+                    <span class="hint">🔒 PIN ini digunakan jika ingin mengubah nama bisnis kartu di kemudian
+                        hari.</span>
+                </div>
+
+                <!-- SUBMIT BUTTON -->
+                <button type="submit" id="submitBtn" class="btn-primary">
+                    <span id="submitBtnText">Aktifkan Kartu</span>
+                    <div id="submitSpinner" class="spinner-sm" style="display: none;"></div>
+                </button>
+            </form>
+        </div>
+
+        <!-- 3. REDIRECT STATE (KARTU SUDAH AKTIF -> AUTO REDIRECT KE REVIEW 5 BINTANG) -->
+        <div id="redirectState" style="display: none; text-align: center;">
+            <div class="redirect-badge">KARTU AKTIF • <span id="activeCardBadge"></span></div>
+
+            <div class="stars-container">
+                <span class="star-item">★</span>
+                <span class="star-item">★</span>
+                <span class="star-item">★</span>
+                <span class="star-item">★</span>
+                <span class="star-item">★</span>
+            </div>
+
+            <h1 id="activeShopTitle" style="font-size: 22px; font-weight: 800; color: #0f172a; margin-bottom: 6px;">
+                Nama Bisnis
+            </h1>
+            <p id="activeShopAddress"
+                style="font-size: 13px; color: var(--text-muted); margin-bottom: 18px; line-height: 1.4;">
+                Memuat lokasi...
+            </p>
+
+            <div
+                style="background: #f8fafc; border-radius: 16px; padding: 16px; margin-bottom: 18px; border: 1px solid #e2e8f0;">
+                <p style="font-size: 13.5px; font-weight: 600; color: #1e293b; margin-bottom: 4px;">
+                    Mengarahkan ke Ulasan Google Maps...
+                </p>
+                <p style="font-size: 12px; color: #64748b;">
+                    Rating 5 bintang siap dipilih otomatis. Pelanggan cukup mengetikkan ulasan pesan mereka.
+                </p>
+                <div class="spinner" style="width: 26px; height: 26px; border-width: 3px; margin: 12px auto 0;"></div>
+            </div>
+
+            <a id="manualRedirectBtn" href="#" class="btn-primary" style="text-decoration: none;">
+                Buka Ulasan Google Sekarang ↗
+            </a>
+
+            <button id="openEditModalBtn" class="btn-outline">
+                ⚙️ Pemilik Bisnis? Ubah Pengaturan Kartu
+            </button>
+        </div>
+
+        <!-- 5. ERROR STATE -->
+        <div id="errorState" style="display: none; text-align: center; padding: 10px 0;">
+            <div class="icon-circle danger">
+                <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="15" y1="9" x2="9" y2="15"></line>
+                    <line x1="9" y1="9" x2="15" y2="15"></line>
+                </svg>
+            </div>
+            <h2 id="errorTitle" style="font-size: 20px; font-weight: 800; margin-bottom: 6px;">Kartu Tidak Ditemukan
+            </h2>
+            <p id="errorSubtitle" style="font-size: 14px; color: var(--text-muted); line-height: 1.5;">
+                Pastikan Anda men-scan URL kartu yang valid atau hubungi admin.
+            </p>
+        </div>
+
+    </div>
+
+    <!-- MODAL EDIT PENGATURAN KARTU (PROTECTED BY PIN) -->
+    <div id="editModal" class="modal-overlay">
+        <div class="modal-card">
+            <!-- Step 1: Input PIN -->
+            <div id="pinStep">
+                <h2 style="font-size: 20px; font-weight: 800; color: #0f172a; margin-bottom: 6px;">Verifikasi Pemilik
+                </h2>
+                <p style="font-size: 13.5px; color: var(--text-muted); margin-bottom: 18px;">
+                    Masukkan PIN kartu untuk mengubah data bisnis.
+                </p>
+                <div id="pinAlert" class="alert alert-danger"></div>
+                <div class="form-group">
+                    <label for="verifyPinInput">PIN Kartu</label>
+                    <input type="password" id="verifyPinInput" placeholder="Masukkan 4 angka PIN" maxlength="4"
+                        inputmode="numeric">
+                </div>
+                <button type="button" id="verifyPinBtn" class="btn-primary" style="margin-top: 10px;">Buka
+                    Pengaturan</button>
+                <button type="button" id="closeModalBtn" class="btn-outline">Batal</button>
+            </div>
+
+            <!-- Step 2: Form Edit Bisnis -->
+            <div id="editStep" style="display: none;">
+                <h2 style="font-size: 20px; font-weight: 800; color: #0f172a; margin-bottom: 6px;">Ubah Bisnis Kartu
+                </h2>
+                <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">
+                    Cari bisnis baru di Google Maps untuk memperbarui kartu.
+                </p>
+                <div id="editAlert" class="alert alert-danger"></div>
+
+                <div class="form-group">
+                    <label for="editShopNameInput">Nama Bisnis Baru</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="editShopNameInput" placeholder="Cari nama bisnis baru...">
+                    </div>
+                    <div id="editSuggestionsBox" class="suggestions-box"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="editNewPin">Ganti PIN Baru (Opsional)</label>
+                    <input type="password" id="editNewPin" placeholder="Biarkan kosong jika tetap (4 angka)"
+                        maxlength="4" inputmode="numeric">
+                </div>
+
+                <button type="button" id="saveEditBtn" class="btn-primary" style="margin-top: 10px;">Simpan
+                    Perubahan</button>
+                <button type="button" id="cancelEditBtn" class="btn-outline">Tutup</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FIREBASE SDK & APPLICATION LOGIC -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+        import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+    apiKey: "{{FIREBASE_API_KEY}}",
+    authDomain: "{{FIREBASE_AUTH_DOMAIN}}",
+    projectId: "{{FIREBASE_PROJECT_ID}}",
+    storageBucket: "{{FIREBASE_STORAGE_BUCKET}}",
+    messagingSenderId: "{{FIREBASE_MESSAGING_SENDER_ID}}",
+    appId: "{{FIREBASE_APP_ID}}",
+    measurementId: "{{FIREBASE_MEASUREMENT_ID}}"
+};
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // State Elements
+        const loadingState = document.getElementById("loadingState");
+        const activateState = document.getElementById("activateState");
+        const redirectState = document.getElementById("redirectState");
+        const errorState = document.getElementById("errorState");
+
+        // Activation Form Elements
+        const cardIdCode = document.getElementById("cardIdCode");
+        const activateForm = document.getElementById("activateForm");
+        const shopNameInput = document.getElementById("shopNameInput");
+        const searchSpinner = document.getElementById("searchSpinner");
+        const suggestionsBox = document.getElementById("suggestionsBox");
+        const selectedPlaceBadge = document.getElementById("selectedPlaceBadge");
+        const badgePlaceName = document.getElementById("badgePlaceName");
+        const badgePlaceAddress = document.getElementById("badgePlaceAddress");
+        const pinInput = document.getElementById("pinInput");
+        const togglePinBtn = document.getElementById("togglePinBtn");
+        const activateAlert = document.getElementById("activateAlert");
+        const submitBtn = document.getElementById("submitBtn");
+        const submitBtnText = document.getElementById("submitBtnText");
+        const submitSpinner = document.getElementById("submitSpinner");
+
+        // Active State Elements
+        const activeCardBadge = document.getElementById("activeCardBadge");
+        const activeShopTitle = document.getElementById("activeShopTitle");
+        const activeShopAddress = document.getElementById("activeShopAddress");
+        const manualRedirectBtn = document.getElementById("manualRedirectBtn");
+        const openEditModalBtn = document.getElementById("openEditModalBtn");
+
+        // Modal Edit Elements
+        const editModal = document.getElementById("editModal");
+        const pinStep = document.getElementById("pinStep");
+        const editStep = document.getElementById("editStep");
+        const verifyPinInput = document.getElementById("verifyPinInput");
+        const verifyPinBtn = document.getElementById("verifyPinBtn");
+        const pinAlert = document.getElementById("pinAlert");
+        const closeModalBtn = document.getElementById("closeModalBtn");
+        const editShopNameInput = document.getElementById("editShopNameInput");
+        const editSuggestionsBox = document.getElementById("editSuggestionsBox");
+        const editNewPin = document.getElementById("editNewPin");
+        const saveEditBtn = document.getElementById("saveEditBtn");
+        const cancelEditBtn = document.getElementById("cancelEditBtn");
+        const editAlert = document.getElementById("editAlert");
+
+        // Application State
+        let currentCardId = "";
+        let currentCardData = null;
+        let selectedPlace = {
+            name: "",
+            address: "",
+            placeId: null,
+            reviewUrl: null
+        };
+        let editSelectedPlace = {
+            name: "",
+            address: "",
+            placeId: null,
+            reviewUrl: null
+        };
+
+        let searchDebounceTimeout = null;
+
+        function showView(viewId) {
+            loadingState.style.display = "none";
+            activateState.style.display = "none";
+            redirectState.style.display = "none";
+            errorState.style.display = "none";
+
+            document.getElementById(viewId).style.display = "block";
+        }
+
+        // Toggle PIN Visibility
+        togglePinBtn.addEventListener("click", () => {
+            if (pinInput.type === "password") {
+                pinInput.type = "text";
+                togglePinBtn.style.color = "var(--primary)";
+            } else {
+                pinInput.type = "password";
+                togglePinBtn.style.color = "var(--text-muted)";
+            }
+        });
+
+        // Search places via Server API or Photon OSM fallback
+        async function fetchPlaceSuggestions(query) {
+            if (!query || query.trim().length < 2) return [];
+
+            // 1. Try internal server API first
+            try {
+                const res = await fetch(`/api/search-places?q=${encodeURIComponent(query.trim())}`);
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.success && Array.isArray(data.results) && data.results.length > 0) {
+                        return data.results;
+                    }
+                }
+            } catch (err) {
+                // Ignore and fallback
+            }
+
+            // 2. Client-side fallback to Photon (OpenStreetMap places in Indonesia)
+            try {
+                const pRes = await fetch(`https://photon.komoot.io/api/?q=${encodeURIComponent(query.trim() + " Indonesia")}&limit=15&bbox=95,6,141,11`);
+                const pData = await pRes.json();
+                if (pData && pData.features) {
+                    return pData.features.map(f => {
+                        const p = f.properties;
+                        const addressParts = [
+                            p.street,
+                            p.district || p.locality,
+                            p.city,
+                            p.county,
+                            p.state,
+                            "Indonesia"
+                        ].filter(Boolean);
+
+                        return {
+                            name: (p.name || query).toUpperCase(),
+                            address: addressParts.join(", ") || "Indonesia",
+                            placeId: null,
+                            reviewUrl: null
+                        };
+                    });
+                }
+            } catch (err) {
+                console.error("Photon fallback error:", err);
+            }
+
+            // 3. Client-side Nominatim fallback
+            try {
+                const nRes = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query.trim() + " Indonesia")}&countrycodes=id&limit=10&addressdetails=1`);
+                const nData = await nRes.json();
+                if (Array.isArray(nData)) {
+                    return nData.map(place => ({
+                        name: place.display_name.split(",")[0].toUpperCase(),
+                        address: place.display_name,
+                        placeId: null,
+                        reviewUrl: null
+                    }));
+                }
+            } catch (err) {
+                console.error("Nominatim fallback error:", err);
+            }
+
+            return [];
+        }
+
+        // Resolve Place ID for 5-star write review link
+        async function resolvePlaceReviewUrl(name, address) {
+            const query = `${name} ${address}`.trim();
+            try {
+                const res = await fetch(`/api/resolve-place?q=${encodeURIComponent(query)}`);
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.success && data.reviewUrl) {
+                        return { placeId: data.placeId, reviewUrl: data.reviewUrl };
+                    }
+                }
+            } catch (_) { }
+
+            // Fallback direct Google Maps search review intent
+            const safeQuery = encodeURIComponent(name + " " + address + " Indonesia");
+            return {
+                placeId: null,
+                reviewUrl: `https://www.google.com/maps/search/?api=1&query=${safeQuery}`
+            };
+        }
+
+        // Handle typing in Nama Bisnis
+        shopNameInput.addEventListener("input", () => {
+            const query = shopNameInput.value.trim();
+            clearTimeout(searchDebounceTimeout);
+
+            if (query.length < 2) {
+                suggestionsBox.style.display = "none";
+                searchSpinner.style.display = "none";
+                return;
+            }
+
+            searchSpinner.style.display = "flex";
+
+            searchDebounceTimeout = setTimeout(async () => {
+                const suggestions = await fetchPlaceSuggestions(query);
+                searchSpinner.style.display = "none";
+                renderSuggestions(suggestions, suggestionsBox, handleSelectPlace);
+            }, 250);
+        });
+
+        // Render autocomplete dropdown list
+        function renderSuggestions(items, boxEl, onSelect) {
+            boxEl.innerHTML = "";
+            if (!items || items.length === 0) {
+                const empty = document.createElement("div");
+                empty.className = "suggestion-empty";
+                empty.textContent = "Tidak ditemukan di Maps. Tetap gunakan nama ini?";
+                empty.addEventListener("click", () => {
+                    onSelect({
+                        name: shopNameInput.value.trim().toUpperCase(),
+                        address: "Lokasi Google Maps",
+                        placeId: null,
+                        reviewUrl: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(shopNameInput.value.trim())}`
+                    });
+                    boxEl.style.display = "none";
+                });
+                boxEl.appendChild(empty);
+                boxEl.style.display = "block";
+                return;
+            }
+
+            items.forEach(item => {
+                const div = document.createElement("div");
+                div.className = "suggestion-item";
+                div.innerHTML = `
+                    <div class="suggestion-name">${escapeHtml(item.name)}</div>
+                    <div class="suggestion-address">${escapeHtml(item.address)}</div>
+                `;
+                div.addEventListener("click", () => {
+                    onSelect(item);
+                    boxEl.style.display = "none";
+                });
+                boxEl.appendChild(div);
+            });
+
+            boxEl.style.display = "block";
+        }
+
+        // Handle Place Selected
+        async function handleSelectPlace(place) {
+            shopNameInput.value = place.name;
+            selectedPlace = { ...place };
+
+            badgePlaceName.textContent = place.name;
+            badgePlaceAddress.textContent = place.address || "Lokasi Google Maps";
+            selectedPlaceBadge.style.display = "flex";
+
+            // If placeId is missing, resolve in background
+            if (!selectedPlace.reviewUrl) {
+                const resolved = await resolvePlaceReviewUrl(place.name, place.address);
+                selectedPlace.placeId = resolved.placeId;
+                selectedPlace.reviewUrl = resolved.reviewUrl;
+            }
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener("click", (e) => {
+            if (!shopNameInput.contains(e.target) && !suggestionsBox.contains(e.target)) {
+                suggestionsBox.style.display = "none";
+            }
+            if (editShopNameInput && !editShopNameInput.contains(e.target) && !editSuggestionsBox.contains(e.target)) {
+                editSuggestionsBox.style.display = "none";
+            }
+        });
+
+        // Handle Activation Submit
+        activateForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            activateAlert.style.display = "none";
+
+            const name = shopNameInput.value.trim();
+            const pin = pinInput.value.trim();
+
+            if (!name) {
+                activateAlert.textContent = "Nama bisnis wajib diisi!";
+                activateAlert.style.display = "block";
+                return;
+            }
+
+            if (!pin || pin.length !== 4) {
+                activateAlert.textContent = "PIN pengaman harus tepat 4 angka!";
+                activateAlert.style.display = "block";
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtnText.textContent = "Mengaktifkan Kartu...";
+            submitSpinner.style.display = "inline-block";
+
+            try {
+                // Ensure reviewUrl is resolved
+                let finalDestination = selectedPlace.reviewUrl;
+                if (!finalDestination) {
+                    const resolved = await resolvePlaceReviewUrl(name, selectedPlace.address || "");
+                    finalDestination = resolved.reviewUrl;
+                    selectedPlace.placeId = resolved.placeId;
+                }
+
+                // Official Google Direct 5-Star Write Review URL
+                if (selectedPlace.placeId && !finalDestination.includes("writereview")) {
+                    finalDestination = `https://search.google.com/local/writereview?placeid=${selectedPlace.placeId}&hl=id`;
+                }
+
+                const cardRef = doc(db, "cards", currentCardId);
+                const cardData = {
+                    shopName: name,
+                    destination: finalDestination,
+                    address: selectedPlace.address || "",
+                    placeId: selectedPlace.placeId || "",
+                    pin: pin,
+                    active: true,
+                    activatedAt: new Date().toISOString()
+                };
+
+                await setDoc(cardRef, cardData, { merge: true });
+
+                currentCardData = cardData;
+
+                // Tampilkan redirectState (sama kayak kartu sudah aktif) - BUKAN successState
+                activeCardBadge.textContent = currentCardId;
+                activeShopTitle.textContent = cardData.shopName || "Toko Anda";
+                activeShopAddress.textContent = cardData.address || "Google Maps Review";
+                manualRedirectBtn.href = cardData.destination;
+
+                showView("redirectState");
+
+                // Auto-redirect ke Google Review setelah 2 detik (untuk testing admin)
+                setTimeout(() => {
+                    window.location.replace(cardData.destination);
+                }, 2000);
+
+            } catch (err) {
+                console.error("Activation error:", err);
+                activateAlert.textContent = "Gagal mengaktifkan kartu: " + err.message;
+                activateAlert.style.display = "block";
+                submitBtn.disabled = false;
+                submitBtnText.textContent = "Aktifkan Kartu";
+                submitSpinner.style.display = "none";
+            }
+        });
+
+        // Initialize Card on Load
+        async function initCard() {
+            const path = window.location.pathname.replace(/^\/+|\/+$/g, "");
+            currentCardId = path.toUpperCase();
+
+            // Validasi format Card ID: ZET#### (3 huruf + 4 angka = 7 chars)
+            const cardIdRegex = /^[A-Z]{3}[0-9]{4}$/;
+            if (!currentCardId || !cardIdRegex.test(currentCardId)) {
+                document.getElementById("errorTitle").textContent = "ID Kartu Tidak Valid";
+                document.getElementById("errorSubtitle").textContent = "Format kartu tidak dikenali. Silakan scan QR code yang valid.";
+                showView("errorState");
+                return;
+            }
+
+            cardIdCode.textContent = currentCardId;
+
+            try {
+                const cardRef = doc(db, "cards", currentCardId);
+                const cardSnap = await getDoc(cardRef);
+
+                if (!cardSnap.exists()) {
+                    document.getElementById("errorTitle").textContent = "Kartu Tidak Ditemukan";
+                    document.getElementById("errorSubtitle").textContent = `ID Kartu "${currentCardId}" belum terdaftar di database.`;
+                    showView("errorState");
+                    return;
+                }
+
+                currentCardData = cardSnap.data();
+
+                // KONDISI 1: KARTU SUDAH AKTIF -> AUTO REDIRECT KE GOOGLE MAPS REVIEW
+                if (currentCardData.active === true && currentCardData.destination) {
+                    activeCardBadge.textContent = currentCardId;
+                    activeShopTitle.textContent = currentCardData.shopName || "Toko Anda";
+                    activeShopAddress.textContent = currentCardData.address || "Google Maps Review";
+                    manualRedirectBtn.href = currentCardData.destination;
+
+                    showView("redirectState");
+
+                    // Redirect otomatis langsung ke dialog ulasan 5-bintang
+                    setTimeout(() => {
+                        window.location.replace(currentCardData.destination);
+                    }, 1000);
+
+                    return;
+                }
+
+                // KONDISI 2: KARTU BELUM AKTIF -> TAMPILKAN FORM AKTIVASI
+                showView("activateState");
+
+            } catch (err) {
+                console.error("Card load error:", err);
+                document.getElementById("errorTitle").textContent = "Gagal Membaca Kartu";
+                document.getElementById("errorSubtitle").textContent = "Periksa koneksi internet Anda.";
+                showView("errorState");
+            }
+        }
+
+        // OWNER EDIT FLOW
+        openEditModalBtn.addEventListener("click", () => {
+            pinStep.style.display = "block";
+            editStep.style.display = "none";
+            verifyPinInput.value = "";
+            pinAlert.style.display = "none";
+            editModal.style.display = "flex";
+        });
+
+        closeModalBtn.addEventListener("click", () => {
+            editModal.style.display = "none";
+        });
+
+        cancelEditBtn.addEventListener("click", () => {
+            editModal.style.display = "none";
+        });
+
+        verifyPinBtn.addEventListener("click", () => {
+            const entered = verifyPinInput.value.trim();
+            if (!entered) {
+                pinAlert.textContent = "Silakan masukkan PIN!";
+                pinAlert.style.display = "block";
+                return;
+            }
+
+            if (entered === currentCardData.pin) {
+                pinStep.style.display = "none";
+                editStep.style.display = "block";
+                editShopNameInput.value = currentCardData.shopName || "";
+                editNewPin.value = "";
+                editSelectedPlace = {
+                    name: currentCardData.shopName || "",
+                    address: currentCardData.address || "",
+                    placeId: currentCardData.placeId || "",
+                    reviewUrl: currentCardData.destination || ""
+                };
+            } else {
+                pinAlert.textContent = "PIN salah! Silakan coba lagi.";
+                pinAlert.style.display = "block";
+            }
+        });
+
+        // Edit business input autocomplete
+        editShopNameInput.addEventListener("input", () => {
+            const query = editShopNameInput.value.trim();
+            if (query.length < 2) {
+                editSuggestionsBox.style.display = "none";
+                return;
+            }
+
+            clearTimeout(searchDebounceTimeout);
+            searchDebounceTimeout = setTimeout(async () => {
+                const suggestions = await fetchPlaceSuggestions(query);
+                renderSuggestions(suggestions, editSuggestionsBox, async (place) => {
+                    editShopNameInput.value = place.name;
+                    editSelectedPlace = { ...place };
+                    if (!editSelectedPlace.reviewUrl) {
+                        const resolved = await resolvePlaceReviewUrl(place.name, place.address);
+                        editSelectedPlace.placeId = resolved.placeId;
+                        editSelectedPlace.reviewUrl = resolved.reviewUrl;
+                    }
+                });
+            }, 250);
+        });
+
+        saveEditBtn.addEventListener("click", async () => {
+            editAlert.style.display = "none";
+            const newName = editShopNameInput.value.trim();
+            const newPin = editNewPin.value.trim();
+
+            if (!newName) {
+                editAlert.textContent = "Nama bisnis tidak boleh kosong!";
+                editAlert.style.display = "block";
+                return;
+            }
+
+            saveEditBtn.disabled = true;
+            saveEditBtn.textContent = "Menyimpan...";
+
+            try {
+                let finalDestination = editSelectedPlace.reviewUrl;
+                if (!finalDestination || editSelectedPlace.name !== newName) {
+                    const resolved = await resolvePlaceReviewUrl(newName, editSelectedPlace.address || "");
+                    finalDestination = resolved.reviewUrl;
+                    editSelectedPlace.placeId = resolved.placeId;
+                }
+
+                if (editSelectedPlace.placeId && !finalDestination.includes("writereview")) {
+                    finalDestination = `https://search.google.com/local/writereview?placeid=${editSelectedPlace.placeId}&hl=id`;
+                }
+
+                const updateData = {
+                    shopName: newName,
+                    destination: finalDestination,
+                    address: editSelectedPlace.address || "",
+                    placeId: editSelectedPlace.placeId || "",
+                    updatedAt: new Date().toISOString()
+                };
+
+                if (newPin) {
+                    if (newPin.length !== 4) {
+                        editAlert.textContent = "PIN baru harus tepat 4 angka!";
+                        editAlert.style.display = "block";
+                        saveEditBtn.disabled = false;
+                        saveEditBtn.textContent = "Simpan Perubahan";
+                        return;
+                    }
+                    updateData.pin = newPin;
+                }
+
+                const cardRef = doc(db, "cards", currentCardId);
+                await setDoc(cardRef, updateData, { merge: true });
+
+                currentCardData = { ...currentCardData, ...updateData };
+                activeShopTitle.textContent = newName;
+                activeShopAddress.textContent = editSelectedPlace.address || "";
+                manualRedirectBtn.href = finalDestination;
+
+                editModal.style.display = "none";
+                alert("Pengaturan bisnis berhasil diperbarui!");
+                saveEditBtn.disabled = false;
+                saveEditBtn.textContent = "Simpan Perubahan";
+
+            } catch (err) {
+                console.error("Save edit error:", err);
+                editAlert.textContent = "Gagal menyimpan: " + err.message;
+                editAlert.style.display = "block";
+                saveEditBtn.disabled = false;
+                saveEditBtn.textContent = "Simpan Perubahan";
+            }
+        });
+
+        function escapeHtml(text) {
+            if (!text) return "";
+            return String(text)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        // Start
+        initCard();
+    </script>
+</body>
+
+</html>

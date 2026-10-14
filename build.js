@@ -42,7 +42,7 @@ if (missing.length > 0) {
   process.exit(1);
 }
 
-// Templates (committed, contain placeholders) -> public/ (generated, gitignored)
+// Inject firebase config langsung ke public/*.html (in-place)
 const replacements = {
   '__FIREBASE_API_KEY__': getEnv('FIREBASE_API_KEY'),
   '__FIREBASE_AUTH_DOMAIN__': getEnv('FIREBASE_AUTH_DOMAIN'),
@@ -53,18 +53,13 @@ const replacements = {
   '__FIREBASE_MEASUREMENT_ID__': getEnv('FIREBASE_MEASUREMENT_ID'),
 };
 const targets = ['index.html', 'cetak.html'];
-fs.mkdirSync(path.join(__dirname, 'public'), { recursive: true });
 for (const f of targets) {
-  const tpl = path.join(__dirname, 'templates', f);
-  if (!fs.existsSync(tpl)) {
-    console.error(`Template missing: templates/${f}`);
-    process.exit(1);
-  }
-  let html = fs.readFileSync(tpl, 'utf8');
+  const fp = path.join(__dirname, 'public', f);
+  let html = fs.readFileSync(fp, 'utf8');
   for (const [placeholder, value] of Object.entries(replacements)) {
     html = html.replace(new RegExp(placeholder, 'g'), value);
   }
-  fs.writeFileSync(path.join(__dirname, 'public', f), html);
-  console.log(`✅ Generated public/${f} from templates/${f}`);
+  fs.writeFileSync(fp, html);
+  console.log(`✅ Firebase config injected into public/${f}`);
 }
 console.log('   Source:', process.env.VERCEL ? 'Vercel Environment Variables' : 'Local .env file');

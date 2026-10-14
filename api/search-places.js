@@ -1,9 +1,11 @@
 // api/search-places.js - Simple version, no rate limit, no security
 module.exports = async (req, res) => {
-  // CORS
+  // CORS + no-cache (cegah 304 Not Modified berisi hasil kosong cache)
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
+  res.setHeader("Pragma", "no-cache");
   if (req.method === "OPTIONS") return res.status(204).end();
 
   const rawQuery = (req.query.q || "").trim();
@@ -34,8 +36,21 @@ module.exports = async (req, res) => {
     });
 
     const data = await response.json();
-    
-    if (!data.places) return res.json({ success: true, results: [] });
+
+    // Jangan samarkan error Google jadi results:[] — teruskan agar bisa didiagnosa
+    if (!response.ok) {
+      console.error("search-places google error:", response.status, JSON.stringify(data).slice(0, 500));
+      return res.status(response.status).json({
+        success: false,
+        error: data?.error?.message || "Google Places error",
+        results: []
+      });
+    }
+    if (!data.places) {
+      // Sukses tapi kosong — kemungkinan bisnis memang tidak ketemu di Google
+      console.log(`search-places empty for query: "${query}"`);
+      return res.json({ success: true, results: [] });
+    }
 
     const results = data.places.map(place => ({
       name: place.displayName?.text?.toUpperCase() || "",

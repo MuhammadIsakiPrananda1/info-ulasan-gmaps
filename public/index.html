@@ -725,8 +725,12 @@
         async function fetchPlaceSuggestions(query) {
             if (!query || query.trim().length < 2) return [];
 
-            const res = await fetch(`${SEARCH_API_BASE}?q=${encodeURIComponent(query.trim())}`);
-            if (!res.ok) return [];
+            const res = await fetch(`${SEARCH_API_BASE}?q=${encodeURIComponent(query.trim())}`, { cache: "no-store" });
+            if (!res.ok) {
+                const errData = await res.json().catch(() => null);
+                console.error("search-places API error:", res.status, errData?.error || "");
+                return [];
+            }
             const data = await res.json();
             if (data.success && Array.isArray(data.results)) {
                 return data.results;

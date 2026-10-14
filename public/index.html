@@ -969,9 +969,8 @@
             const path = window.location.pathname.replace(/^\/+|\/+$/g, "");
             currentCardId = path.toUpperCase();
 
-            // Validasi format Card ID: ZET#### (3 huruf + 4 angka = 7 chars)
-            const cardIdRegex = /^[A-Z]{3}[0-9]{4}$/;
-            if (!currentCardId || !cardIdRegex.test(currentCardId)) {
+            // Validasi Card ID tidak kosong (mendukung 6-char QR codes: ZXSRL7, ZNFCF7, dll)
+            if (!currentCardId) {
                 document.getElementById("errorTitle").textContent = "ID Kartu Tidak Valid";
                 document.getElementById("errorSubtitle").textContent = "Format kartu tidak dikenali. Silakan scan QR code yang valid.";
                 showView("errorState");

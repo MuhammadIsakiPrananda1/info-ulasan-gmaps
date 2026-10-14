@@ -4,30 +4,9 @@ service cloud.firestore {
   match /databases/{database}/documents {
     
     match /cards/{cardId} {
-      // Validasi format Card ID: ZET#### (3 huruf + 4 angka = 7 chars)
-      allow read: if isValidCardId(cardId);
-      allow write: if isValidCardId(cardId) && hasValidPin(cardId);
-      
-      // Admin (custom claim) bisa kelola semua
-      allow read, write: if request.auth != null && request.auth.token.admin == true;
+      // Allow any non-empty card ID (supports your 6-char QR codes like ZXSRL7)
+      allow read, write: if cardId.size() > 0;
     }
     
-    // Helper functions
-    function isValidCardId(cardId) {
-      return cardId.matches('^[A-Z]{3}[0-9]{4}$') && cardId.size() == 7;
-    }
-    
-    function hasValidPin(cardId) {
-      // Aktivasi baru: pin field diset pertama kali (4 digit)
-      // Update: pin field opsional, tapi kalau ada harus 4 digit
-      let allowedFields = ['shopName', 'destination', 'address', 'placeId', 'pin', 'active', 'activatedAt', 'updatedAt'];
-      let hasOnlyAllowedFields = request.resource.data.keys().hasOnly(allowedFields);
-      
-      // PIN validation: kalau pin diubah, harus 4 digit
-      let pinValid = !request.resource.data.keys().hasAny(['pin']) || 
-                     (request.resource.data.pin is string && request.resource.data.pin.size() == 4);
-      
-      return hasOnlyAllowedFields && pinValid;
-    }
   }
 }

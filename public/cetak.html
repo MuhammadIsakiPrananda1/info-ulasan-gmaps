@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Cetak QR Kartu Review</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;font-family:'Plus Jakarta Sans',sans-serif}
@@ -27,6 +27,7 @@ button{padding:12px 20px;border:none;border-radius:9999px;font-weight:700;cursor
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:16px;margin-top:20px}
 .qr-item{background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:14px;text-align:center}
 .qr-item canvas,.qr-item img{width:100%;height:auto;border-radius:8px}
+.qr-item img{display:none}
 .qr-id{font-weight:800;font-size:15px;margin:8px 0 2px;letter-spacing:1px}
 .qr-url{font-size:10px;color:#64748b;word-break:break-all;margin-bottom:8px}
 .dl{font-size:12px;padding:8px 14px;width:100%}
@@ -102,9 +103,11 @@ genBtn.addEventListener("click",async()=>{
       const url=BASE_URL+id;
       generated.push({id,url});
       done++;
-      log(`[${done}/${qty}] ${id} tersimpan.`);
-      renderOne({id,url});
-    }catch(e){console.error(e);showErr("Gagal simpan: "+e.message);break;}
+      log(`[${done}/${qty}] ${id} tersimpan di Firestore.`);
+      try {
+        renderOne({id,url});
+      } catch(qe) { console.error(qe); log(`[${id}] QR gagal dirender: ${qe.message}`); }
+    }catch(e){console.error(e);showErr("Gagal simpan ke Firestore: "+e.message);break;}
   }
   countEl.textContent=generated.length;
   if(generated.length)toolbar.style.display="flex";
@@ -112,17 +115,22 @@ genBtn.addEventListener("click",async()=>{
   genBtn.disabled=false;genBtn.textContent="Generate + Simpan ke Firebase";
 });
 function renderOne({id,url}){
+  if (typeof QRCode === "undefined") throw new Error("Library QR gagal dimuat (periksa koneksi).");
   const div=document.createElement("div");
   div.className="qr-item";
-  const cv=document.createElement("canvas");
-  div.appendChild(cv);
+  const holder=document.createElement("div");
+  div.appendChild(holder);
+  new QRCode(holder,{text:url,width:360,height:360,correctLevel:QRCode.CorrectLevel.H});
   div.insertAdjacentHTML("beforeend",`<div class="qr-id">${id}</div><div class="qr-url">${url}</div>`);
   const b=document.createElement("button");
   b.className="btn-o dl";b.textContent="Download PNG";
-  b.onclick=()=>{const a=document.createElement("a");a.download=id+".png";a.href=cv.toDataURL("image/png");a.click();};
+  b.onclick=()=>{
+    const cv=div.querySelector("canvas");
+    if(!cv){alert("QR belum siap diunduh.");return;}
+    const a=document.createElement("a");a.download=id+".png";a.href=cv.toDataURL("image/png");a.click();
+  };
   div.appendChild(b);
   grid.appendChild(div);
-  QRCode.toCanvas(cv,url,{width:400,margin:2,errorCorrectionLevel:"H"},e=>{if(e)console.error(e);});
   countEl.textContent=generated.length;
 }
 document.getElementById("dlAllBtn").addEventListener("click",async()=>{
@@ -130,6 +138,7 @@ document.getElementById("dlAllBtn").addEventListener("click",async()=>{
   document.querySelectorAll("#grid .qr-item").forEach(item=>{
     const id=item.querySelector(".qr-id").textContent;
     const cv=item.querySelector("canvas");
+    if(!cv)return;
     const b64=cv.toDataURL("image/png").split(",")[1];
     zip.file(id+".png",b64,{base64:true});
   });

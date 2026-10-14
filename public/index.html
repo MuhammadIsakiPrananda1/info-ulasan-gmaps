@@ -436,7 +436,7 @@
     <div class="card-container">
 
         <!-- 1. LOADING STATE -->
-        <div id="loadingState" style="text-align: center; padding: 20px 0;">
+        <div id="loadingState" style="display: none; text-align: center; padding: 20px 0;">
             <div class="spinner"></div>
             <h2 style="font-size: 18px; font-weight: 700; margin-bottom: 6px;">Mengecek Kartu...</h2>
             <p style="font-size: 13px; color: var(--text-muted);">Memeriksa status kartu fisik Anda...</p>
@@ -959,15 +959,21 @@
             const path = window.location.pathname.replace(/^\/+|\/+$/g, "");
             currentCardId = path.toUpperCase();
 
-            // Validasi Card ID tidak kosong (mendukung 6-char QR codes: ZXSRL7, ZNFCF7, dll)
+            // Validasi Card ID tidak kosong - tampilkan halaman kosong untuk root URL
             if (!currentCardId) {
-                document.getElementById("errorTitle").textContent = "ID Kartu Tidak Valid";
-                document.getElementById("errorSubtitle").textContent = "Format kartu tidak dikenali. Silakan scan QR code yang valid.";
-                showView("errorState");
+                // Sembunyikan semua state, tampilkan halaman kosong
+                loadingState.style.display = "none";
+                activateState.style.display = "none";
+                redirectState.style.display = "none";
+                errorState.style.display = "none";
+                // document.body.innerHTML = ''; // Opsional: benar-benar kosongkan
                 return;
             }
 
             cardIdCode.textContent = currentCardId;
+
+            // Tampilkan loading state hanya untuk valid card ID
+            loadingState.style.display = "flex";
 
             try {
                 const cardRef = doc(db, "cards", currentCardId);

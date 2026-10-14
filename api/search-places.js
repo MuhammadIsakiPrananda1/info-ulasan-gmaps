@@ -1,9 +1,12 @@
 // api/search-places.js - Simple version, no rate limit, no security
 module.exports = async (req, res) => {
-  // CORS
+  // CORS + Prevent caching
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
+  res.setHeader("Pragma", "no-cache");
+  res.setHeader("Expires", "0");
   if (req.method === "OPTIONS") return res.status(204).end();
 
   const rawQuery = (req.query.q || "").trim();

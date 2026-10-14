@@ -38,7 +38,11 @@ async function generateQRs() {
         await QRCode.toFile(filePath, url, {
             width: 1000,
             margin: 4,
-            errorCorrectionLevel: "H"
+            errorCorrectionLevel: "H",
+            color: {
+                dark: '#000000',
+                light: '#ffffff'
+            }
         });
 
         console.log(`${cardId} → ${url}`);

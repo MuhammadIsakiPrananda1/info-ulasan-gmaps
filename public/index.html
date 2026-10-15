@@ -724,6 +724,10 @@
 
         let searchAbortController = null;
         const clientCache = new Map();
+        try {
+            const saved = JSON.parse(localStorage.getItem("place_cache_v1") || "{}");
+            Object.entries(saved).forEach(([k, v]) => clientCache.set(k, v));
+        } catch (_) {}
         async function fetchPlaceSuggestions(query) {
             const key = query.trim().toLowerCase();
             if (clientCache.has(key)) return clientCache.get(key);
@@ -736,7 +740,7 @@
                 signal: searchAbortController.signal
             });
             if (res.status === 429) {
-                throw new Error("QUOTA_HABIS");
+                return [];
             }
             if (!res.ok) {
                 const errData = await res.json().catch(() => null);
@@ -745,8 +749,11 @@
             }
             const data = await res.json();
             if (data.success && Array.isArray(data.results)) {
-                if (clientCache.size > 100) clientCache.clear();
+                if (clientCache.size > 200) clientCache.clear();
                 clientCache.set(key, data.results);
+                try {
+                    localStorage.setItem("place_cache_v1", JSON.stringify(Object.fromEntries([...clientCache].slice(-200))));
+                } catch (_) {}
                 return data.results;
             }
             return [];
@@ -798,10 +805,7 @@
                 } catch (err) {
                     if (err.name === "AbortError") return;
                     searchSpinner.style.display = "none";
-                    if (err.message === "QUOTA_HABIS") {
-                        suggestionsBox.innerHTML = `<div class="suggestion-empty">⚠️ Kuota pencarian Google habis hari ini. Ketik nama bisnis manual lalu Aktifkan — link review tetap dibuat.</div>`;
-                        suggestionsBox.style.display = "block";
-                    }
+                    suggestionsBox.style.display = "none";
                 }
             }, 900);
         });
@@ -1062,10 +1066,7 @@
                     });
                 } catch (err) {
                     if (err.name === "AbortError") return;
-                    if (err.message === "QUOTA_HABIS") {
-                        editSuggestionsBox.innerHTML = `<div class="suggestion-empty">⚠️ Kuota pencarian habis hari ini.</div>`;
-                        editSuggestionsBox.style.display = "block";
-                    }
+                    editSuggestionsBox.style.display = "none";
                 }
             }, 900);
         });

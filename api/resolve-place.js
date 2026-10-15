@@ -1,12 +1,22 @@
-// api/resolve-place.js - hemat kuota, cache + fallback Maps search URL
+// api/resolve-place.js - hemat kuota, cache + rotasi multi-key
 const cache = new Map();
 const CACHE_TTL_MS = 30 * 24 * 3600 * 1000;
+
+const cooldown = new Map();
+const COOLDOWN_MS = 24 * 3600 * 1000;
 
 function getKeys() {
   return (process.env.GOOGLE_PLACES_API_KEY || "")
     .split(",")
     .map((s) => s.trim())
     .filter(Boolean);
+}
+
+function getLiveKeys() {
+  const now = Date.now();
+  const all = getKeys();
+  const live = all.filter((k) => (cooldown.get(k) || 0) <= now);
+  return live.length ? live : all;
 }
 
 module.exports = async (req, res) => {
@@ -29,7 +39,7 @@ module.exports = async (req, res) => {
     return res.json(hit.payload);
   }
 
-  const keys = getKeys();
+  const keys = getLiveKeys();
   if (!keys.length) return res.json({ success: true, placeId: null, reviewUrl: fallbackUrl, fallback: true });
 
   for (const apiKey of keys) {
@@ -49,7 +59,7 @@ module.exports = async (req, res) => {
         }),
       });
       const data = await response.json().catch(() => ({}));
-      if (response.status === 429) continue; // kuota key ini habis, coba key lain
+      if (response.status === 429) { cooldown.set(apiKey, Date.now() + COOLDOWN_MS); continue; }
       if (!response.ok) continue;
 
       const placeId = data.places?.[0]?.id || null;

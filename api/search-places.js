@@ -1,9 +1,20 @@
-// api/search-places.js - bersih, Google Places New saja + cache
+// api/search-places.js - bersih, Google Places New saja + cache + rotasi multi-key
 const cache = new Map();
 const CACHE_TTL_MS = 30 * 24 * 3600 * 1000;
 
+// Key yang kena 429 diistirahatkan 24 jam biar request berikutnya langsung pakai key sehat
+const cooldown = new Map(); // apiKey -> timestamp boleh dipakai lagi
+const COOLDOWN_MS = 24 * 3600 * 1000;
+
 function getKeys() {
   return (process.env.GOOGLE_PLACES_API_KEY || "").split(",").map((s) => s.trim()).filter(Boolean);
+}
+
+function getLiveKeys() {
+  const now = Date.now();
+  const all = getKeys();
+  const live = all.filter((k) => (cooldown.get(k) || 0) <= now);
+  return live.length ? live : all; // kalau semua cooldown, coba semua lagi (siapa tahu sudah reset)
 }
 
 module.exports = async (req, res) => {
@@ -24,7 +35,7 @@ module.exports = async (req, res) => {
     return res.json(hit.payload);
   }
 
-  const keys = getKeys();
+  const keys = getLiveKeys();
   if (!keys.length) {
     return res.status(500).json({ success: false, error: "Server config error", results: [] });
   }
@@ -46,6 +57,7 @@ module.exports = async (req, res) => {
       if (response.status === 429) {
         lastError = data?.error?.message || "Quota exceeded";
         lastStatus = 429;
+        cooldown.set(apiKey, Date.now() + COOLDOWN_MS);
         continue;
       }
       if (!response.ok) {

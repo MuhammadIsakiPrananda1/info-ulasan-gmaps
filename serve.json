@@ -2,8 +2,11 @@
   "public": "public",
   "cleanUrls": false,
   "rewrites": [
-    { "source": "/admin", "destination": "/admin.html" },
-    { "source": "/admin-dashboard", "destination": "/admin-dashboard.html" },
+    { "source": "/login", "destination": "/login.html" },
+    { "source": "/admin", "destination": "/login.html" },
+    { "source": "/dashboard", "destination": "/dashboard.html" },
+    { "source": "/admin-dashboard", "destination": "/dashboard.html" },
+    { "source": "/cetak", "destination": "/cetak.html" },
     { "source": "!(*.html|*.png|*.js|*.css)", "destination": "/index.html" }
   ]
 }

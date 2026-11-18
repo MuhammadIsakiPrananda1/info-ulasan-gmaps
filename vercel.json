@@ -6,6 +6,22 @@
   "framework": null,
   "rewrites": [
     {
+      "source": "/login",
+      "destination": "/login.html"
+    },
+    {
+      "source": "/admin",
+      "destination": "/login.html"
+    },
+    {
+      "source": "/dashboard",
+      "destination": "/dashboard.html"
+    },
+    {
+      "source": "/admin-dashboard",
+      "destination": "/dashboard.html"
+    },
+    {
       "source": "/cetak",
       "destination": "/cetak.html"
     },

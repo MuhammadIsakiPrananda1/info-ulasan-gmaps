@@ -125,9 +125,6 @@ body {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
   width: 100%;
 }
-  gap: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
-}
 
 .badge-pill {
   display: inline-flex;
@@ -1246,22 +1243,29 @@ const sbOpenBtn = document.getElementById("sb-collapse-open");
 const sbCloseBtn = document.getElementById("sb-collapse-close");
 
 function openMobileSidebar() {
+  if (!sbSide || !sbScrim) return;
   sbSide.classList.remove("max-lg:hidden");
   sbSide.classList.add("flex");
   sbScrim.removeAttribute("hidden");
+  document.body.classList.add("overflow-hidden");
 }
 function closeMobileSidebar() {
+  if (!sbSide || !sbScrim) return;
   sbSide.classList.add("max-lg:hidden");
   sbSide.classList.remove("flex");
   sbScrim.setAttribute("hidden", "");
+  document.body.classList.remove("overflow-hidden");
 }
 
-sbOpenBtn.addEventListener("click", openMobileSidebar);
-sbCloseBtn.addEventListener("click", closeMobileSidebar);
-sbScrim.addEventListener("click", closeMobileSidebar);
+if (sbOpenBtn) sbOpenBtn.addEventListener("click", openMobileSidebar);
+if (sbCloseBtn) sbCloseBtn.addEventListener("click", closeMobileSidebar);
+if (sbScrim) sbScrim.addEventListener("click", closeMobileSidebar);
 
 // NAV SWITCHER
 window.switchNav = function(viewId) {
+  if (!viewId) return;
+
+  // Update status active pada link sidebar
   document.querySelectorAll(".sb-nav-link").forEach(b => {
     if (b.dataset.view === viewId) {
       b.setAttribute("aria-current", "page");
@@ -1270,29 +1274,38 @@ window.switchNav = function(viewId) {
     }
   });
 
+  // Tampilkan tab view yang dipilih
   document.querySelectorAll(".tab-view").forEach(v => {
     v.classList.toggle("active", v.id === viewId);
   });
 
+  // Tutup sidebar mobile setelah menu ditekan
   closeMobileSidebar();
 
   const titles = {
     'view-overview': ['Dashboard', 'Ringkasan performa ulasan dan kartu aktif'],
     'view-cards': ['NFC Cards', 'Daftar semua kartu yang tersimpan di database'],
-    'view-studio': ['Template Desain', 'Generator cetak kartu Google Review (10x10 cm)'],
+    'view-studio': ['Template Desain', 'Koleksi template & generator cetak kartu Google Review'],
+    'view-layout-sticker': ['Layout Sticker', 'Cetak multi-sticker lembar A4/A3/Kustom PDF & PNG'],
     'view-reset': ['QR Reset Kartu', 'Hapus kaitan bisnis agar kartu dapat diaktivasi ulang'],
     'view-admins': ['Kelola Admin', 'Daftar pengelola akun administrator'],
     'view-settings': ['Pengaturan', 'Nama aplikasi, logo kustom, dan mode tampilan']
   };
 
   const cur = titles[viewId] || ['Dashboard', ''];
-  document.getElementById("topbarTitle").textContent = cur[0];
+  const topTitle = document.getElementById("topbarTitle");
+  if (topTitle) topTitle.textContent = cur[0];
   const sub = document.getElementById("topbarSub");
   if (sub) sub.textContent = cur[1];
 };
 
-document.querySelectorAll(".sb-nav-link").forEach(btn => {
-  btn.addEventListener("click", () => switchNav(btn.dataset.view));
+// Delegasi event klik ke document untuk memastikan semua tombol sb-nav-link selalu responsif
+document.addEventListener("click", (e) => {
+  const btn = e.target.closest(".sb-nav-link");
+  if (btn && btn.dataset.view) {
+    e.preventDefault();
+    window.switchNav(btn.dataset.view);
+  }
 });
 
 // OVERVIEW & TABLE DATA LOADER

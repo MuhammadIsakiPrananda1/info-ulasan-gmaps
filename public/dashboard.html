@@ -1212,14 +1212,14 @@ function getAdminSession() {
 
 const adminSession = getAdminSession();
 if (adminSession && adminSession.username) {
-  userEmailBadge.textContent = adminSession.username;
-  activeAdminEmailDisplay.textContent = adminSession.username + " (Super Admin)";
+  if (userEmailBadge) userEmailBadge.textContent = adminSession.username;
+  if (activeAdminEmailDisplay) activeAdminEmailDisplay.textContent = adminSession.username + " (Super Admin)";
   setupRealtimeCardsListener();
 } else {
   onAuthStateChanged(auth, (user) => {
     if (user) {
-      userEmailBadge.textContent = user.email || "Admin";
-      activeAdminEmailDisplay.textContent = user.email || "admin@ulasankuu.com";
+      if (userEmailBadge) userEmailBadge.textContent = user.email || "Admin";
+      if (activeAdminEmailDisplay) activeAdminEmailDisplay.textContent = user.email || "admin@ulasankuu.com";
       setupRealtimeCardsListener();
     } else {
       window.location.replace("/login");

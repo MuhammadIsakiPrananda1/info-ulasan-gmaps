@@ -759,6 +759,15 @@ body {
               </div>
             </div>
 
+            <!-- Prefix Kode Kartu -->
+            <div>
+              <label class="block text-xs font-bold text-neutral-900 mb-1.5" for="settingCardPrefix">Prefix Kode Kartu</label>
+              <input type="text" id="settingCardPrefix" placeholder="Contoh: NPT" maxlength="8" class="w-full rounded-lg border border-neutral-300 bg-neutral-50/50 px-3.5 py-2.5 text-xs font-mono font-bold uppercase tracking-wider text-neutral-900 focus:border-zinc-950 focus:bg-white focus:outline-none">
+              <p class="mt-1 text-[11px] text-neutral-500">
+                Opsional (2-8 karakter huruf/angka). Contoh jika diisi <b class="text-neutral-900">NPT</b>, kartu akan dibuat dengan format <b class="text-neutral-900 font-mono">NPT-AB12CD</b> (tetap memakai 6-digit acak unik). Kosongkan jika ingin 6-digit tanpa awalan.
+              </p>
+            </div>
+
             <div class="pt-2">
               <button type="submit" class="w-full rounded-lg bg-zinc-950 py-2.5 text-xs font-bold text-white shadow-xs hover:bg-zinc-800 transition-colors">
                 Simpan Perubahan Pengaturan
@@ -798,6 +807,20 @@ const CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 function randId(){
   let s = "";
   for(let i=0; i<6; i++) s += CHARS[Math.floor(Math.random() * CHARS.length)];
+  
+  // Ambil prefix tersimpan dari Pengaturan (jika ada)
+  const saved = localStorage.getItem("ulasankuu_app_settings");
+  if (saved) {
+    try {
+      const parsed = JSON.parse(saved);
+      if (parsed && parsed.cardPrefix) {
+        const prefix = parsed.cardPrefix.trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
+        if (prefix) {
+          return prefix + "-" + s;
+        }
+      }
+    } catch(e){}
+  }
   return s;
 }
 
@@ -1438,7 +1461,8 @@ function loadAppSettings() {
     appName: "Ulasankuu",
     appSubtitle: "Google Review Card",
     logoData: null,
-    displayMode: "both" // 'both' | 'logo-only' | 'text-only'
+    displayMode: "both", // 'both' | 'logo-only' | 'text-only'
+    cardPrefix: ""
   };
 
   if (saved) {
@@ -1450,6 +1474,9 @@ function loadAppSettings() {
   // Terapkan ke form
   const inputName = document.getElementById("settingAppName");
   if (inputName) inputName.value = cfg.appName;
+
+  const inputPrefix = document.getElementById("settingCardPrefix");
+  if (inputPrefix) inputPrefix.value = cfg.cardPrefix || "";
 
   const radios = document.querySelectorAll("input[name='displayMode']");
   radios.forEach(r => {
@@ -1529,12 +1556,14 @@ settingsForm.addEventListener("submit", (e) => {
   settingsMsgOk.classList.add("hidden");
 
   const appName = document.getElementById("settingAppName").value.trim() || "Ulasankuu";
+  const cardPrefix = document.getElementById("settingCardPrefix").value.trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
   const selectedMode = document.querySelector("input[name='displayMode']:checked")?.value || "both";
 
   const saved = localStorage.getItem(SETTINGS_KEY);
   let curCfg = saved ? JSON.parse(saved) : {};
 
   curCfg.appName = appName;
+  curCfg.cardPrefix = cardPrefix;
   curCfg.displayMode = selectedMode;
 
   if (settingRemoveLogo.checked) {
@@ -1547,7 +1576,7 @@ settingsForm.addEventListener("submit", (e) => {
   localStorage.setItem(SETTINGS_KEY, JSON.stringify(curCfg));
   applyBranding(curCfg);
 
-  settingsMsgOk.textContent = "Pengaturan nama dan logo aplikasi berhasil disimpan!";
+  settingsMsgOk.textContent = "Pengaturan nama, prefix kartu, dan logo aplikasi berhasil disimpan!";
   settingsMsgOk.classList.remove("hidden");
   setTimeout(() => settingsMsgOk.classList.add("hidden"), 4000);
 });

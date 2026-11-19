@@ -169,15 +169,16 @@ body {
     <!-- BRAND / LOGO -->
     <div class="flex items-center gap-1 px-3 pt-3">
       <a href="/dashboard" aria-label="Ulasankuu Management" class="flex min-w-0 flex-1 cursor-pointer items-center gap-2.5 rounded-lg p-2 text-left transition-colors duration-150 hover:bg-neutral-950/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-950">
-        <span aria-hidden="true" class="flex size-8 shrink-0 items-center justify-center rounded-lg bg-zinc-950 text-sm font-semibold text-white">
+        <!-- Logo Container -->
+        <span id="brandLogoContainer" aria-hidden="true" class="flex size-8 shrink-0 items-center justify-center rounded-lg bg-zinc-950 text-sm font-semibold text-white overflow-hidden">
           <svg class="size-4.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <rect width="18" height="18" x="3" y="3" rx="2" />
             <path d="M7 7h.01M17 7h.01M7 17h.01M17 17h.01" />
           </svg>
         </span>
-        <span class="min-w-0 flex-1">
-          <span class="block truncate text-sm font-semibold text-neutral-950">Ulasankuu</span>
-          <span class="block truncate text-[11px] text-neutral-500 font-medium">Google Review Card</span>
+        <span class="min-w-0 flex-1" id="brandTextWrap">
+          <span class="block truncate text-sm font-semibold text-neutral-950" id="brandTitleDisplay">Ulasankuu</span>
+          <span class="block truncate text-[11px] text-neutral-500 font-medium" id="brandSubtitleDisplay">Google Review Card</span>
         </span>
       </a>
       <button type="button" id="sb-collapse-close" aria-label="Close menu" class="inline-flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-lg text-neutral-600 transition-colors duration-150 hover:bg-neutral-950/5 hover:text-neutral-950 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-950 lg:hidden">
@@ -246,6 +247,16 @@ body {
                 <path d="M22 20c0-3.37-2-6.5-4-8a5 5 0 0 0-.45-8.3" />
               </svg>
               <span class="truncate">List Akun Admin</span>
+            </button>
+          </li>
+          <!-- Pengaturan Aplikasi -->
+          <li>
+            <button type="button" class="sb-nav-link group/row relative flex h-10 w-full items-center gap-2.5 rounded-lg px-2.5 text-sm font-medium text-neutral-600 transition-colors duration-150 hover:bg-neutral-950/5 hover:text-neutral-950 focus-visible:outline-2 focus-visible:outline-zinc-950 aria-[current=page]:bg-white aria-[current=page]:text-neutral-950 aria-[current=page]:shadow-xs aria-[current=page]:ring-1 aria-[current=page]:ring-neutral-950/5 lg:h-8" data-view="view-settings">
+              <svg class="size-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="12" cy="12" r="3"/>
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+              </svg>
+              <span class="truncate">Pengaturan</span>
             </button>
           </li>
         </ul>
@@ -675,6 +686,88 @@ body {
         </div>
       </section>
 
+      <!-- VIEW 6: PENGATURAN APLIKASI (GANTI NAMA, LOGO, DAN DISPLAY) -->
+      <section class="tab-view" id="view-settings">
+        <div class="max-w-2xl rounded-xl border border-neutral-200/80 bg-white p-6 shadow-xs">
+          <h2 class="text-lg font-bold text-neutral-950">Pengaturan Aplikasi</h2>
+          <p class="mt-1 text-xs text-neutral-500">Ubah identitas merek, logo, dan preferensi tampilan nama aplikasi.</p>
+
+          <div id="settingsMsgOk" class="hidden mt-4 rounded-lg border border-neutral-900 bg-neutral-100 p-3 text-xs font-semibold text-neutral-950"></div>
+
+          <form id="settingsForm" class="mt-5 space-y-5">
+            <!-- Nama Aplikasi -->
+            <div>
+              <label class="block text-xs font-bold text-neutral-900 mb-1.5" for="settingAppName">Nama Aplikasi</label>
+              <input type="text" id="settingAppName" value="Ulasankuu" required class="w-full rounded-lg border border-neutral-300 bg-neutral-50/50 px-3.5 py-2.5 text-xs font-semibold text-neutral-900 focus:border-zinc-950 focus:bg-white focus:outline-none">
+              <p class="mt-1 text-[11px] text-neutral-500">Tampil di sidebar, judul halaman browser, dan halaman login.</p>
+            </div>
+
+            <!-- Logo Aplikasi -->
+            <div>
+              <label class="block text-xs font-bold text-neutral-900 mb-1.5">Logo Aplikasi</label>
+              
+              <!-- Box Preview Logo Saat Ini -->
+              <div class="flex items-center gap-3 rounded-lg border border-neutral-200 bg-neutral-50/60 p-3 mb-2">
+                <div id="settingsLogoPreviewBox" class="size-10 rounded-lg bg-zinc-950 flex items-center justify-center text-white overflow-hidden shrink-0 border border-neutral-300">
+                  <svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><rect width="18" height="18" x="3" y="3" rx="2" /><path d="M7 7h.01M17 7h.01M7 17h.01M17 17h.01" /></svg>
+                </div>
+                <div class="text-xs">
+                  <p class="font-bold text-neutral-900" id="currentLogoLabel">Logo saat ini: Ikon Bawaan</p>
+                  <p class="text-[11px] text-neutral-500">Format PNG, JPG, atau WebP transparan (Maks. 2 MB)</p>
+                </div>
+              </div>
+
+              <!-- Input File Upload Logo -->
+              <input type="file" id="settingLogoFile" accept="image/png, image/jpeg, image/webp" class="block w-full text-xs text-neutral-600 file:mr-3 file:py-2 file:px-3.5 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-neutral-950 file:text-white hover:file:bg-neutral-800 file:cursor-pointer cursor-pointer border border-neutral-300 rounded-lg bg-neutral-50/40 p-1.5">
+              
+              <div class="mt-2 flex items-center gap-2">
+                <input type="checkbox" id="settingRemoveLogo" class="size-4 rounded border-neutral-300 accent-neutral-950">
+                <label for="settingRemoveLogo" class="text-xs text-neutral-700 cursor-pointer">Hapus custom logo (kembali ke ikon bawaan)</label>
+              </div>
+            </div>
+
+            <!-- Mode Tampilan di Navigasi -->
+            <div>
+              <label class="block text-xs font-bold text-neutral-900 mb-2">Tampilan di Navigasi & Login</label>
+              <div class="space-y-2">
+                <!-- Option 1: Logo + teks -->
+                <label class="flex items-start gap-3 p-3 rounded-lg border border-neutral-200 bg-neutral-50/40 hover:bg-neutral-50 cursor-pointer transition-colors">
+                  <input type="radio" name="displayMode" value="both" checked class="mt-0.5 size-4 accent-neutral-950">
+                  <div>
+                    <span class="block text-xs font-bold text-neutral-900">Logo + teks</span>
+                    <span class="block text-[11px] text-neutral-500">Logo di samping nama aplikasi (Rekomendasi).</span>
+                  </div>
+                </label>
+
+                <!-- Option 2: Logo saja -->
+                <label class="flex items-start gap-3 p-3 rounded-lg border border-neutral-200 bg-neutral-50/40 hover:bg-neutral-50 cursor-pointer transition-colors">
+                  <input type="radio" name="displayMode" value="logo-only" class="mt-0.5 size-4 accent-neutral-950">
+                  <div>
+                    <span class="block text-xs font-bold text-neutral-900">Logo saja</span>
+                    <span class="block text-[11px] text-neutral-500">Hanya gambar logo; teks nama aplikasi disembunyikan.</span>
+                  </div>
+                </label>
+
+                <!-- Option 3: Teks saja -->
+                <label class="flex items-start gap-3 p-3 rounded-lg border border-neutral-200 bg-neutral-50/40 hover:bg-neutral-50 cursor-pointer transition-colors">
+                  <input type="radio" name="displayMode" value="text-only" class="mt-0.5 size-4 accent-neutral-950">
+                  <div>
+                    <span class="block text-xs font-bold text-neutral-900">Teks saja</span>
+                    <span class="block text-[11px] text-neutral-500">Hanya menampilkan teks nama aplikasi tanpa logo.</span>
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            <div class="pt-2">
+              <button type="submit" class="w-full rounded-lg bg-zinc-950 py-2.5 text-xs font-bold text-white shadow-xs hover:bg-zinc-800 transition-colors">
+                Simpan Perubahan Pengaturan
+              </button>
+            </div>
+          </form>
+        </div>
+      </section>
+
     </div>
   </main>
 </div>
@@ -791,7 +884,8 @@ window.switchNav = function(viewId) {
     'view-studio': ['Desain Kartu & QR', 'Template kartu Google Review dengan barcode QR otomatis (10x10 cm)'],
     'view-cards': ['Manajemen Kartu', 'Daftar semua kartu yang tersimpan di Firestore'],
     'view-reset': ['Reset Kartu & QR', 'Hapus kaitan bisnis agar kartu dapat diaktivasi ulang'],
-    'view-admins': ['List Akun Admin', 'Daftar pengelola akun administrator']
+    'view-admins': ['List Akun Admin', 'Daftar pengelola akun administrator'],
+    'view-settings': ['Pengaturan', 'Sesuaikan nama aplikasi, unggah logo kustom, dan mode tampilan navigasi']
   };
 
   const cur = titles[viewId] || ['Dashboard', ''];
@@ -1335,8 +1429,132 @@ resetForm.addEventListener("submit", async (e) => {
   }
 });
 
+// SETTINGS LOGIC (NAMA APLIKASI, LOGO, DAN DISPLAY MODE)
+const SETTINGS_KEY = "ulasankuu_app_settings";
+
+function loadAppSettings() {
+  const saved = localStorage.getItem(SETTINGS_KEY);
+  let cfg = {
+    appName: "Ulasankuu",
+    appSubtitle: "Google Review Card",
+    logoData: null,
+    displayMode: "both" // 'both' | 'logo-only' | 'text-only'
+  };
+
+  if (saved) {
+    try {
+      cfg = { ...cfg, ...JSON.parse(saved) };
+    } catch(e){}
+  }
+
+  // Terapkan ke form
+  const inputName = document.getElementById("settingAppName");
+  if (inputName) inputName.value = cfg.appName;
+
+  const radios = document.querySelectorAll("input[name='displayMode']");
+  radios.forEach(r => {
+    r.checked = (r.value === cfg.displayMode);
+  });
+
+  // Terapkan ke Brand Header Sidebar & Title Halaman
+  applyBranding(cfg);
+}
+
+function applyBranding(cfg) {
+  const titleDisplay = document.getElementById("brandTitleDisplay");
+  const textWrap = document.getElementById("brandTextWrap");
+  const logoBox = document.getElementById("brandLogoContainer");
+  const settingsLogoPreview = document.getElementById("settingsLogoPreviewBox");
+  const currentLogoLabel = document.getElementById("currentLogoLabel");
+
+  if (titleDisplay) titleDisplay.textContent = cfg.appName || "Ulasankuu";
+  document.title = (cfg.appName || "Ulasankuu") + " | Admin Dashboard";
+
+  // Atur Logo Preview di Navigasi & Form
+  const defaultSvg = `<svg class="size-4.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="3" rx="2" /><path d="M7 7h.01M17 7h.01M7 17h.01M17 17h.01" /></svg>`;
+
+  if (cfg.logoData) {
+    if (logoBox) logoBox.innerHTML = `<img src="${cfg.logoData}" alt="${cfg.appName}" class="size-full object-contain p-0.5">`;
+    if (settingsLogoPreview) settingsLogoPreview.innerHTML = `<img src="${cfg.logoData}" alt="${cfg.appName}" class="size-full object-contain p-0.5">`;
+    if (currentLogoLabel) currentLogoLabel.textContent = "Logo saat ini: Custom Logo Aktif ✓";
+  } else {
+    if (logoBox) logoBox.innerHTML = defaultSvg;
+    if (settingsLogoPreview) settingsLogoPreview.innerHTML = defaultSvg;
+    if (currentLogoLabel) currentLogoLabel.textContent = "Logo saat ini: Ikon Bawaan";
+  }
+
+  // Atur Mode Tampilan (both, logo-only, text-only)
+  if (cfg.displayMode === "logo-only") {
+    if (textWrap) textWrap.classList.add("hidden");
+    if (logoBox) logoBox.classList.remove("hidden");
+  } else if (cfg.displayMode === "text-only") {
+    if (textWrap) textWrap.classList.remove("hidden");
+    if (logoBox) logoBox.classList.add("hidden");
+  } else {
+    // both
+    if (textWrap) textWrap.classList.remove("hidden");
+    if (logoBox) logoBox.classList.remove("hidden");
+  }
+}
+
+const settingsForm = document.getElementById("settingsForm");
+const settingLogoFile = document.getElementById("settingLogoFile");
+const settingRemoveLogo = document.getElementById("settingRemoveLogo");
+const settingsMsgOk = document.getElementById("settingsMsgOk");
+
+let pendingLogoData = null;
+
+settingLogoFile.addEventListener("change", (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  if (file.size > 2 * 1024 * 1024) {
+    alert("Ukuran gambar maksimal 2 MB!");
+    settingLogoFile.value = "";
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = (evt) => {
+    pendingLogoData = evt.target.result;
+    document.getElementById("settingsLogoPreviewBox").innerHTML = `<img src="${pendingLogoData}" class="size-full object-contain p-0.5">`;
+    document.getElementById("currentLogoLabel").textContent = "File baru dipilih (" + file.name + ")";
+    settingRemoveLogo.checked = false;
+  };
+  reader.readAsDataURL(file);
+});
+
+settingsForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+  settingsMsgOk.classList.add("hidden");
+
+  const appName = document.getElementById("settingAppName").value.trim() || "Ulasankuu";
+  const selectedMode = document.querySelector("input[name='displayMode']:checked")?.value || "both";
+
+  const saved = localStorage.getItem(SETTINGS_KEY);
+  let curCfg = saved ? JSON.parse(saved) : {};
+
+  curCfg.appName = appName;
+  curCfg.displayMode = selectedMode;
+
+  if (settingRemoveLogo.checked) {
+    curCfg.logoData = null;
+    pendingLogoData = null;
+  } else if (pendingLogoData) {
+    curCfg.logoData = pendingLogoData;
+  }
+
+  localStorage.setItem(SETTINGS_KEY, JSON.stringify(curCfg));
+  applyBranding(curCfg);
+
+  settingsMsgOk.textContent = "Pengaturan nama dan logo aplikasi berhasil disimpan!";
+  settingsMsgOk.classList.remove("hidden");
+  setTimeout(() => settingsMsgOk.classList.add("hidden"), 4000);
+});
+
 window.addEventListener("DOMContentLoaded", () => {
   totalStudioCards.textContent = "0";
+  loadAppSettings();
 });
 </script>
 </body>

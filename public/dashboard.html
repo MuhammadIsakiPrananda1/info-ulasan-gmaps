@@ -1156,7 +1156,7 @@ body {
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
-import { getFirestore, collection, doc, getDoc, getDocs, setDoc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+import { getFirestore, collection, doc, getDoc, getDocs, setDoc, updateDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAt46l97-gXPI3SAWKc6ZgpiTisSG7gmDs",
@@ -1214,13 +1214,13 @@ const adminSession = getAdminSession();
 if (adminSession && adminSession.username) {
   userEmailBadge.textContent = adminSession.username;
   activeAdminEmailDisplay.textContent = adminSession.username + " (Super Admin)";
-  loadOverviewAndTable();
+  setupRealtimeCardsListener();
 } else {
   onAuthStateChanged(auth, (user) => {
     if (user) {
       userEmailBadge.textContent = user.email || "Admin";
       activeAdminEmailDisplay.textContent = user.email || "admin@ulasankuu.com";
-      loadOverviewAndTable();
+      setupRealtimeCardsListener();
     } else {
       window.location.replace("/login");
     }
@@ -1308,143 +1308,178 @@ document.addEventListener("click", (e) => {
   }
 });
 
-// OVERVIEW & TABLE DATA LOADER
+// OVERVIEW & TABLE DATA LOADER (DENGAN REAL-TIME ONSNAPSHOT FIRESTORE)
 let allFirestoreCardsList = [];
+let cardsUnsubscribe = null;
+
+function renderCardsData(cards) {
+  let total = cards.length;
+  let active = 0;
+  let html = "";
+  let mobileHtml = "";
+  allFirestoreCardsList = cards;
+
+  cards.forEach(card => {
+    const id = card.id;
+    const isActive = card.active === true;
+    if (isActive) active++;
+
+    // Baris Tabel Desktop
+    html += `
+      <tr class="hover:bg-neutral-50/70 transition-colors">
+        <td class="p-3.5"><b class="font-mono tracking-wider font-bold text-neutral-900">${id}</b></td>
+        <td class="p-3.5">
+          <span class="badge-pill ${isActive ? 'badge-active' : 'badge-inactive'}">
+            ${isActive ? '✓ Aktif' : '○ Kosong'}
+          </span>
+        </td>
+        <td class="p-3.5 text-neutral-800">${card.businessName || card.placeName || '<span class="text-neutral-400">-</span>'}</td>
+        <td class="p-3.5 max-w-[240px] truncate">
+          ${card.destination ? `<a href="${card.destination}" target="_blank" class="text-neutral-900 underline font-semibold hover:text-black">${card.destination}</a>` : '<span class="text-neutral-400">Belum diaktivasi</span>'}
+        </td>
+        <td class="p-3.5">
+          <div class="flex items-center gap-1.5">
+            <button type="button" class="inline-flex items-center gap-1 rounded-md border border-neutral-300 bg-white px-2.5 py-1 text-[11px] font-semibold text-neutral-800 hover:bg-neutral-50 shadow-xs" onclick="downloadCardById('${id}')" title="Unduh Kartu 10x10 cm">
+              <svg class="size-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Kartu
+            </button>
+            <button type="button" class="inline-flex items-center gap-1 rounded-md border border-neutral-300 bg-white px-2.5 py-1 text-[11px] font-semibold text-neutral-800 hover:bg-neutral-50 shadow-xs" onclick="downloadQRById('${id}')" title="Unduh QR Code Saja">
+              <svg class="size-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 7h.01M17 7h.01M7 17h.01M17 17h.01"/></svg>
+              QR
+            </button>
+          </div>
+        </td>
+        <td class="p-3.5 text-right">
+          <a href="${card.url}" target="_blank" class="inline-flex items-center rounded-md border border-neutral-200 bg-neutral-50 px-2.5 py-1 text-[11px] font-semibold text-neutral-800 hover:bg-neutral-100">Tes Link</a>
+        </td>
+      </tr>
+    `;
+
+    // Kartu Tampilan Mobile Card
+    mobileHtml += `
+      <div class="rounded-xl border border-neutral-200 bg-neutral-50/50 p-3.5 space-y-3">
+        <div class="flex items-center justify-between gap-2">
+          <div class="flex items-center gap-2">
+            <span class="font-mono font-bold text-sm text-neutral-950">${id}</span>
+            <span class="badge-pill ${isActive ? 'badge-active' : 'badge-inactive'} text-[10px] py-0.5 px-2">
+              ${isActive ? '✓ Aktif' : '○ Kosong'}
+            </span>
+          </div>
+          <a href="${card.url}" target="_blank" class="inline-flex items-center rounded-lg border border-neutral-200 bg-white px-2 py-1 text-[11px] font-semibold text-neutral-700 hover:bg-neutral-50 shadow-xs">
+            Tes Link ↗
+          </a>
+        </div>
+
+        <div class="text-xs space-y-1">
+          <div class="text-neutral-500 text-[11px]">Bisnis: <span class="text-neutral-900 font-semibold">${card.businessName || card.placeName || 'Belum terhubung'}</span></div>
+          ${card.destination ? `<div class="truncate text-[11px] text-blue-600 underline font-medium"><a href="${card.destination}" target="_blank">${card.destination}</a></div>` : ''}
+        </div>
+
+        <div class="pt-2 border-t border-neutral-200/80 flex items-center gap-2">
+          <button type="button" onclick="downloadCardById('${id}')" class="flex-1 inline-flex justify-center items-center gap-1.5 rounded-lg bg-zinc-950 py-1.5 px-3 text-xs font-bold text-white shadow-xs hover:bg-zinc-800 transition-colors">
+            <svg class="size-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Unduh Kartu
+          </button>
+          <button type="button" onclick="downloadQRById('${id}')" class="flex-1 inline-flex justify-center items-center gap-1.5 rounded-lg border border-neutral-300 bg-white py-1.5 px-3 text-xs font-bold text-neutral-800 shadow-xs hover:bg-neutral-50 transition-colors">
+            <svg class="size-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 7h.01M17 7h.01M7 17h.01M17 17h.01"/></svg>
+            Unduh QR
+          </button>
+        </div>
+      </div>
+    `;
+  });
+
+  const totalCardsElem = document.getElementById("statTotalCards");
+  if (totalCardsElem) totalCardsElem.textContent = total;
+  const activeCardsElem = document.getElementById("statActiveCards");
+  if (activeCardsElem) activeCardsElem.textContent = active;
+  const inactiveCardsElem = document.getElementById("statInactiveCards");
+  if (inactiveCardsElem) inactiveCardsElem.textContent = total - active;
+  const sbBadge = document.getElementById("sbBadgeTotalCards");
+  if (sbBadge) sbBadge.textContent = total;
+
+  // Rasio & Progress Bar
+  const ratio = total > 0 ? Math.round((active / total) * 100) : 0;
+  const activeRatioElem = document.getElementById("statActiveRatio");
+  if (activeRatioElem) activeRatioElem.textContent = ratio + "%";
+  const progText = document.getElementById("progressPercentageText");
+  if (progText) progText.textContent = ratio + "% Teraktivasi (" + active + "/" + total + ")";
+  const progBar = document.getElementById("activationProgressBar");
+  if (progBar) progBar.style.width = ratio + "%";
+  const lblActive = document.getElementById("labelBarActive");
+  if (lblActive) lblActive.textContent = active + " Kartu Aktif";
+  const lblInactive = document.getElementById("labelBarInactive");
+  if (lblInactive) lblInactive.textContent = (total - active) + " Kartu Stok Awal";
+
+  // Widget 4 Kartu Terbaru
+  const recentContainer = document.getElementById("overviewRecentCards");
+  if (recentContainer) {
+    if (cards.length === 0) {
+      recentContainer.innerHTML = `<div class="py-6 text-center text-xs text-neutral-400">Belum ada kartu di database. Klik Buat Kartu Baru untuk memulai.</div>`;
+    } else {
+      const topRecent = cards.slice(-4).reverse();
+      recentContainer.innerHTML = topRecent.map(c => `
+        <div class="py-2.5 flex items-center justify-between gap-3">
+          <div class="flex items-center gap-2.5 min-w-0">
+            <span class="size-2 rounded-full ${c.active ? 'bg-emerald-500' : 'bg-neutral-300'}"></span>
+            <div class="min-w-0">
+              <p class="font-mono font-bold text-xs text-neutral-900 truncate">${c.id}</p>
+              <p class="text-[11px] text-neutral-500 truncate">${c.businessName || (c.active ? 'Aktif terhubung' : 'Stok Belum Terhubung')}</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-1.5 shrink-0">
+            <button type="button" onclick="downloadCardById('${c.id}')" class="rounded border border-neutral-200 bg-white px-2 py-0.5 text-[10px] font-semibold text-neutral-700 hover:bg-neutral-50">Kartu</button>
+            <a href="${c.url}" target="_blank" class="rounded border border-neutral-200 bg-neutral-50 px-2 py-0.5 text-[10px] font-semibold text-neutral-700 hover:bg-neutral-100">Tes</a>
+          </div>
+        </div>
+      `).join("");
+    }
+  }
+
+  // Isi Tabel & Mobile Card List
+  const tbody = document.getElementById("tableCardsBody");
+  if (tbody) tbody.innerHTML = total > 0 ? html : `<tr><td colspan="6" class="p-6 text-center text-neutral-500">Belum ada kartu di database.</td></tr>`;
+
+  const mobileContainer = document.getElementById("mobileCardsContainer");
+  if (mobileContainer) {
+    mobileContainer.innerHTML = total > 0 ? mobileHtml : `<div class="p-6 text-center text-xs text-neutral-400 bg-neutral-50 rounded-xl border border-dashed border-neutral-200">Belum ada kartu di database.</div>`;
+  }
+
+  // Sinkronkan pratinjau layout sticker jika sedang dibuka
+  if (typeof renderLayoutStickerPreview === "function") {
+    renderLayoutStickerPreview();
+  }
+}
+
+// REALTIME LISTENER KE KOLEKSI FIRESTORE "cards"
+function setupRealtimeCardsListener() {
+  if (cardsUnsubscribe) cardsUnsubscribe();
+
+  try {
+    cardsUnsubscribe = onSnapshot(collection(db, "cards"), (snapshot) => {
+      const cardsList = [];
+      snapshot.forEach(docSnap => {
+        cardsList.push({ id: docSnap.id, url: BASE_URL + docSnap.id, ...docSnap.data() });
+      });
+      renderCardsData(cardsList);
+    }, (error) => {
+      console.warn("onSnapshot cards error, fallback ke getDocs:", error);
+      loadOverviewAndTable();
+    });
+  } catch (err) {
+    console.warn("Realtime onSnapshot failed:", err);
+    loadOverviewAndTable();
+  }
+}
 
 async function loadOverviewAndTable() {
   try {
     const snap = await getDocs(collection(db, "cards"));
-    let total = 0;
-    let active = 0;
-    let html = "";
-    let mobileHtml = "";
-    allFirestoreCardsList = [];
-
+    const cardsList = [];
     snap.forEach(docSnap => {
-      total++;
-      const data = docSnap.data();
-      const id = docSnap.id;
-      const isActive = data.active === true;
-      if (isActive) active++;
-
-      allFirestoreCardsList.push({ id, url: BASE_URL + id, ...data });
-
-      // Baris Tabel Desktop
-      html += `
-        <tr class="hover:bg-neutral-50/70 transition-colors">
-          <td class="p-3.5"><b class="font-mono tracking-wider font-bold text-neutral-900">${id}</b></td>
-          <td class="p-3.5">
-            <span class="badge-pill ${isActive ? 'badge-active' : 'badge-inactive'}">
-              ${isActive ? '✓ Aktif' : '○ Kosong'}
-            </span>
-          </td>
-          <td class="p-3.5 text-neutral-800">${data.businessName || data.placeName || '<span class="text-neutral-400">-</span>'}</td>
-          <td class="p-3.5 max-w-[240px] truncate">
-            ${data.destination ? `<a href="${data.destination}" target="_blank" class="text-neutral-900 underline font-semibold hover:text-black">${data.destination}</a>` : '<span class="text-neutral-400">Belum diaktivasi</span>'}
-          </td>
-          <td class="p-3.5">
-            <div class="flex items-center gap-1.5">
-              <button type="button" class="inline-flex items-center gap-1 rounded-md border border-neutral-300 bg-white px-2.5 py-1 text-[11px] font-semibold text-neutral-800 hover:bg-neutral-50 shadow-xs" onclick="downloadCardById('${id}')" title="Unduh Kartu 10x10 cm">
-                <svg class="size-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                Kartu
-              </button>
-              <button type="button" class="inline-flex items-center gap-1 rounded-md border border-neutral-300 bg-white px-2.5 py-1 text-[11px] font-semibold text-neutral-800 hover:bg-neutral-50 shadow-xs" onclick="downloadQRById('${id}')" title="Unduh QR Code Saja">
-                <svg class="size-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 7h.01M17 7h.01M7 17h.01M17 17h.01"/></svg>
-                QR
-              </button>
-            </div>
-          </td>
-          <td class="p-3.5 text-right">
-            <a href="${BASE_URL + id}" target="_blank" class="inline-flex items-center rounded-md border border-neutral-200 bg-neutral-50 px-2.5 py-1 text-[11px] font-semibold text-neutral-800 hover:bg-neutral-100">Tes Link</a>
-          </td>
-        </tr>
-      `;
-
-      // Kartu Tampilan Mobile Card yang Ringkas & Responsif
-      mobileHtml += `
-        <div class="rounded-xl border border-neutral-200 bg-neutral-50/50 p-3.5 space-y-3">
-          <div class="flex items-center justify-between gap-2">
-            <div class="flex items-center gap-2">
-              <span class="font-mono font-bold text-sm text-neutral-950">${id}</span>
-              <span class="badge-pill ${isActive ? 'badge-active' : 'badge-inactive'} text-[10px] py-0.5 px-2">
-                ${isActive ? '✓ Aktif' : '○ Kosong'}
-              </span>
-            </div>
-            <a href="${BASE_URL + id}" target="_blank" class="inline-flex items-center rounded-lg border border-neutral-200 bg-white px-2 py-1 text-[11px] font-semibold text-neutral-700 hover:bg-neutral-50 shadow-xs">
-              Tes Link ↗
-            </a>
-          </div>
-
-          <div class="text-xs space-y-1">
-            <div class="text-neutral-500 text-[11px]">Bisnis: <span class="text-neutral-900 font-semibold">${data.businessName || data.placeName || 'Belum terhubung'}</span></div>
-            ${data.destination ? `<div class="truncate text-[11px] text-blue-600 underline font-medium"><a href="${data.destination}" target="_blank">${data.destination}</a></div>` : ''}
-          </div>
-
-          <div class="pt-2 border-t border-neutral-200/80 flex items-center gap-2">
-            <button type="button" onclick="downloadCardById('${id}')" class="flex-1 inline-flex justify-center items-center gap-1.5 rounded-lg bg-zinc-950 py-1.5 px-3 text-xs font-bold text-white shadow-xs hover:bg-zinc-800 transition-colors">
-              <svg class="size-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-              Unduh Kartu
-            </button>
-            <button type="button" onclick="downloadQRById('${id}')" class="flex-1 inline-flex justify-center items-center gap-1.5 rounded-lg border border-neutral-300 bg-white py-1.5 px-3 text-xs font-bold text-neutral-800 shadow-xs hover:bg-neutral-50 transition-colors">
-              <svg class="size-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 7h.01M17 7h.01M7 17h.01M17 17h.01"/></svg>
-              Unduh QR
-            </button>
-          </div>
-        </div>
-      `;
+      cardsList.push({ id: docSnap.id, url: BASE_URL + docSnap.id, ...docSnap.data() });
     });
-
-    document.getElementById("statTotalCards").textContent = total;
-    document.getElementById("statActiveCards").textContent = active;
-    document.getElementById("statInactiveCards").textContent = total - active;
-    const sbBadge = document.getElementById("sbBadgeTotalCards");
-    if (sbBadge) sbBadge.textContent = total;
-
-    // Perbarui Rasio & Progress Bar Overview
-    const ratio = total > 0 ? Math.round((active / total) * 100) : 0;
-    const activeRatioElem = document.getElementById("statActiveRatio");
-    if (activeRatioElem) activeRatioElem.textContent = ratio + "%";
-    const progText = document.getElementById("progressPercentageText");
-    if (progText) progText.textContent = ratio + "% Teraktivasi (" + active + "/" + total + ")";
-    const progBar = document.getElementById("activationProgressBar");
-    if (progBar) progBar.style.width = ratio + "%";
-    const lblActive = document.getElementById("labelBarActive");
-    if (lblActive) lblActive.textContent = active + " Kartu Aktif";
-    const lblInactive = document.getElementById("labelBarInactive");
-    if (lblInactive) lblInactive.textContent = (total - active) + " Kartu Stok Awal";
-
-    // Tampilkan 4 Kartu Terbaru di Widget Overview
-    const recentContainer = document.getElementById("overviewRecentCards");
-    if (recentContainer) {
-      if (allFirestoreCardsList.length === 0) {
-        recentContainer.innerHTML = `<div class="py-6 text-center text-xs text-neutral-400">Belum ada kartu di database. Klik Buat Kartu Baru untuk memulai.</div>`;
-      } else {
-        const topRecent = allFirestoreCardsList.slice(-4).reverse();
-        recentContainer.innerHTML = topRecent.map(c => `
-          <div class="py-2.5 flex items-center justify-between gap-3">
-            <div class="flex items-center gap-2.5 min-w-0">
-              <span class="size-2 rounded-full ${c.active ? 'bg-emerald-500' : 'bg-neutral-300'}"></span>
-              <div class="min-w-0">
-                <p class="font-mono font-bold text-xs text-neutral-900 truncate">${c.id}</p>
-                <p class="text-[11px] text-neutral-500 truncate">${c.businessName || (c.active ? 'Aktif terhubung' : 'Stok Belum Terhubung')}</p>
-              </div>
-            </div>
-            <div class="flex items-center gap-1.5 shrink-0">
-              <button type="button" onclick="downloadCardById('${c.id}')" class="rounded border border-neutral-200 bg-white px-2 py-0.5 text-[10px] font-semibold text-neutral-700 hover:bg-neutral-50">Kartu</button>
-              <a href="${c.url}" target="_blank" class="rounded border border-neutral-200 bg-neutral-50 px-2 py-0.5 text-[10px] font-semibold text-neutral-700 hover:bg-neutral-100">Tes</a>
-            </div>
-          </div>
-        `).join("");
-      }
-    }
-
-    const tbody = document.getElementById("tableCardsBody");
-    tbody.innerHTML = total > 0 ? html : `<tr><td colspan="6" class="p-6 text-center text-neutral-500">Belum ada kartu di database.</td></tr>`;
-
-    const mobileContainer = document.getElementById("mobileCardsContainer");
-    if (mobileContainer) {
-      mobileContainer.innerHTML = total > 0 ? mobileHtml : `<div class="p-6 text-center text-xs text-neutral-400 bg-neutral-50 rounded-xl border border-dashed border-neutral-200">Belum ada kartu di database.</div>`;
-    }
+    renderCardsData(cardsList);
   } catch (err) {
     console.error("Gagal load kartu:", err);
   }
@@ -3003,6 +3038,7 @@ window.addEventListener("DOMContentLoaded", () => {
   totalStudioCards.textContent = "0";
   loadAppSettings();
   loadAdminsList();
+  setupRealtimeCardsListener();
 });
 </script>
 </body>

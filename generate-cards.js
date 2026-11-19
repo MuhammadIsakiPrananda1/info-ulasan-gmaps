@@ -2,7 +2,9 @@ const fs = require("fs");
 const path = require("path");
 const QRCode = require("qrcode");
 
-const BASE_URL = "https://info-ulasan-gmaps.vercel.app/";
+// Domain hidup: ulasankuu.my.id (info-ulasan-gmaps.vercel.app sudah DEPLOYMENT_NOT_FOUND).
+// Bisa dioverride lewat env BASE_URL saat generate QR.
+const BASE_URL = (process.env.BASE_URL || "https://ulasankuu.my.id").replace(/\/+$/, "") + "/";
 const TOTAL_CARDS = 100;
 
 const outputDir = path.join(__dirname, "qr-codes");

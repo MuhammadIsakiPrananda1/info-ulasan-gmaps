@@ -718,9 +718,45 @@
             }
         });
 
-        // Search places via Server API (full pakai info-ulasan-gmaps.vercel.app)
-        const SEARCH_API_BASE = "https://info-ulasan-gmaps.vercel.app/api/search-places";
-        const RESOLVE_API_BASE = "https://info-ulasan-gmaps.vercel.app/api/resolve-place";
+        // API Places: pakai origin yang sama dulu (bebas CORS & tidak ikut mati kalau domain berubah),
+        // lalu fallback ke domain produksi kalau endpoint lokal tidak tersedia.
+        const API_ORIGINS = ["", "https://ulasankuu.my.id"];
+        const SEARCH_API_PATH = "/api/search-places";
+        const RESOLVE_API_PATH = "/api/resolve-place";
+
+        function apiCandidates(pathAndQuery) {
+            const seen = new Set();
+            const urls = [];
+            for (const origin of API_ORIGINS) {
+                const url = `${origin}${pathAndQuery}`;
+                if (!seen.has(url)) {
+                    seen.add(url);
+                    urls.push(url);
+                }
+            }
+            return urls;
+        }
+
+        // Coba tiap origin berurutan; lewati origin yang endpoint-nya tidak ada (404/405/bukan JSON).
+        async function fetchApiJson(pathAndQuery, options = {}) {
+            let lastError = null;
+            for (const url of apiCandidates(pathAndQuery)) {
+                try {
+                    const res = await fetch(url, options);
+                    const isJson = (res.headers.get("content-type") || "").includes("application/json");
+                    if (res.status === 404 || res.status === 405 || !isJson) {
+                        lastError = new Error(`Endpoint tidak tersedia: ${url} (${res.status})`);
+                        continue;
+                    }
+                    return res;
+                } catch (err) {
+                    if (err && err.name === "AbortError") throw err;
+                    lastError = err;
+                    continue;
+                }
+            }
+            throw lastError || new Error("API Places tidak tersedia");
+        }
 
         let searchAbortController = null;
         const clientCache = new Map();
@@ -736,7 +772,7 @@
             if (searchAbortController) searchAbortController.abort();
             searchAbortController = new AbortController();
 
-            const res = await fetch(`${SEARCH_API_BASE}?q=${encodeURIComponent(query.trim())}`, {
+            const res = await fetchApiJson(`${SEARCH_API_PATH}?q=${encodeURIComponent(query.trim())}`, {
                 signal: searchAbortController.signal
             });
             if (res.status === 429) {
@@ -763,7 +799,7 @@
         async function resolvePlaceReviewUrl(name, address) {
             const query = `${name} ${address}`.trim();
             try {
-                const res = await fetch(`${RESOLVE_API_BASE}?q=${encodeURIComponent(query)}`);
+                const res = await fetchApiJson(`${RESOLVE_API_PATH}?q=${encodeURIComponent(query)}`);
                 if (res.ok) {
                     const data = await res.json();
                     if (data.success && data.reviewUrl) {

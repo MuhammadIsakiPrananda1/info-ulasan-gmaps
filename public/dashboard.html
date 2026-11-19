@@ -878,27 +878,38 @@ body {
         </div>
       </section>
 
-      <!-- VIEW 5: LIST AKUN ADMIN -->
+      <!-- VIEW 6: KELOLA AKUN ADMIN -->
       <section class="tab-view" id="view-admins">
-        <div class="max-w-2xl rounded-xl border border-neutral-200/80 bg-white p-6 shadow-xs">
-          <h2 class="text-lg font-bold text-neutral-950">List Akun Admin</h2>
-          <p class="mt-1 text-xs text-neutral-500">Daftar akun pengelola yang memiliki akses ke dashboard ini.</p>
+        <div class="max-w-3xl rounded-2xl border border-neutral-200/90 bg-white p-6 shadow-xs space-y-5">
+          <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-neutral-100">
+            <div>
+              <h2 class="text-base font-bold text-neutral-950">Kelola Akun Admin</h2>
+              <p class="text-xs text-neutral-500 mt-0.5">Daftar akun pengelola yang memiliki wewenang akses login ke dashboard ini.</p>
+            </div>
+            <button type="button" id="btnOpenAddAdminModal" class="inline-flex items-center gap-1.5 rounded-xl bg-blue-600 px-4 py-2 text-xs font-bold text-white shadow-xs hover:bg-blue-700 transition-colors">
+              <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Tambah Admin
+            </button>
+          </div>
 
-          <div class="mt-5 overflow-hidden rounded-lg border border-neutral-200">
+          <!-- Alert Pesan Sukses / Error -->
+          <div id="adminMsgOk" class="hidden p-3 rounded-xl border border-neutral-900 bg-neutral-100 text-xs font-semibold text-neutral-950"></div>
+          <div id="adminMsgErr" class="hidden p-3 rounded-xl border border-dashed border-red-500 bg-red-50 text-xs font-semibold text-red-900"></div>
+
+          <!-- Tabel List Admin -->
+          <div class="overflow-hidden rounded-xl border border-neutral-200">
             <table class="w-full text-left text-xs">
               <thead class="bg-neutral-50 border-b border-neutral-200 text-neutral-700 font-bold">
                 <tr>
                   <th class="p-3.5">Username / Admin</th>
+                  <th class="p-3.5">Nama Lengkap</th>
                   <th class="p-3.5">Role</th>
                   <th class="p-3.5">Status</th>
+                  <th class="p-3.5 text-right">Aksi</th>
                 </tr>
               </thead>
-              <tbody class="divide-y divide-neutral-200 font-medium">
-                <tr>
-                  <td class="p-3.5"><b id="activeAdminEmailDisplay" class="font-bold text-neutral-950">zinatxd</b></td>
-                  <td class="p-3.5"><span class="badge-pill badge-inactive">Super Admin</span></td>
-                  <td class="p-3.5"><span class="badge-pill badge-active">Sedang Aktif</span></td>
-                </tr>
+              <tbody id="adminTableBody" class="divide-y divide-neutral-200 font-medium">
+                <!-- Di-render dinamis oleh JavaScript -->
               </tbody>
             </table>
           </div>
@@ -1000,7 +1011,58 @@ body {
   </main>
 </div>
 
-<!-- MODAL TAMBAH TEMPLATE PERSIS SEPERTI SCREENSHOT USER -->
+<!-- MODAL TAMBAH ADMIN BARU -->
+<div id="modalAddAdmin" class="fixed inset-0 z-50 hidden bg-neutral-950/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+  <div class="bg-white rounded-2xl max-w-md w-full border border-neutral-200 shadow-2xl p-6 my-8 animate-in fade-in zoom-in-95 duration-150">
+    <div class="flex items-center justify-between pb-3 border-b border-neutral-100">
+      <div class="flex items-center gap-2">
+        <span class="flex size-8 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
+          <svg class="size-4.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+        </span>
+        <h3 class="text-base font-bold text-neutral-950">Tambah Akun Admin Baru</h3>
+      </div>
+      <button type="button" id="btnCloseAddAdminModal" class="rounded-lg p-1 text-neutral-400 hover:text-neutral-950 hover:bg-neutral-100 transition-colors">
+        <svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+      </button>
+    </div>
+
+    <form id="formAddAdmin" class="mt-4 space-y-4">
+      <div>
+        <label class="block text-xs font-semibold text-neutral-900 mb-1.5">Username Admin</label>
+        <input type="text" id="adminNewUsername" placeholder="mis. admin2 atau namauser" required class="w-full rounded-xl border border-neutral-300 bg-white px-3.5 py-2.5 text-xs font-medium text-neutral-900 placeholder:text-neutral-400 focus:border-zinc-950 focus:outline-none">
+        <p class="mt-1 text-[11px] text-neutral-500">Huruf kecil tanpa spasi. Digunakan untuk login ke dashboard.</p>
+      </div>
+
+      <div>
+        <label class="block text-xs font-semibold text-neutral-900 mb-1.5">Nama Lengkap</label>
+        <input type="text" id="adminNewFullName" placeholder="mis. Muhammad Raihan" required class="w-full rounded-xl border border-neutral-300 bg-white px-3.5 py-2.5 text-xs font-medium text-neutral-900 placeholder:text-neutral-400 focus:border-zinc-950 focus:outline-none">
+      </div>
+
+      <div>
+        <label class="block text-xs font-semibold text-neutral-900 mb-1.5">Password</label>
+        <input type="password" id="adminNewPassword" placeholder="Minimal 6 karakter" required minlength="6" class="w-full rounded-xl border border-neutral-300 bg-white px-3.5 py-2.5 text-xs font-medium text-neutral-900 placeholder:text-neutral-400 focus:border-zinc-950 focus:outline-none">
+      </div>
+
+      <div>
+        <label class="block text-xs font-semibold text-neutral-900 mb-1.5">Peran / Role</label>
+        <select id="adminNewRole" class="w-full rounded-xl border border-neutral-300 bg-white px-3.5 py-2.5 text-xs font-semibold text-neutral-900 focus:border-zinc-950 focus:outline-none">
+          <option value="Admin">Admin</option>
+          <option value="Super Admin">Super Admin</option>
+          <option value="Operator">Operator</option>
+        </select>
+      </div>
+
+      <div class="pt-3 flex items-center justify-end gap-2 border-t border-neutral-100">
+        <button type="button" id="btnCancelAddAdmin" class="rounded-xl border border-neutral-300 bg-white px-4 py-2 text-xs font-semibold text-neutral-800 hover:bg-neutral-50 transition-colors">
+          Batal
+        </button>
+        <button type="submit" id="btnSaveAdmin" class="rounded-xl bg-blue-600 px-5 py-2 text-xs font-bold text-white hover:bg-blue-700 transition-colors shadow-xs">
+          Simpan Admin
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
 <div id="modalAddTemplate" class="fixed inset-0 z-50 hidden bg-neutral-950/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
   <div class="bg-white rounded-2xl max-w-lg w-full border border-neutral-200 shadow-2xl p-6 my-8 animate-in fade-in zoom-in-95 duration-150">
     <div class="flex items-center justify-between pb-3 border-b border-neutral-100">
@@ -2673,9 +2735,200 @@ settingsForm.addEventListener("submit", (e) => {
   setTimeout(() => settingsMsgOk.classList.add("hidden"), 4000);
 });
 
+// ==========================================
+// KELOLA AKUN ADMIN (FIRESTORE & LOCAL STORAGE)
+// ==========================================
+const ADMINS_STORAGE_KEY = "ulasankuu_admins_list";
+const DEFAULT_SUPER_ADMIN = {
+  username: "zinatxd",
+  fullName: "Super Admin",
+  role: "Super Admin",
+  isSuperAdmin: true,
+  createdAt: "2026-01-01T00:00:00.000Z"
+};
+
+function getLocalAdmins() {
+  try {
+    const raw = localStorage.getItem(ADMINS_STORAGE_KEY);
+    if (!raw) return [DEFAULT_SUPER_ADMIN];
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed) || parsed.length === 0) return [DEFAULT_SUPER_ADMIN];
+    if (!parsed.some(a => a.username === "zinatxd")) parsed.unshift(DEFAULT_SUPER_ADMIN);
+    return parsed;
+  } catch (e) {
+    return [DEFAULT_SUPER_ADMIN];
+  }
+}
+
+function saveLocalAdmins(list) {
+  try {
+    localStorage.setItem(ADMINS_STORAGE_KEY, JSON.stringify(list));
+  } catch (e) {}
+}
+
+async function loadAdminsList() {
+  const tbody = document.getElementById("adminTableBody");
+  if (!tbody) return;
+
+  const currentAdminSession = JSON.parse(localStorage.getItem("ulasankuu_admin_session") || "{}");
+  const currentUsername = currentAdminSession.username || "zinatxd";
+
+  let admins = [];
+  try {
+    const snap = await getDocs(collection(db, "admins"));
+    snap.forEach(d => {
+      admins.push({ id: d.id, ...d.data() });
+    });
+  } catch (err) {
+    console.warn("Gagal load admins dari Firestore, fallback ke localStorage:", err);
+  }
+
+  if (admins.length === 0) {
+    admins = getLocalAdmins();
+  }
+
+  tbody.innerHTML = admins.map(a => {
+    const isCurrent = a.username === currentUsername;
+    const isSuper = a.role === "Super Admin" || a.username === "zinatxd";
+
+    return `
+      <tr class="hover:bg-neutral-50/70 transition-colors">
+        <td class="p-3.5">
+          <div class="flex items-center gap-2">
+            <span class="flex size-7 shrink-0 items-center justify-center rounded-lg bg-zinc-950 text-white font-bold text-xs uppercase">
+              ${a.username.slice(0, 2)}
+            </span>
+            <div>
+              <span class="font-bold text-neutral-900 block">${a.username}</span>
+              ${isCurrent ? '<span class="text-[10px] text-blue-600 font-bold">Akun Anda</span>' : ''}
+            </div>
+          </div>
+        </td>
+        <td class="p-3.5 text-neutral-800 font-medium">${a.fullName || a.username}</td>
+        <td class="p-3.5">
+          <span class="badge-pill ${isSuper ? 'badge-active' : 'badge-inactive'}">
+            ${a.role || 'Admin'}
+          </span>
+        </td>
+        <td class="p-3.5">
+          <span class="inline-flex items-center gap-1.5 text-[11px] font-semibold text-emerald-600">
+            <span class="size-2 rounded-full bg-emerald-500"></span>
+            Aktif
+          </span>
+        </td>
+        <td class="p-3.5 text-right">
+          ${!isSuper ? `
+            <button type="button" onclick="window.deleteAdminAccount('${a.username}')" class="inline-flex items-center gap-1 rounded-lg border border-red-200 bg-red-50 px-2.5 py-1 text-[11px] font-bold text-red-700 hover:bg-red-100 transition-colors" title="Hapus Akun Admin">
+              <svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+              Hapus
+            </button>
+          ` : `
+            <span class="text-[11px] text-neutral-400 font-medium">Bawaan</span>
+          `}
+        </td>
+      </tr>
+    `;
+  }).join("");
+}
+
+window.deleteAdminAccount = async function(uname) {
+  if (uname === "zinatxd") {
+    alert("Super admin utama tidak dapat dihapus!");
+    return;
+  }
+  if (!confirm(`Apakah Anda yakin ingin menghapus admin "${uname}"?`)) return;
+
+  try {
+    await deleteDoc(doc(db, "admins", uname)).catch(() => null);
+  } catch (e) {}
+
+  let localList = getLocalAdmins().filter(a => a.username !== uname);
+  saveLocalAdmins(localList);
+
+  const adminMsgOk = document.getElementById("adminMsgOk");
+  if (adminMsgOk) {
+    adminMsgOk.textContent = `Admin "${uname}" berhasil dihapus.`;
+    adminMsgOk.classList.remove("hidden");
+    setTimeout(() => adminMsgOk.classList.add("hidden"), 3000);
+  }
+  loadAdminsList();
+};
+
+// Modal Tambah Admin
+const modalAddAdmin = document.getElementById("modalAddAdmin");
+const btnOpenAddAdminModal = document.getElementById("btnOpenAddAdminModal");
+const btnCloseAddAdminModal = document.getElementById("btnCloseAddAdminModal");
+const btnCancelAddAdmin = document.getElementById("btnCancelAddAdmin");
+const formAddAdmin = document.getElementById("formAddAdmin");
+
+if (btnOpenAddAdminModal) {
+  btnOpenAddAdminModal.addEventListener("click", () => {
+    formAddAdmin.reset();
+    modalAddAdmin.classList.remove("hidden");
+  });
+}
+function closeAddAdminModal() {
+  if (modalAddAdmin) modalAddAdmin.classList.add("hidden");
+}
+if (btnCloseAddAdminModal) btnCloseAddAdminModal.addEventListener("click", closeAddAdminModal);
+if (btnCancelAddAdmin) btnCancelAddAdmin.addEventListener("click", closeAddAdminModal);
+
+if (formAddAdmin) {
+  formAddAdmin.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const uname = document.getElementById("adminNewUsername").value.trim().toLowerCase().replace(/[^a-z0-9_]/g, "");
+    const fullName = document.getElementById("adminNewFullName").value.trim();
+    const pass = document.getElementById("adminNewPassword").value;
+    const role = document.getElementById("adminNewRole").value;
+
+    if (!uname || !pass) {
+      alert("Mohon lengkapi username dan password!");
+      return;
+    }
+
+    const btn = document.getElementById("btnSaveAdmin");
+    btn.disabled = true;
+    btn.innerHTML = `<div class="spinner"></div> Menyimpan...`;
+
+    const newAdmin = {
+      username: uname,
+      fullName: fullName || uname,
+      password: pass,
+      role: role || "Admin",
+      createdAt: new Date().toISOString()
+    };
+
+    try {
+      // Simpan ke Firestore koleksi "admins"
+      await setDoc(doc(db, "admins", uname), newAdmin);
+    } catch (err) {
+      console.warn("Firestore admins error, fallback save lokal:", err);
+    }
+
+    // Simpan ke localStorage agar bisa diverifikasi saat login
+    let localList = getLocalAdmins();
+    localList = localList.filter(a => a.username !== uname);
+    localList.push(newAdmin);
+    saveLocalAdmins(localList);
+
+    closeAddAdminModal();
+    btn.disabled = false;
+    btn.innerHTML = "Simpan Admin";
+
+    const adminMsgOk = document.getElementById("adminMsgOk");
+    if (adminMsgOk) {
+      adminMsgOk.innerHTML = `✓ Akun admin <b>${uname}</b> (${role}) berhasil ditambahkan dan siap digunakan untuk login!`;
+      adminMsgOk.classList.remove("hidden");
+      setTimeout(() => adminMsgOk.classList.add("hidden"), 5000);
+    }
+    loadAdminsList();
+  });
+}
+
 window.addEventListener("DOMContentLoaded", () => {
   totalStudioCards.textContent = "0";
   loadAppSettings();
+  loadAdminsList();
 });
 </script>
 </body>

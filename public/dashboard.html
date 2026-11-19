@@ -167,22 +167,23 @@ body {
   <aside id="sb-collapse-side" class="group/sb flex-col transition-transform duration-300 ease-out motion-reduce:transition-none max-lg:fixed max-lg:inset-y-0 max-lg:left-0 max-lg:z-50 max-lg:hidden max-lg:w-72 max-lg:bg-neutral-100 max-lg:shadow-2xl max-lg:ring-1 max-lg:ring-neutral-950/10 lg:sticky lg:top-0 lg:flex lg:h-screen lg:w-64 lg:shrink-0 lg:transition-[width] lg:duration-200">
     
     <!-- BRAND / LOGO -->
-    <div class="flex items-center gap-1 px-3 pt-3">
-      <a href="/dashboard" aria-label="Ulasankuu Management" class="flex min-w-0 flex-1 cursor-pointer items-center gap-2.5 rounded-lg p-2 text-left transition-colors duration-150 hover:bg-neutral-950/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-950">
-        <!-- Logo Container -->
-        <span id="brandLogoContainer" aria-hidden="true" class="flex size-8 shrink-0 items-center justify-center rounded-lg bg-zinc-950 text-sm font-semibold text-white overflow-hidden">
-          <svg class="size-4.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <rect width="18" height="18" x="3" y="3" rx="2" />
-            <path d="M7 7h.01M17 7h.01M7 17h.01M17 17h.01" />
+    <div class="flex items-center justify-between px-4 pt-5 pb-3">
+      <a href="/dashboard" aria-label="Ulasankuu Management" class="flex min-w-0 flex-1 items-center gap-3 text-left">
+        <!-- Logo Image / Svg Container -->
+        <span id="brandLogoContainer" aria-hidden="true" class="flex size-9 shrink-0 items-center justify-center overflow-hidden">
+          <svg class="size-8 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 17l6-6 4 4 6-6"/>
+            <path d="M12 3a9 9 0 0 1 9 9"/>
+            <path d="M12 7a5 5 0 0 1 5 5"/>
           </svg>
         </span>
+        <!-- Text Container -->
         <span class="min-w-0 flex-1" id="brandTextWrap">
-          <span class="block truncate text-sm font-semibold text-neutral-950" id="brandTitleDisplay">Ulasankuu</span>
-          <span class="block truncate text-[11px] text-neutral-500 font-medium" id="brandSubtitleDisplay">Google Review Card</span>
+          <span class="block truncate text-xl font-bold tracking-tight text-neutral-900" id="brandTitleDisplay">Ulasankuu</span>
         </span>
       </a>
-      <button type="button" id="sb-collapse-close" aria-label="Close menu" class="inline-flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-lg text-neutral-600 transition-colors duration-150 hover:bg-neutral-950/5 hover:text-neutral-950 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-950 lg:hidden">
-        <svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <button type="button" id="sb-collapse-close" aria-label="Close menu" class="inline-flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-lg text-neutral-500 hover:bg-neutral-200/60 hover:text-neutral-900 lg:hidden">
+        <svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
           <path d="M18 6 6 18" />
           <path d="m6 6 12 12" />
         </svg>
@@ -190,77 +191,80 @@ body {
     </div>
 
     <!-- MAIN NAV LINKS -->
-    <nav aria-label="Main" class="flex min-h-0 flex-1 flex-col gap-5 overflow-y-auto p-3">
-      <div>
-        <p id="sb-collapse-main-label" class="px-2.5 pb-1.5 text-xs font-medium text-neutral-600">Menu Utama</p>
-        <ul aria-labelledby="sb-collapse-main-label" class="flex flex-col gap-0.5">
-          <!-- Overview -->
-          <li>
-            <button type="button" class="sb-nav-link group/row relative flex h-10 w-full items-center gap-2.5 rounded-lg px-2.5 text-sm font-medium text-neutral-600 transition-colors duration-150 hover:bg-neutral-950/5 hover:text-neutral-950 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-950 aria-[current=page]:bg-white aria-[current=page]:text-neutral-950 aria-[current=page]:shadow-xs aria-[current=page]:ring-1 aria-[current=page]:ring-neutral-950/5 lg:h-8" data-view="view-overview" aria-current="page">
-              <svg class="size-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <rect width="7" height="9" x="3" y="3" rx="1" />
-                <rect width="7" height="5" x="14" y="3" rx="1" />
-                <rect width="7" height="9" x="14" y="12" rx="1" />
-                <rect width="7" height="5" x="3" y="16" rx="1" />
-              </svg>
-              <span class="truncate">Overview</span>
-            </button>
-          </li>
-          <!-- Desain Kartu & QR -->
-          <li>
-            <button type="button" class="sb-nav-link group/row relative flex h-10 w-full items-center gap-2.5 rounded-lg px-2.5 text-sm font-medium text-neutral-600 transition-colors duration-150 hover:bg-neutral-950/5 hover:text-neutral-950 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-950 aria-[current=page]:bg-white aria-[current=page]:text-neutral-950 aria-[current=page]:shadow-xs aria-[current=page]:ring-1 aria-[current=page]:ring-neutral-950/5 lg:h-8" data-view="view-studio">
-              <svg class="size-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <rect width="18" height="18" x="3" y="3" rx="2" />
-                <circle cx="8.5" cy="8.5" r="1.5" />
-                <polyline points="21 15 16 10 5 21" />
-              </svg>
-              <span class="truncate">Desain Kartu & QR</span>
-            </button>
-          </li>
-          <!-- Manajemen Kartu -->
-          <li>
-            <button type="button" class="sb-nav-link group/row relative flex h-10 w-full items-center gap-2.5 rounded-lg px-2.5 text-sm font-medium text-neutral-600 transition-colors duration-150 hover:bg-neutral-950/5 hover:text-neutral-950 focus-visible:outline-2 focus-visible:outline-zinc-950 aria-[current=page]:bg-white aria-[current=page]:text-neutral-950 aria-[current=page]:shadow-xs aria-[current=page]:ring-1 aria-[current=page]:ring-neutral-950/5 lg:h-8" data-view="view-cards">
-              <svg class="size-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
-                <line x1="2" y1="10" x2="22" y2="10" />
-              </svg>
-              <span class="truncate">Manajemen Kartu</span>
-              <span class="ml-auto inline-flex items-center rounded-full bg-neutral-200 px-2 py-0.5 text-[11px] font-semibold text-neutral-800" id="sbBadgeTotalCards">0</span>
-            </button>
-          </li>
-          <!-- Reset Kartu / QR -->
-          <li>
-            <button type="button" class="sb-nav-link group/row relative flex h-10 w-full items-center gap-2.5 rounded-lg px-2.5 text-sm font-medium text-neutral-600 transition-colors duration-150 hover:bg-neutral-950/5 hover:text-neutral-950 focus-visible:outline-2 focus-visible:outline-zinc-950 aria-[current=page]:bg-white aria-[current=page]:text-neutral-950 aria-[current=page]:shadow-xs aria-[current=page]:ring-1 aria-[current=page]:ring-neutral-950/5 lg:h-8" data-view="view-reset">
-              <svg class="size-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
-                <path d="M3 3v5h5" />
-              </svg>
-              <span class="truncate">Reset Kartu</span>
-            </button>
-          </li>
-          <!-- List Akun Admin -->
-          <li>
-            <button type="button" class="sb-nav-link group/row relative flex h-10 w-full items-center gap-2.5 rounded-lg px-2.5 text-sm font-medium text-neutral-600 transition-colors duration-150 hover:bg-neutral-950/5 hover:text-neutral-950 focus-visible:outline-2 focus-visible:outline-zinc-950 aria-[current=page]:bg-white aria-[current=page]:text-neutral-950 aria-[current=page]:shadow-xs aria-[current=page]:ring-1 aria-[current=page]:ring-neutral-950/5 lg:h-8" data-view="view-admins">
-              <svg class="size-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M18 21a8 8 0 0 0-16 0" />
-                <circle cx="10" cy="8" r="5" />
-                <path d="M22 20c0-3.37-2-6.5-4-8a5 5 0 0 0-.45-8.3" />
-              </svg>
-              <span class="truncate">List Akun Admin</span>
-            </button>
-          </li>
-          <!-- Pengaturan Aplikasi -->
-          <li>
-            <button type="button" class="sb-nav-link group/row relative flex h-10 w-full items-center gap-2.5 rounded-lg px-2.5 text-sm font-medium text-neutral-600 transition-colors duration-150 hover:bg-neutral-950/5 hover:text-neutral-950 focus-visible:outline-2 focus-visible:outline-zinc-950 aria-[current=page]:bg-white aria-[current=page]:text-neutral-950 aria-[current=page]:shadow-xs aria-[current=page]:ring-1 aria-[current=page]:ring-neutral-950/5 lg:h-8" data-view="view-settings">
-              <svg class="size-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <circle cx="12" cy="12" r="3"/>
-                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
-              </svg>
-              <span class="truncate">Pengaturan</span>
-            </button>
-          </li>
-        </ul>
-      </div>
+    <nav aria-label="Main" class="flex min-h-0 flex-1 flex-col overflow-y-auto px-3 py-3">
+      <ul class="flex flex-col gap-1 text-sm font-medium">
+        <!-- 1. Dashboard / Overview -->
+        <li>
+          <button type="button" class="sb-nav-link group relative flex h-11 w-full items-center gap-3.5 rounded-xl px-3.5 text-neutral-600 transition-all hover:bg-neutral-200/60 hover:text-neutral-900 aria-[current=page]:bg-blue-50/80 aria-[current=page]:text-blue-600 aria-[current=page]:font-bold" data-view="view-overview" aria-current="page">
+            <svg class="size-5 shrink-0 opacity-80 group-aria-[current=page]:opacity-100 group-aria-[current=page]:text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 14l2-2m-8 2a8 8 0 1 1 12 0H6z" />
+              <path d="M12 2v2" />
+              <path d="M12 14v.01" />
+            </svg>
+            <span class="truncate">Dashboard</span>
+          </button>
+        </li>
+        <!-- 2. NFC Cards -->
+        <li>
+          <button type="button" class="sb-nav-link group relative flex h-11 w-full items-center gap-3.5 rounded-xl px-3.5 text-neutral-600 transition-all hover:bg-neutral-200/60 hover:text-neutral-900 aria-[current=page]:bg-blue-50/80 aria-[current=page]:text-blue-600 aria-[current=page]:font-bold" data-view="view-cards">
+            <svg class="size-5 shrink-0 opacity-80 group-aria-[current=page]:opacity-100 group-aria-[current=page]:text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="5" width="20" height="14" rx="2" />
+              <line x1="2" y1="10" x2="22" y2="10" />
+            </svg>
+            <span class="truncate">NFC Cards</span>
+            <span class="ml-auto inline-flex items-center rounded-full bg-neutral-200/70 px-2 py-0.5 text-[11px] font-semibold text-neutral-700" id="sbBadgeTotalCards">0</span>
+          </button>
+        </li>
+        <!-- 3. Template Desain -->
+        <li>
+          <button type="button" class="sb-nav-link group relative flex h-11 w-full items-center gap-3.5 rounded-xl px-3.5 text-neutral-600 transition-all hover:bg-neutral-200/60 hover:text-neutral-900 aria-[current=page]:bg-blue-50/80 aria-[current=page]:text-blue-600 aria-[current=page]:font-bold" data-view="view-studio">
+            <svg class="size-5 shrink-0 opacity-80 group-aria-[current=page]:opacity-100 group-aria-[current=page]:text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/>
+              <circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/>
+              <circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/>
+              <circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/>
+              <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.563-2.512 5.563-5.563C22 6.5 17.5 2 12 2z"/>
+            </svg>
+            <span class="truncate">Template Desain</span>
+          </button>
+        </li>
+        <!-- 4. QR Reset Kartu -->
+        <li>
+          <button type="button" class="sb-nav-link group relative flex h-11 w-full items-center gap-3.5 rounded-xl px-3.5 text-neutral-600 transition-all hover:bg-neutral-200/60 hover:text-neutral-900 aria-[current=page]:bg-blue-50/80 aria-[current=page]:text-blue-600 aria-[current=page]:font-bold" data-view="view-reset">
+            <svg class="size-5 shrink-0 opacity-80 group-aria-[current=page]:opacity-100 group-aria-[current=page]:text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="7" height="7" rx="1"/>
+              <rect x="14" y="3" width="7" height="7" rx="1"/>
+              <rect x="3" y="14" width="7" height="7" rx="1"/>
+              <path d="M14 14h3v3h-3z"/>
+              <path d="M20 14v3"/>
+              <path d="M14 20h6"/>
+            </svg>
+            <span class="truncate">QR Reset Kartu</span>
+          </button>
+        </li>
+        <!-- 5. Kelola Admin -->
+        <li>
+          <button type="button" class="sb-nav-link group relative flex h-11 w-full items-center gap-3.5 rounded-xl px-3.5 text-neutral-600 transition-all hover:bg-neutral-200/60 hover:text-neutral-900 aria-[current=page]:bg-blue-50/80 aria-[current=page]:text-blue-600 aria-[current=page]:font-bold" data-view="view-admins">
+            <svg class="size-5 shrink-0 opacity-80 group-aria-[current=page]:opacity-100 group-aria-[current=page]:text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+              <circle cx="9" cy="7" r="4" />
+              <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+              <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+            </svg>
+            <span class="truncate">Kelola Admin</span>
+          </button>
+        </li>
+        <!-- 6. Pengaturan -->
+        <li>
+          <button type="button" class="sb-nav-link group relative flex h-11 w-full items-center gap-3.5 rounded-xl px-3.5 text-neutral-600 transition-all hover:bg-neutral-200/60 hover:text-neutral-900 aria-[current=page]:bg-blue-50/80 aria-[current=page]:text-blue-600 aria-[current=page]:font-bold" data-view="view-settings">
+            <svg class="size-5 shrink-0 opacity-80 group-aria-[current=page]:opacity-100 group-aria-[current=page]:text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="3"/>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+            </svg>
+            <span class="truncate">Pengaturan</span>
+          </button>
+        </li>
+      </ul>
     </nav>
 
     <!-- USER PROFILE / LOGOUT -->
@@ -903,12 +907,12 @@ window.switchNav = function(viewId) {
   closeMobileSidebar();
 
   const titles = {
-    'view-overview': ['Overview', 'Ringkasan status kartu dan pemantauan ulasan Google Maps'],
-    'view-studio': ['Desain Kartu & QR', 'Template kartu Google Review dengan barcode QR otomatis (10x10 cm)'],
-    'view-cards': ['Manajemen Kartu', 'Daftar semua kartu yang tersimpan di Firestore'],
-    'view-reset': ['Reset Kartu & QR', 'Hapus kaitan bisnis agar kartu dapat diaktivasi ulang'],
-    'view-admins': ['List Akun Admin', 'Daftar pengelola akun administrator'],
-    'view-settings': ['Pengaturan', 'Sesuaikan nama aplikasi, unggah logo kustom, dan mode tampilan navigasi']
+    'view-overview': ['Dashboard', 'Ringkasan performa ulasan dan kartu aktif'],
+    'view-cards': ['NFC Cards', 'Daftar semua kartu yang tersimpan di database'],
+    'view-studio': ['Template Desain', 'Generator cetak kartu Google Review (10x10 cm)'],
+    'view-reset': ['QR Reset Kartu', 'Hapus kaitan bisnis agar kartu dapat diaktivasi ulang'],
+    'view-admins': ['Kelola Admin', 'Daftar pengelola akun administrator'],
+    'view-settings': ['Pengaturan', 'Nama aplikasi, logo kustom, dan mode tampilan']
   };
 
   const cur = titles[viewId] || ['Dashboard', ''];
@@ -1498,14 +1502,24 @@ function applyBranding(cfg) {
   document.title = (cfg.appName || "Ulasankuu") + " | Admin Dashboard";
 
   // Atur Logo Preview di Navigasi & Form
-  const defaultSvg = `<svg class="size-4.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="3" rx="2" /><path d="M7 7h.01M17 7h.01M7 17h.01M17 17h.01" /></svg>`;
+  const defaultSvg = `<svg class="size-8 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17l6-6 4 4 6-6"/><path d="M12 3a9 9 0 0 1 9 9"/><path d="M12 7a5 5 0 0 1 5 5"/></svg>`;
 
   if (cfg.logoData) {
-    if (logoBox) logoBox.innerHTML = `<img src="${cfg.logoData}" alt="${cfg.appName}" class="size-full object-contain p-0.5">`;
+    if (logoBox) {
+      if (cfg.displayMode === "logo-only") {
+        logoBox.className = "flex h-9 w-auto max-w-[140px] items-center justify-center overflow-hidden";
+      } else {
+        logoBox.className = "flex size-9 shrink-0 items-center justify-center overflow-hidden";
+      }
+      logoBox.innerHTML = `<img src="${cfg.logoData}" alt="${cfg.appName}" class="max-h-9 w-auto object-contain">`;
+    }
     if (settingsLogoPreview) settingsLogoPreview.innerHTML = `<img src="${cfg.logoData}" alt="${cfg.appName}" class="size-full object-contain p-0.5">`;
     if (currentLogoLabel) currentLogoLabel.textContent = "Logo saat ini: Custom Logo Aktif ✓";
   } else {
-    if (logoBox) logoBox.innerHTML = defaultSvg;
+    if (logoBox) {
+      logoBox.className = "flex size-9 shrink-0 items-center justify-center overflow-hidden";
+      logoBox.innerHTML = defaultSvg;
+    }
     if (settingsLogoPreview) settingsLogoPreview.innerHTML = defaultSvg;
     if (currentLogoLabel) currentLogoLabel.textContent = "Logo saat ini: Ikon Bawaan";
   }

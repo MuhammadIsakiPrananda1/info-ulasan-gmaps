@@ -24,8 +24,8 @@
 <!-- QR Code & JSZip CDN & jsQR & jsPDF -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
-<script src="/jsqr.min.js"></script>
-<script src="/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 <style>
 :root {
@@ -206,55 +206,55 @@ body {
       <ul class="flex flex-col gap-1 text-sm font-medium">
         <!-- 1. Dashboard / Overview -->
         <li>
-          <button type="button" class="sb-nav-link group relative flex h-11 w-full items-center gap-3.5 rounded-xl px-3.5 text-neutral-600 transition-all hover:bg-neutral-200/60 hover:text-neutral-900 aria-[current=page]:bg-blue-50/80 aria-[current=page]:text-blue-600 aria-[current=page]:font-bold" data-view="view-overview" aria-current="page">
-            <svg class="size-5 shrink-0 opacity-80 group-aria-[current=page]:opacity-100 group-aria-[current=page]:text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <button type="button" onclick="window.switchNav('view-overview')" class="sb-nav-link group relative flex h-11 w-full items-center gap-3.5 rounded-xl px-3.5 text-neutral-600 transition-all hover:bg-neutral-200/60 hover:text-neutral-900 aria-[current=page]:bg-blue-50/80 aria-[current=page]:text-blue-600 aria-[current=page]:font-bold cursor-pointer" data-view="view-overview" aria-current="page">
+            <svg class="size-5 shrink-0 opacity-80 group-aria-[current=page]:opacity-100 group-aria-[current=page]:text-blue-600 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
               <path d="M12 14l2-2m-8 2a8 8 0 1 1 12 0H6z" />
               <path d="M12 2v2" />
               <path d="M12 14v.01" />
             </svg>
-            <span class="truncate">Dashboard</span>
+            <span class="truncate pointer-events-none">Dashboard</span>
           </button>
         </li>
         <!-- 2. NFC Cards -->
         <li>
-          <button type="button" class="sb-nav-link group relative flex h-11 w-full items-center gap-3.5 rounded-xl px-3.5 text-neutral-600 transition-all hover:bg-neutral-200/60 hover:text-neutral-900 aria-[current=page]:bg-blue-50/80 aria-[current=page]:text-blue-600 aria-[current=page]:font-bold" data-view="view-cards">
-            <svg class="size-5 shrink-0 opacity-80 group-aria-[current=page]:opacity-100 group-aria-[current=page]:text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <button type="button" onclick="window.switchNav('view-cards')" class="sb-nav-link group relative flex h-11 w-full items-center gap-3.5 rounded-xl px-3.5 text-neutral-600 transition-all hover:bg-neutral-200/60 hover:text-neutral-900 aria-[current=page]:bg-blue-50/80 aria-[current=page]:text-blue-600 aria-[current=page]:font-bold cursor-pointer" data-view="view-cards">
+            <svg class="size-5 shrink-0 opacity-80 group-aria-[current=page]:opacity-100 group-aria-[current=page]:text-blue-600 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
               <rect x="2" y="5" width="20" height="14" rx="2" />
               <line x1="2" y1="10" x2="22" y2="10" />
             </svg>
-            <span class="truncate">NFC Cards</span>
-            <span class="ml-auto inline-flex items-center rounded-full bg-neutral-200/70 px-2 py-0.5 text-[11px] font-semibold text-neutral-700" id="sbBadgeTotalCards">0</span>
+            <span class="truncate pointer-events-none">NFC Cards</span>
+            <span class="ml-auto inline-flex items-center rounded-full bg-neutral-200/70 px-2 py-0.5 text-[11px] font-semibold text-neutral-700 pointer-events-none" id="sbBadgeTotalCards">0</span>
           </button>
         </li>
         <!-- 3. Template Desain -->
         <li>
-          <button type="button" class="sb-nav-link group relative flex h-11 w-full items-center gap-3.5 rounded-xl px-3.5 text-neutral-600 transition-all hover:bg-neutral-200/60 hover:text-neutral-900 aria-[current=page]:bg-blue-50/80 aria-[current=page]:text-blue-600 aria-[current=page]:font-bold" data-view="view-studio">
-            <svg class="size-5 shrink-0 opacity-80 group-aria-[current=page]:opacity-100 group-aria-[current=page]:text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <button type="button" onclick="window.switchNav('view-studio')" class="sb-nav-link group relative flex h-11 w-full items-center gap-3.5 rounded-xl px-3.5 text-neutral-600 transition-all hover:bg-neutral-200/60 hover:text-neutral-900 aria-[current=page]:bg-blue-50/80 aria-[current=page]:text-blue-600 aria-[current=page]:font-bold cursor-pointer" data-view="view-studio">
+            <svg class="size-5 shrink-0 opacity-80 group-aria-[current=page]:opacity-100 group-aria-[current=page]:text-blue-600 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/>
               <circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/>
               <circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/>
               <circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/>
               <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.563-2.512 5.563-5.563C22 6.5 17.5 2 12 2z"/>
             </svg>
-            <span class="truncate">Template Desain</span>
+            <span class="truncate pointer-events-none">Template Desain</span>
           </button>
         </li>
         <!-- 4. Layout Sticker -->
         <li>
-          <button type="button" class="sb-nav-link group relative flex h-11 w-full items-center gap-3.5 rounded-xl px-3.5 text-neutral-600 transition-all hover:bg-neutral-200/60 hover:text-neutral-900 aria-[current=page]:bg-blue-50/80 aria-[current=page]:text-blue-600 aria-[current=page]:font-bold" data-view="view-layout-sticker">
-            <svg class="size-5 shrink-0 opacity-80 group-aria-[current=page]:opacity-100 group-aria-[current=page]:text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <button type="button" onclick="window.switchNav('view-layout-sticker')" class="sb-nav-link group relative flex h-11 w-full items-center gap-3.5 rounded-xl px-3.5 text-neutral-600 transition-all hover:bg-neutral-200/60 hover:text-neutral-900 aria-[current=page]:bg-blue-50/80 aria-[current=page]:text-blue-600 aria-[current=page]:font-bold cursor-pointer" data-view="view-layout-sticker">
+            <svg class="size-5 shrink-0 opacity-80 group-aria-[current=page]:opacity-100 group-aria-[current=page]:text-blue-600 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
               <rect x="3" y="3" width="7" height="7" rx="1.5"/>
               <rect x="14" y="3" width="7" height="7" rx="1.5"/>
               <rect x="3" y="14" width="7" height="7" rx="1.5"/>
               <rect x="14" y="14" width="7" height="7" rx="1.5"/>
             </svg>
-            <span class="truncate">Layout Sticker</span>
+            <span class="truncate pointer-events-none">Layout Sticker</span>
           </button>
         </li>
         <!-- 5. QR Reset Kartu -->
         <li>
-          <button type="button" class="sb-nav-link group relative flex h-11 w-full items-center gap-3.5 rounded-xl px-3.5 text-neutral-600 transition-all hover:bg-neutral-200/60 hover:text-neutral-900 aria-[current=page]:bg-blue-50/80 aria-[current=page]:text-blue-600 aria-[current=page]:font-bold" data-view="view-reset">
-            <svg class="size-5 shrink-0 opacity-80 group-aria-[current=page]:opacity-100 group-aria-[current=page]:text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <button type="button" onclick="window.switchNav('view-reset')" class="sb-nav-link group relative flex h-11 w-full items-center gap-3.5 rounded-xl px-3.5 text-neutral-600 transition-all hover:bg-neutral-200/60 hover:text-neutral-900 aria-[current=page]:bg-blue-50/80 aria-[current=page]:text-blue-600 aria-[current=page]:font-bold cursor-pointer" data-view="view-reset">
+            <svg class="size-5 shrink-0 opacity-80 group-aria-[current=page]:opacity-100 group-aria-[current=page]:text-blue-600 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
               <rect x="3" y="3" width="7" height="7" rx="1"/>
               <rect x="14" y="3" width="7" height="7" rx="1"/>
               <rect x="3" y="14" width="7" height="7" rx="1"/>
@@ -262,29 +262,29 @@ body {
               <path d="M20 14v3"/>
               <path d="M14 20h6"/>
             </svg>
-            <span class="truncate">QR Reset Kartu</span>
+            <span class="truncate pointer-events-none">QR Reset Kartu</span>
           </button>
         </li>
         <!-- 6. Kelola Admin -->
         <li>
-          <button type="button" class="sb-nav-link group relative flex h-11 w-full items-center gap-3.5 rounded-xl px-3.5 text-neutral-600 transition-all hover:bg-neutral-200/60 hover:text-neutral-900 aria-[current=page]:bg-blue-50/80 aria-[current=page]:text-blue-600 aria-[current=page]:font-bold" data-view="view-admins">
-            <svg class="size-5 shrink-0 opacity-80 group-aria-[current=page]:opacity-100 group-aria-[current=page]:text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <button type="button" onclick="window.switchNav('view-admins')" class="sb-nav-link group relative flex h-11 w-full items-center gap-3.5 rounded-xl px-3.5 text-neutral-600 transition-all hover:bg-neutral-200/60 hover:text-neutral-900 aria-[current=page]:bg-blue-50/80 aria-[current=page]:text-blue-600 aria-[current=page]:font-bold cursor-pointer" data-view="view-admins">
+            <svg class="size-5 shrink-0 opacity-80 group-aria-[current=page]:opacity-100 group-aria-[current=page]:text-blue-600 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
               <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
               <circle cx="9" cy="7" r="4" />
               <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
               <path d="M16 3.13a4 4 0 0 1 0 7.75" />
             </svg>
-            <span class="truncate">Kelola Admin</span>
+            <span class="truncate pointer-events-none">Kelola Admin</span>
           </button>
         </li>
         <!-- 7. Pengaturan -->
         <li>
-          <button type="button" class="sb-nav-link group relative flex h-11 w-full items-center gap-3.5 rounded-xl px-3.5 text-neutral-600 transition-all hover:bg-neutral-200/60 hover:text-neutral-900 aria-[current=page]:bg-blue-50/80 aria-[current=page]:text-blue-600 aria-[current=page]:font-bold" data-view="view-settings">
-            <svg class="size-5 shrink-0 opacity-80 group-aria-[current=page]:opacity-100 group-aria-[current=page]:text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <button type="button" onclick="window.switchNav('view-settings')" class="sb-nav-link group relative flex h-11 w-full items-center gap-3.5 rounded-xl px-3.5 text-neutral-600 transition-all hover:bg-neutral-200/60 hover:text-neutral-900 aria-[current=page]:bg-blue-50/80 aria-[current=page]:text-blue-600 aria-[current=page]:font-bold cursor-pointer" data-view="view-settings">
+            <svg class="size-5 shrink-0 opacity-80 group-aria-[current=page]:opacity-100 group-aria-[current=page]:text-blue-600 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="12" cy="12" r="3"/>
               <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
             </svg>
-            <span class="truncate">Pengaturan</span>
+            <span class="truncate pointer-events-none">Pengaturan</span>
           </button>
         </li>
       </ul>

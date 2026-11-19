@@ -21,9 +21,10 @@
     }
   }
 </script>
-<!-- QR Code & JSZip CDN -->
+<!-- QR Code & JSZip CDN & jsQR -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+<script src="/jsqr.min.js"></script>
 
 <style>
 :root {
@@ -513,68 +514,99 @@ body {
         </div>
       </section>
 
-      <!-- VIEW 2: STUDIO DESAIN KARTU NFC -->
+      <!-- VIEW 2: TEMPLATE DESAIN & GENERATOR -->
       <section class="tab-view" id="view-studio">
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          <!-- Control Panel -->
-          <div class="lg:col-span-5 rounded-xl border border-neutral-200/80 bg-white p-6 shadow-xs">
-            <h2 class="text-lg font-bold text-neutral-950">Generator Kartu Google Review</h2>
-            <p class="mt-1 text-xs text-neutral-500">QR Code otomatis digenerate dan menempati kotak barcode template kartu asli secara presisi (10x10 cm).</p>
-
-            <div id="studioMsgOk" class="hidden mt-4 rounded-lg border border-neutral-900 bg-neutral-100 p-3 text-xs font-semibold text-neutral-950"></div>
-            <div id="studioMsgErr" class="hidden mt-4 rounded-lg border border-dashed border-neutral-900 bg-neutral-50 p-3 text-xs font-semibold text-neutral-950"></div>
-
-            <div class="mt-5 space-y-4">
-              <div>
-                <label class="block text-xs font-bold text-neutral-900 mb-1.5">Mode Pembuatan</label>
-                <select id="genMode" class="w-full rounded-lg border border-neutral-300 bg-neutral-50/50 px-3.5 py-2.5 text-xs font-medium text-neutral-900 focus:border-zinc-950 focus:bg-white focus:outline-none">
-                  <option value="batch">Generate Kartu Baru (Simpan ke Firestore)</option>
-                  <option value="custom">Preview / Kartu Tunggal Kustom</option>
-                </select>
-              </div>
-
-              <div id="batchFields">
-                <label class="block text-xs font-bold text-neutral-900 mb-1.5">Jumlah Kartu</label>
-                <input type="number" id="batchQty" value="4" min="1" max="50" class="w-full rounded-lg border border-neutral-300 bg-neutral-50/50 px-3.5 py-2.5 text-xs font-medium text-neutral-900 focus:border-zinc-950 focus:bg-white focus:outline-none">
-                <p class="mt-1 text-[11px] text-neutral-500">ID 6-karakter acak unik dibuat otomatis dan tersimpan di database.</p>
-              </div>
-
-              <div id="customFields" style="display:none">
-                <label class="block text-xs font-bold text-neutral-900 mb-1.5">Card ID Kustom</label>
-                <input type="text" id="customId" placeholder="Contoh: CARD01" maxlength="12" class="w-full rounded-lg border border-neutral-300 bg-neutral-50/50 px-3.5 py-2.5 text-xs font-medium text-neutral-900 focus:border-zinc-950 focus:bg-white focus:outline-none uppercase font-mono">
-              </div>
-
-              <button type="button" class="w-full rounded-lg bg-zinc-950 py-2.5 text-xs font-bold text-white shadow-xs hover:bg-zinc-800 transition-colors" id="btnRunGenerate">
-                Generate Desain Kartu
-              </button>
-
-              <div id="studioLog" class="rounded-lg border border-dashed border-neutral-300 bg-neutral-50 p-3 text-[11px] text-neutral-500 max-h-28 overflow-y-auto font-mono">
-                Siap. Pilih jumlah kartu lalu klik Generate.
-              </div>
-            </div>
+        <!-- HEADER TEMPLATE DESAIN SESUAI SCREENSHOT USER -->
+        <div class="mb-6 flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <h1 class="text-xl font-bold tracking-tight text-neutral-950">Template Desain</h1>
+            <p class="text-xs text-neutral-500 mt-0.5"><span id="templateCountBadge">1 template</span> tersedia untuk cetak kartu review NFC</p>
           </div>
+          <button type="button" id="btnOpenAddTemplateModal" class="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-xs font-bold text-white shadow-sm hover:bg-blue-700 transition-colors">
+            <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Tambah template
+          </button>
+        </div>
 
-          <!-- Catalog Result -->
-          <div class="lg:col-span-7 rounded-xl border border-neutral-200/80 bg-white p-6 shadow-xs">
-            <div class="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-neutral-200">
-              <div>
-                <h2 class="text-lg font-bold text-neutral-950">Hasil Desain Kartu (<span id="totalStudioCards">0</span>)</h2>
-                <p class="text-xs text-neutral-500">Desain kartu siap cetak (Ukuran 10 x 10 cm, 300 DPI).</p>
+        <!-- GRID TEMPLATE LIST (PERSIS SEPERTI SCREENSHOT USER: FOTO THUMBNAIL, NAMA, RESOLUSI PX) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-8" id="templateGridList">
+          <!-- Di-render dinamis oleh JS -->
+        </div>
+
+        <!-- DIVIDER / SECTION GENERATOR KARTU -->
+        <div class="pt-4 border-t border-neutral-200">
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <!-- Control Panel -->
+            <div class="lg:col-span-5 rounded-xl border border-neutral-200/80 bg-white p-6 shadow-xs">
+              <div class="flex items-center justify-between">
+                <h2 class="text-base font-bold text-neutral-950">Generator Desain Kartu (10 x 10 cm)</h2>
+                <span class="inline-flex items-center rounded-full bg-blue-50 px-2.5 py-0.5 text-[11px] font-bold text-blue-700" id="currentActiveTemplateBadge">Template: Default</span>
               </div>
-              <div class="flex gap-2" id="batchActionButtons">
-                <button type="button" class="inline-flex items-center gap-1.5 rounded-lg border border-neutral-300 bg-white px-3 py-1.5 text-xs font-bold text-neutral-800 hover:bg-neutral-50 shadow-xs" id="btnDownloadZip">
-                  Download ZIP (2 Foto)
+              <p class="mt-1 text-xs text-neutral-500">QR Code digenerate dan otomatis menempati posisi QR template secara presisi.</p>
+
+              <div id="studioMsgOk" class="hidden mt-4 rounded-lg border border-neutral-900 bg-neutral-100 p-3 text-xs font-semibold text-neutral-950"></div>
+              <div id="studioMsgErr" class="hidden mt-4 rounded-lg border border-dashed border-neutral-900 bg-neutral-50 p-3 text-xs font-semibold text-neutral-950"></div>
+
+              <div class="mt-5 space-y-4">
+                <!-- PILIH TEMPLATE UNTUK DIGUNAKAN -->
+                <div>
+                  <label class="block text-xs font-bold text-neutral-900 mb-1.5">Pilih Template Cetak</label>
+                  <select id="selectedTemplateSelect" class="w-full rounded-lg border border-neutral-300 bg-neutral-50/50 px-3.5 py-2.5 text-xs font-medium text-neutral-900 focus:border-zinc-950 focus:bg-white focus:outline-none">
+                    <!-- Option template dinamis -->
+                  </select>
+                </div>
+
+                <div>
+                  <label class="block text-xs font-bold text-neutral-900 mb-1.5">Mode Pembuatan</label>
+                  <select id="genMode" class="w-full rounded-lg border border-neutral-300 bg-neutral-50/50 px-3.5 py-2.5 text-xs font-medium text-neutral-900 focus:border-zinc-950 focus:bg-white focus:outline-none">
+                    <option value="batch">Generate Kartu Baru (Simpan ke Firestore)</option>
+                    <option value="custom">Preview / Kartu Tunggal Kustom</option>
+                  </select>
+                </div>
+
+                <div id="batchFields">
+                  <label class="block text-xs font-bold text-neutral-900 mb-1.5">Jumlah Kartu</label>
+                  <input type="number" id="batchQty" value="4" min="1" max="50" class="w-full rounded-lg border border-neutral-300 bg-neutral-50/50 px-3.5 py-2.5 text-xs font-medium text-neutral-900 focus:border-zinc-950 focus:bg-white focus:outline-none">
+                  <p class="mt-1 text-[11px] text-neutral-500">ID acak unik dibuat otomatis dan tersimpan di database.</p>
+                </div>
+
+                <div id="customFields" style="display:none">
+                  <label class="block text-xs font-bold text-neutral-900 mb-1.5">Card ID Kustom</label>
+                  <input type="text" id="customId" placeholder="Contoh: CARD01" maxlength="12" class="w-full rounded-lg border border-neutral-300 bg-neutral-50/50 px-3.5 py-2.5 text-xs font-medium text-neutral-900 focus:border-zinc-950 focus:bg-white focus:outline-none uppercase font-mono">
+                </div>
+
+                <button type="button" class="w-full rounded-lg bg-zinc-950 py-2.5 text-xs font-bold text-white shadow-xs hover:bg-zinc-800 transition-colors" id="btnRunGenerate">
+                  Generate Desain Kartu
                 </button>
-                <button type="button" class="inline-flex items-center gap-1.5 rounded-lg bg-zinc-950 px-3 py-1.5 text-xs font-bold text-white hover:bg-zinc-800 shadow-xs" onclick="window.print()">
-                  Cetak Lembar
-                </button>
+
+                <div id="studioLog" class="rounded-lg border border-dashed border-neutral-300 bg-neutral-50 p-3 text-[11px] text-neutral-500 max-h-28 overflow-y-auto font-mono">
+                  Siap. Pilih template dan jumlah kartu lalu klik Generate.
+                </div>
               </div>
             </div>
 
-            <div class="cards-catalog" id="cardsCatalog">
-              <div id="studioEmptyState" class="col-span-full py-12 text-center border-2 border-dashed border-neutral-200 rounded-xl bg-neutral-50/50">
-                <p class="text-sm font-bold text-neutral-800">Belum Ada Kartu yang Dibuat</p>
-                <p class="mt-1 text-xs text-neutral-500">Tentukan jumlah kartu di panel kiri lalu klik tombol Generate.</p>
+            <!-- Catalog Result -->
+            <div class="lg:col-span-7 rounded-xl border border-neutral-200/80 bg-white p-6 shadow-xs">
+              <div class="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-neutral-200">
+                <div>
+                  <h2 class="text-base font-bold text-neutral-950">Hasil Desain Kartu (<span id="totalStudioCards">0</span>)</h2>
+                  <p class="text-xs text-neutral-500">Desain kartu siap cetak (Ukuran 10 x 10 cm).</p>
+                </div>
+                <div class="flex gap-2" id="batchActionButtons">
+                  <button type="button" class="inline-flex items-center gap-1.5 rounded-lg border border-neutral-300 bg-white px-3 py-1.5 text-xs font-bold text-neutral-800 hover:bg-neutral-50 shadow-xs" id="btnDownloadZip">
+                    Download ZIP (2 Foto)
+                  </button>
+                  <button type="button" class="inline-flex items-center gap-1.5 rounded-lg bg-zinc-950 px-3 py-1.5 text-xs font-bold text-white hover:bg-zinc-800 shadow-xs" onclick="window.print()">
+                    Cetak Lembar
+                  </button>
+                </div>
+              </div>
+
+              <div class="cards-catalog" id="cardsCatalog">
+                <div id="studioEmptyState" class="col-span-full py-12 text-center border-2 border-dashed border-neutral-200 rounded-xl bg-neutral-50/50">
+                  <p class="text-sm font-bold text-neutral-800">Belum Ada Kartu yang Dibuat</p>
+                  <p class="mt-1 text-xs text-neutral-500">Tentukan jumlah kartu di panel kiri lalu klik tombol Generate.</p>
+                </div>
               </div>
             </div>
           </div>
@@ -773,6 +805,80 @@ body {
 
     </div>
   </main>
+</div>
+
+<!-- MODAL TAMBAH TEMPLATE DENGAN AUTO-DETEKSI QR / MANUAL TWEAK -->
+<div id="modalAddTemplate" class="fixed inset-0 z-50 hidden bg-neutral-950/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+  <div class="bg-white rounded-2xl max-w-2xl w-full border border-neutral-200 shadow-2xl p-6 my-8 animate-in fade-in zoom-in-95 duration-150">
+    <div class="flex items-center justify-between pb-4 border-b border-neutral-100">
+      <div>
+        <h3 class="text-base font-bold text-neutral-950">Tambah Template Desain Baru</h3>
+        <p class="text-xs text-neutral-500">Unggah gambar template dan sistem akan mendeteksi posisi QR Code secara otomatis.</p>
+      </div>
+      <button type="button" id="btnCloseAddTemplateModal" class="rounded-lg p-1 text-neutral-400 hover:text-neutral-950 hover:bg-neutral-100 transition-colors">
+        <svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+      </button>
+    </div>
+
+    <form id="formAddTemplate" class="mt-4 space-y-4">
+      <div>
+        <label class="block text-xs font-bold text-neutral-900 mb-1">Nama Template</label>
+        <input type="text" id="tplNameInput" placeholder="Contoh: NPT1 atau Square Blue" required class="w-full rounded-lg border border-neutral-300 bg-neutral-50/50 px-3.5 py-2 text-xs font-semibold text-neutral-900 focus:border-zinc-950 focus:bg-white focus:outline-none">
+      </div>
+
+      <div>
+        <label class="block text-xs font-bold text-neutral-900 mb-1">Pilih Berkas Gambar Template</label>
+        <input type="file" id="tplFileInput" accept="image/png, image/jpeg, image/webp" required class="block w-full text-xs text-neutral-600 file:mr-3 file:py-2 file:px-3.5 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-neutral-950 file:text-white hover:file:bg-neutral-800 file:cursor-pointer cursor-pointer border border-neutral-300 rounded-lg bg-neutral-50/40 p-1.5">
+        <p class="mt-1 text-[11px] text-neutral-500">Gunakan desain kartu berasio 1:1 (Contoh: 1024x1024, 1200x1200 px). Jika gambar memiliki QR Code di dalamnya, sistem akan otomatis membaca koordinatnya!</p>
+      </div>
+
+      <!-- STATUS DETEKSI QR -->
+      <div id="tplDetectStatus" class="hidden p-3 rounded-xl text-xs font-medium border"></div>
+
+      <!-- PREVIEW CANVAS DETEKSI -->
+      <div id="tplCanvasPreviewWrap" class="hidden space-y-2">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-bold text-neutral-800">Preview Posisi QR Template:</span>
+          <span class="text-[11px] text-neutral-500" id="tplDimsLabel">0 x 0 px</span>
+        </div>
+        <div class="relative max-h-72 w-full overflow-hidden rounded-xl border border-neutral-200 bg-neutral-100 flex items-center justify-center p-2">
+          <canvas id="tplPreviewCanvas" class="max-h-64 max-w-full object-contain rounded-lg shadow-xs"></canvas>
+        </div>
+        <p class="text-[11px] text-neutral-500">
+          💡 <span class="font-bold text-neutral-700">Kotak Merah/Biru:</span> Area yang akan ditempeli QR Code baru saat proses cetak kartu. Anda dapat menyesuaikan posisi jika perlu di bawah ini.
+        </p>
+
+        <!-- KOORDINAT & UKURAN QR BOX (BISA OTOMATIS / DIEDIT MANUAL) -->
+        <div class="grid grid-cols-4 gap-2 pt-1">
+          <div>
+            <label class="block text-[11px] font-bold text-neutral-700 mb-0.5">X (%)</label>
+            <input type="number" step="0.1" id="tplQrX" class="w-full rounded border border-neutral-300 px-2 py-1 text-xs font-mono">
+          </div>
+          <div>
+            <label class="block text-[11px] font-bold text-neutral-700 mb-0.5">Y (%)</label>
+            <input type="number" step="0.1" id="tplQrY" class="w-full rounded border border-neutral-300 px-2 py-1 text-xs font-mono">
+          </div>
+          <div>
+            <label class="block text-[11px] font-bold text-neutral-700 mb-0.5">Lebar W (%)</label>
+            <input type="number" step="0.1" id="tplQrW" class="w-full rounded border border-neutral-300 px-2 py-1 text-xs font-mono">
+          </div>
+          <div>
+            <label class="block text-[11px] font-bold text-neutral-700 mb-0.5">Tinggi H (%)</label>
+            <input type="number" step="0.1" id="tplQrH" class="w-full rounded border border-neutral-300 px-2 py-1 text-xs font-mono">
+          </div>
+        </div>
+      </div>
+
+      <div class="pt-3 border-t border-neutral-100 flex items-center justify-end gap-2">
+        <button type="button" id="btnCancelAddTemplate" class="rounded-lg border border-neutral-300 bg-white px-4 py-2 text-xs font-bold text-neutral-700 hover:bg-neutral-50">
+          Batal
+        </button>
+        <button type="submit" id="btnSaveTemplate" disabled class="rounded-lg bg-blue-600 px-4 py-2 text-xs font-bold text-white hover:bg-blue-700 disabled:opacity-50 transition-colors">
+          Simpan Template
+        </button>
+      </div>
+    </form>
+  </div>
 </div>
 
 <!-- SCRIPTS FIREBASE & LOGIKA APLIKASI -->
@@ -1032,9 +1138,10 @@ document.getElementById("btnDownloadAllTableZip").addEventListener("click", asyn
 
   try {
     const zip = new JSZip();
+    const activeTpl = getActiveTemplate();
     const bgImg = new Image();
     bgImg.crossOrigin = "anonymous";
-    bgImg.src = "/card-base.png";
+    bgImg.src = activeTpl.imageUrl;
 
     await new Promise((resolve, reject) => {
       bgImg.onload = resolve;
@@ -1060,14 +1167,22 @@ document.getElementById("btnDownloadAllTableZip").addEventListener("click", asyn
       const qrCanvas = tempDiv.querySelector("canvas");
       if (!qrCanvas) continue;
 
-      // Desain Kartu 10x10 cm (1181x1181 px @ 300 DPI)
+      // Desain Kartu 10x10 cm (1181x1181 px @ 300 DPI) sesuai template aktif
       const canvas = document.createElement("canvas");
       canvas.width = 1181;
       canvas.height = 1181;
       const ctx = canvas.getContext("2d");
 
       ctx.drawImage(bgImg, 0, 0, 1181, 1181);
-      ctx.drawImage(qrCanvas, 706, 675, 292, 282);
+
+      const qx = Math.round((activeTpl.qrX / 100) * 1181);
+      const qy = Math.round((activeTpl.qrY / 100) * 1181);
+      const qw = Math.round((activeTpl.qrW / 100) * 1181);
+      const qh = Math.round((activeTpl.qrH / 100) * 1181);
+
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(qx, qy, qw, qh);
+      ctx.drawImage(qrCanvas, qx, qy, qw, qh);
 
       const cardB64 = canvas.toDataURL("image/png").split(",")[1];
       zip.file(`kartu-${id}-10x10cm.png`, cardB64, { base64: true });
@@ -1077,7 +1192,7 @@ document.getElementById("btnDownloadAllTableZip").addEventListener("click", asyn
     }
 
     zip.file("daftar-semua-kartu.txt", allFirestoreCardsList.map(c => 
-      `ID: ${c.id}\nStatus: ${c.active ? 'Aktif' : 'Belum Aktif'}\nBisnis: ${c.businessName || '-'}\nURL: ${c.url}\nTujuan: ${c.destination || '-'}\n----------------------------------`
+      `ID: ${c.id}\nStatus: ${c.active ? 'Aktif' : 'Belum Aktif'}\nBisnis: ${c.businessName || '-'}\nURL: ${c.url}\nTujuan: ${c.destination || '-'}\nTemplate: ${activeTpl.name}\n----------------------------------`
     ).join("\n"));
 
     btn.innerHTML = `<div class="spinner"></div> Mengompres berkas ZIP...`;
@@ -1134,6 +1249,368 @@ document.getElementById("btnResetAllFirestore").addEventListener("click", async 
   }
 });
 
+// ==========================================
+// TEMPLATE DESAIN MANAGEMENT & AUTO QR DETECTION
+// ==========================================
+const TEMPLATES_STORAGE_KEY = "ulasankuu_templates";
+const ACTIVE_TEMPLATE_KEY = "ulasankuu_active_template_id";
+
+const DEFAULT_TEMPLATE = {
+  id: "tpl_default",
+  name: "Google Review Card (Default)",
+  width: 1024,
+  height: 1024,
+  // Koordinat presisi di template kartu bawaan (1024x1024)
+  qrX: 59.8,
+  qrY: 57.1,
+  qrW: 24.7,
+  qrH: 23.9,
+  imageUrl: "/card-base.png",
+  isDefault: true
+};
+
+function getSavedTemplates() {
+  try {
+    const raw = localStorage.getItem(TEMPLATES_STORAGE_KEY);
+    if (!raw) return [DEFAULT_TEMPLATE];
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed) || parsed.length === 0) return [DEFAULT_TEMPLATE];
+    // Pastikan default template selalu ada
+    const hasDefault = parsed.some(t => t.id === "tpl_default");
+    if (!hasDefault) parsed.unshift(DEFAULT_TEMPLATE);
+    return parsed;
+  } catch (e) {
+    console.error("Gagal parse templates:", e);
+    return [DEFAULT_TEMPLATE];
+  }
+}
+
+function saveTemplates(list) {
+  try {
+    localStorage.setItem(TEMPLATES_STORAGE_KEY, JSON.stringify(list));
+  } catch (e) {
+    console.error("Gagal simpan templates ke localStorage:", e);
+  }
+}
+
+function getActiveTemplate() {
+  const templates = getSavedTemplates();
+  const activeId = localStorage.getItem(ACTIVE_TEMPLATE_KEY) || "tpl_default";
+  return templates.find(t => t.id === activeId) || templates[0];
+}
+
+function setActiveTemplateId(id) {
+  localStorage.setItem(ACTIVE_TEMPLATE_KEY, id);
+  renderTemplateGrid();
+  updateTemplateSelectOptions();
+}
+
+function renderTemplateGrid() {
+  const templates = getSavedTemplates();
+  const activeTpl = getActiveTemplate();
+  const countBadge = document.getElementById("templateCountBadge");
+  if (countBadge) countBadge.textContent = `${templates.length} template`;
+
+  const currentActiveBadge = document.getElementById("currentActiveTemplateBadge");
+  if (currentActiveBadge) {
+    currentActiveBadge.textContent = `Template: ${activeTpl.name}`;
+  }
+
+  const grid = document.getElementById("templateGridList");
+  if (!grid) return;
+
+  grid.innerHTML = templates.map(tpl => {
+    const isActive = tpl.id === activeTpl.id;
+    return `
+      <div class="group relative flex flex-col rounded-2xl border ${isActive ? 'border-blue-600 ring-2 ring-blue-600/20 bg-blue-50/20' : 'border-neutral-200/90 bg-white hover:border-neutral-400'} p-4 shadow-xs transition-all">
+        <!-- Thumbnail Container -->
+        <div class="relative aspect-square w-full overflow-hidden rounded-xl bg-neutral-100 flex items-center justify-center border border-neutral-200/60 mb-3">
+          <img src="${tpl.imageUrl}" alt="${tpl.name}" class="h-full w-full object-contain">
+          <!-- Bounding Box Indicator -->
+          <div class="absolute border-2 border-dashed border-red-500 bg-red-500/10 pointer-events-none rounded" style="top:${tpl.qrY}%;left:${tpl.qrX}%;width:${tpl.qrW}%;height:${tpl.qrH}%;">
+            <span class="absolute -top-4 left-0 bg-red-600 text-white text-[9px] font-bold px-1 rounded shadow">QR Box</span>
+          </div>
+          ${isActive ? '<span class="absolute top-2 right-2 rounded-full bg-blue-600 px-2 py-0.5 text-[10px] font-bold text-white shadow-xs">Aktif</span>' : ''}
+        </div>
+
+        <!-- Info Template -->
+        <div class="flex items-center justify-between">
+          <div class="min-w-0 flex-1">
+            <h4 class="font-bold text-sm text-neutral-900 truncate">${tpl.name}</h4>
+            <p class="text-xs text-neutral-500">${tpl.width} x ${tpl.height} px</p>
+          </div>
+        </div>
+
+        <!-- Tombol Aksi -->
+        <div class="mt-3 pt-3 border-t border-neutral-100 flex items-center gap-2">
+          ${!isActive ? `
+            <button type="button" onclick="window.selectTemplate('${tpl.id}')" class="flex-1 rounded-lg bg-neutral-950 py-1.5 text-xs font-bold text-white hover:bg-neutral-800 transition-colors">
+              Gunakan
+            </button>
+          ` : `
+            <span class="flex-1 text-center py-1.5 text-xs font-bold text-blue-600 bg-blue-50 rounded-lg">
+              ✓ Sedang Digunakan
+            </span>
+          `}
+          ${!tpl.isDefault ? `
+            <button type="button" onclick="window.deleteTemplate('${tpl.id}')" class="rounded-lg p-1.5 text-neutral-400 hover:text-red-600 hover:bg-red-50 transition-colors" title="Hapus Template">
+              <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+            </button>
+          ` : ''}
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+
+function updateTemplateSelectOptions() {
+  const select = document.getElementById("selectedTemplateSelect");
+  if (!select) return;
+  const templates = getSavedTemplates();
+  const activeTpl = getActiveTemplate();
+
+  select.innerHTML = templates.map(tpl => `
+    <option value="${tpl.id}" ${tpl.id === activeTpl.id ? 'selected' : ''}>
+      ${tpl.name} (${tpl.width} x ${tpl.height} px) ${tpl.id === activeTpl.id ? '★ Aktif' : ''}
+    </option>
+  `).join("");
+}
+
+window.selectTemplate = function(id) {
+  setActiveTemplateId(id);
+};
+
+window.deleteTemplate = function(id) {
+  if (confirm("Hapus template ini?")) {
+    let list = getSavedTemplates().filter(t => t.id !== id);
+    saveTemplates(list);
+    const active = getActiveTemplate();
+    if (active.id === id) {
+      setActiveTemplateId("tpl_default");
+    } else {
+      renderTemplateGrid();
+      updateTemplateSelectOptions();
+    }
+  }
+};
+
+// Event change select template di Generator
+const tplSelectEl = document.getElementById("selectedTemplateSelect");
+if (tplSelectEl) {
+  tplSelectEl.addEventListener("change", (e) => {
+    setActiveTemplateId(e.target.value);
+  });
+}
+
+// Inisialisasi Modal Tambah Template
+const modalAddTemplate = document.getElementById("modalAddTemplate");
+const btnOpenAddTemplateModal = document.getElementById("btnOpenAddTemplateModal");
+const btnCloseAddTemplateModal = document.getElementById("btnCloseAddTemplateModal");
+const btnCancelAddTemplate = document.getElementById("btnCancelAddTemplate");
+const formAddTemplate = document.getElementById("formAddTemplate");
+const tplFileInput = document.getElementById("tplFileInput");
+const tplDetectStatus = document.getElementById("tplDetectStatus");
+const tplCanvasPreviewWrap = document.getElementById("tplCanvasPreviewWrap");
+const tplPreviewCanvas = document.getElementById("tplPreviewCanvas");
+const tplDimsLabel = document.getElementById("tplDimsLabel");
+const btnSaveTemplate = document.getElementById("btnSaveTemplate");
+
+const tplQrX = document.getElementById("tplQrX");
+const tplQrY = document.getElementById("tplQrY");
+const tplQrW = document.getElementById("tplQrW");
+const tplQrH = document.getElementById("tplQrH");
+
+let currentUploadedImage = null;
+let currentUploadedDataUrl = "";
+let currentUploadedDims = { width: 0, height: 0 };
+
+if (btnOpenAddTemplateModal) {
+  btnOpenAddTemplateModal.addEventListener("click", () => {
+    formAddTemplate.reset();
+    tplDetectStatus.classList.add("hidden");
+    tplCanvasPreviewWrap.classList.add("hidden");
+    btnSaveTemplate.disabled = true;
+    currentUploadedImage = null;
+    currentUploadedDataUrl = "";
+    modalAddTemplate.classList.remove("hidden");
+  });
+}
+
+function closeTemplateModal() {
+  modalAddTemplate.classList.add("hidden");
+}
+if (btnCloseAddTemplateModal) btnCloseAddTemplateModal.addEventListener("click", closeTemplateModal);
+if (btnCancelAddTemplate) btnCancelAddTemplate.addEventListener("click", closeTemplateModal);
+
+// Saat file template dipilih -> auto-detect QR code posisi dengan jsQR
+if (tplFileInput) {
+  tplFileInput.addEventListener("change", (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (re) => {
+      currentUploadedDataUrl = re.target.result;
+      const img = new Image();
+      img.onload = () => {
+        currentUploadedImage = img;
+        currentUploadedDims = { width: img.naturalWidth, height: img.naturalHeight };
+        tplDimsLabel.textContent = `${img.naturalWidth} x ${img.naturalHeight} px`;
+
+        // Proses deteksi QR Code
+        detectQrOnImage(img);
+      };
+      img.src = currentUploadedDataUrl;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+function drawTemplatePreview(xPct, yPct, wPct, hPct) {
+  if (!currentUploadedImage) return;
+  const canvas = tplPreviewCanvas;
+  const ctx = canvas.getContext("2d");
+  canvas.width = currentUploadedDims.width;
+  canvas.height = currentUploadedDims.height;
+
+  // Gambar background
+  ctx.drawImage(currentUploadedImage, 0, 0);
+
+  // Gambar kotak posisi QR
+  const boxX = (xPct / 100) * canvas.width;
+  const boxY = (yPct / 100) * canvas.height;
+  const boxW = (wPct / 100) * canvas.width;
+  const boxH = (hPct / 100) * canvas.height;
+
+  // Border & overlay fill
+  ctx.fillStyle = "rgba(59, 130, 246, 0.25)";
+  ctx.fillRect(boxX, boxY, boxW, boxH);
+  ctx.lineWidth = Math.max(3, Math.round(canvas.width * 0.005));
+  ctx.strokeStyle = "#2563eb";
+  ctx.strokeRect(boxX, boxY, boxW, boxH);
+
+  // Teks label
+  ctx.fillStyle = "#2563eb";
+  ctx.font = `bold ${Math.round(canvas.width * 0.03)}px sans-serif`;
+  ctx.fillText("Posisi QR Code Disini", boxX + 6, boxY - 8 > 20 ? boxY - 8 : boxY + 24);
+}
+
+function detectQrOnImage(img) {
+  tplDetectStatus.classList.remove("hidden");
+  tplDetectStatus.className = "p-3 rounded-xl text-xs font-semibold border border-blue-200 bg-blue-50 text-blue-900";
+  tplDetectStatus.innerHTML = `🔍 Memindai gambar untuk mendeteksi posisi QR Code...`;
+
+  const offCanvas = document.createElement("canvas");
+  offCanvas.width = img.naturalWidth;
+  offCanvas.height = img.naturalHeight;
+  const offCtx = offCanvas.getContext("2d");
+  offCtx.drawImage(img, 0, 0);
+
+  const imgData = offCtx.getImageData(0, 0, offCanvas.width, offCanvas.height);
+  
+  let detected = null;
+  if (typeof jsQR !== "undefined") {
+    try {
+      detected = jsQR(imgData.data, imgData.width, imgData.height, {
+        inversionAttempts: "dontInvert"
+      });
+      if (!detected) {
+        detected = jsQR(imgData.data, imgData.width, imgData.height, {
+          inversionAttempts: "onlyInvert"
+        });
+      }
+    } catch (err) {
+      console.warn("jsQR error:", err);
+    }
+  }
+
+  let finalX = 60;
+  let finalY = 57;
+  let finalW = 25;
+  let finalH = 25;
+
+  if (detected && detected.location) {
+    const loc = detected.location;
+    const xs = [loc.topLeftCorner.x, loc.topRightCorner.x, loc.bottomRightCorner.x, loc.bottomLeftCorner.x];
+    const ys = [loc.topLeftCorner.y, loc.topRightCorner.y, loc.bottomRightCorner.y, loc.bottomLeftCorner.y];
+    const minX = Math.min(...xs);
+    const maxX = Math.max(...xs);
+    const minY = Math.min(...ys);
+    const maxY = Math.max(...ys);
+
+    finalX = Number(((minX / offCanvas.width) * 100).toFixed(1));
+    finalY = Number(((minY / offCanvas.height) * 100).toFixed(1));
+    finalW = Number((((maxX - minX) / offCanvas.width) * 100).toFixed(1));
+    finalH = Number((((maxY - minY) / offCanvas.height) * 100).toFixed(1));
+
+    tplDetectStatus.className = "p-3 rounded-xl text-xs font-semibold border border-emerald-200 bg-emerald-50 text-emerald-900";
+    tplDetectStatus.innerHTML = `
+      ✓ <b>QR Code Berhasil Terdeteksi Otomatis!</b><br>
+      Isi QR: <span class="font-mono text-[11px]">${detected.data || 'Terbaca'}</span> | Posisi: X=${finalX}%, Y=${finalY}%, W=${finalW}%, H=${finalH}%. Area ini akan ditimpa dengan QR kartu baru saat digenerate.
+    `;
+  } else {
+    tplDetectStatus.className = "p-3 rounded-xl text-xs font-semibold border border-amber-200 bg-amber-50 text-amber-900";
+    tplDetectStatus.innerHTML = `
+      ℹ️ QR Code bawaan tidak terdeteksi otomatis pada gambar ini. Sistem menetapkan koordinat perkiraan default (X=60%, Y=57%). Anda dapat menggeser / mengubah nilai koordinat di bawah.
+    `;
+  }
+
+  tplQrX.value = finalX;
+  tplQrY.value = finalY;
+  tplQrW.value = finalW;
+  tplQrH.value = finalH;
+
+  tplCanvasPreviewWrap.classList.remove("hidden");
+  btnSaveTemplate.disabled = false;
+  drawTemplatePreview(finalX, finalY, finalW, finalH);
+}
+
+// Listener input koordinat manual
+[tplQrX, tplQrY, tplQrW, tplQrH].forEach(inp => {
+  if (inp) {
+    inp.addEventListener("input", () => {
+      const x = parseFloat(tplQrX.value) || 0;
+      const y = parseFloat(tplQrY.value) || 0;
+      const w = parseFloat(tplQrW.value) || 20;
+      const h = parseFloat(tplQrH.value) || 20;
+      drawTemplatePreview(x, y, w, h);
+    });
+  }
+});
+
+// Simpan Template Baru
+if (formAddTemplate) {
+  formAddTemplate.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const name = document.getElementById("tplNameInput").value.trim();
+    if (!name || !currentUploadedDataUrl) return;
+
+    const newTemplate = {
+      id: "tpl_" + Date.now(),
+      name,
+      width: currentUploadedDims.width,
+      height: currentUploadedDims.height,
+      qrX: parseFloat(tplQrX.value) || 60,
+      qrY: parseFloat(tplQrY.value) || 57,
+      qrW: parseFloat(tplQrW.value) || 25,
+      qrH: parseFloat(tplQrH.value) || 25,
+      imageUrl: currentUploadedDataUrl,
+      isDefault: false
+    };
+
+    const list = getSavedTemplates();
+    list.push(newTemplate);
+    saveTemplates(list);
+    setActiveTemplateId(newTemplate.id);
+    closeTemplateModal();
+    alert(`Template "${name}" berhasil ditambahkan dan dijadikan template aktif!`);
+  });
+}
+
+// Inisialisasi tampilan awal
+renderTemplateGrid();
+updateTemplateSelectOptions();
+
 // STUDIO NFC & BARCODE TATA LETAK OTOMATIS
 const genMode = document.getElementById("genMode");
 const batchFields = document.getElementById("batchFields");
@@ -1162,6 +1639,7 @@ genMode.addEventListener("change", () => {
 
 function renderCardPreview(cardData) {
   const { id, url } = cardData;
+  const activeTpl = getActiveTemplate();
 
   const wrap = document.createElement("div");
   wrap.className = "card-preview-item";
@@ -1169,13 +1647,13 @@ function renderCardPreview(cardData) {
 
   wrap.innerHTML = `
     <div class="nfc-card-frame" id="frame-${id}">
-      <img class="base-bg" src="/card-base.png" alt="Desain Kartu Google Review">
-      <div class="qr-overlay-box" id="qr-box-${id}"></div>
+      <img class="base-bg" src="${activeTpl.imageUrl}" alt="${activeTpl.name}">
+      <div class="qr-overlay-box" id="qr-box-${id}" style="top:${activeTpl.qrY}%;left:${activeTpl.qrX}%;width:${activeTpl.qrW}%;height:${activeTpl.qrH}%;"></div>
     </div>
 
     <div class="flex items-center justify-between w-full">
       <span class="card-id-badge">ID: ${id}</span>
-      <a class="inline-flex items-center rounded-md border border-neutral-200 bg-neutral-50 px-2.5 py-1 text-xs font-semibold text-neutral-800 hover:bg-neutral-100" href="${url}" target="_blank">Buka Link</a>
+      <span class="text-[11px] text-neutral-500 font-medium truncate max-w-[120px]" title="${activeTpl.name}">${activeTpl.name}</span>
     </div>
 
     <div class="grid grid-cols-2 gap-2 w-full">
@@ -1221,6 +1699,8 @@ window.downloadQRById = function(id) {
 
 window.downloadCardById = function(id) {
   const url = BASE_URL + id;
+  const activeTpl = getActiveTemplate();
+
   const tempDiv = document.createElement("div");
   new QRCode(tempDiv, {
     text: url,
@@ -1235,15 +1715,26 @@ window.downloadCardById = function(id) {
 
     const bgImg = new Image();
     bgImg.crossOrigin = "anonymous";
-    bgImg.src = "/card-base.png";
+    bgImg.src = activeTpl.imageUrl;
     bgImg.onload = () => {
+      // 10x10 cm @ 300 DPI = 1181 x 1181 px
       const canvas = document.createElement("canvas");
       canvas.width = 1181;
       canvas.height = 1181;
       const ctx = canvas.getContext("2d");
 
       ctx.drawImage(bgImg, 0, 0, 1181, 1181);
-      ctx.drawImage(qrCanvas, 706, 675, 292, 282);
+
+      // Hitung koordinat presisi berdasarkan template aktif
+      const qx = Math.round((activeTpl.qrX / 100) * 1181);
+      const qy = Math.round((activeTpl.qrY / 100) * 1181);
+      const qw = Math.round((activeTpl.qrW / 100) * 1181);
+      const qh = Math.round((activeTpl.qrH / 100) * 1181);
+
+      // Bersihkan latar belakang QR dengan putih jika diperlukan
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(qx, qy, qw, qh);
+      ctx.drawImage(qrCanvas, qx, qy, qw, qh);
 
       const a = document.createElement("a");
       a.download = `kartu-nfc-review-${id}-10x10cm.png`;
@@ -1265,10 +1756,11 @@ function downloadSingleQRPNG(id, wrapElement) {
 function downloadMergedCardPNG(id, wrapElement) {
   const qrCanvas = wrapElement.querySelector(".qr-overlay-box canvas");
   if (!qrCanvas) return;
+  const activeTpl = getActiveTemplate();
 
   const bgImg = new Image();
   bgImg.crossOrigin = "anonymous";
-  bgImg.src = "/card-base.png";
+  bgImg.src = activeTpl.imageUrl;
   bgImg.onload = () => {
     const canvas = document.createElement("canvas");
     canvas.width = 1181;
@@ -1276,7 +1768,15 @@ function downloadMergedCardPNG(id, wrapElement) {
     const ctx = canvas.getContext("2d");
 
     ctx.drawImage(bgImg, 0, 0, 1181, 1181);
-    ctx.drawImage(qrCanvas, 706, 675, 292, 282);
+
+    const qx = Math.round((activeTpl.qrX / 100) * 1181);
+    const qy = Math.round((activeTpl.qrY / 100) * 1181);
+    const qw = Math.round((activeTpl.qrW / 100) * 1181);
+    const qh = Math.round((activeTpl.qrH / 100) * 1181);
+
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(qx, qy, qw, qh);
+    ctx.drawImage(qrCanvas, qx, qy, qw, qh);
 
     const a = document.createElement("a");
     a.download = `kartu-nfc-review-${id}-10x10cm.png`;
@@ -1360,11 +1860,12 @@ btnRunGenerate.addEventListener("click", async () => {
 document.getElementById("btnDownloadZip").addEventListener("click", async () => {
   if (generatedCards.length === 0) return;
   const zip = new JSZip();
-  logStudio("Menyiapkan berkas ZIP: Kartu 10x10 cm + QR Code...");
+  const activeTpl = getActiveTemplate();
+  logStudio(`Menyiapkan berkas ZIP: Kartu 10x10 cm (Template: ${activeTpl.name}) + QR Code...`);
 
   const bgImg = new Image();
   bgImg.crossOrigin = "anonymous";
-  bgImg.src = "/card-base.png";
+  bgImg.src = activeTpl.imageUrl;
   bgImg.onload = async () => {
     for(const c of generatedCards) {
       const wrap = document.querySelector(`.card-preview-item[data-card-id="${c.id}"]`);
@@ -1378,7 +1879,15 @@ document.getElementById("btnDownloadZip").addEventListener("click", async () => 
       const ctx = canvas.getContext("2d");
 
       ctx.drawImage(bgImg, 0, 0, 1181, 1181);
-      ctx.drawImage(qrCanvas, 706, 675, 292, 282);
+
+      const qx = Math.round((activeTpl.qrX / 100) * 1181);
+      const qy = Math.round((activeTpl.qrY / 100) * 1181);
+      const qw = Math.round((activeTpl.qrW / 100) * 1181);
+      const qh = Math.round((activeTpl.qrH / 100) * 1181);
+
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(qx, qy, qw, qh);
+      ctx.drawImage(qrCanvas, qx, qy, qw, qh);
 
       const cardB64 = canvas.toDataURL("image/png").split(",")[1];
       zip.file(`kartu-${c.id}-10x10cm.png`, cardB64, { base64: true });
@@ -1387,11 +1896,11 @@ document.getElementById("btnDownloadZip").addEventListener("click", async () => 
       zip.file(`qrcode-${c.id}.png`, qrB64, { base64: true });
     }
 
-    zip.file("daftar-kartu.txt", generatedCards.map(c => `ID: ${c.id}\nURL: ${c.url}\nUkuran Kartu: 10x10 cm\n-------------------------`).join("\n"));
+    zip.file("daftar-kartu.txt", generatedCards.map(c => `ID: ${c.id}\nURL: ${c.url}\nTemplate: ${activeTpl.name}\nUkuran Kartu: 10x10 cm\n-------------------------`).join("\n"));
     const blob = await zip.generateAsync({ type: "blob" });
     const a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
-    a.download = "paket-kartu-nfc-10x10cm.zip";
+    a.download = `paket-kartu-nfc-10x10cm-${generatedCards.length}-kartu.zip`;
     a.click();
     logStudio("Berkas ZIP berhasil diunduh (terisi 2 foto: Kartu 10x10 cm & QR Code terpisah).");
   };

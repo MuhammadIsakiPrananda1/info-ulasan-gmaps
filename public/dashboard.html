@@ -1195,122 +1195,11 @@ function randId(){
   return s;
 }
 
-// 1. AUTHENTICATION & LOGIN CHECK
-const userEmailBadge = document.getElementById("userEmailBadge");
-const activeAdminEmailDisplay = document.getElementById("activeAdminEmailDisplay");
-const btnLogout = document.getElementById("btnLogout");
-
-function getAdminSession() {
-  const sessionStr = localStorage.getItem("ulasankuu_admin_session");
-  if (sessionStr) {
-    try {
-      return JSON.parse(sessionStr);
-    } catch(e){}
-  }
-  return null;
-}
-
-const adminSession = getAdminSession();
-if (adminSession && adminSession.username) {
-  if (userEmailBadge) userEmailBadge.textContent = adminSession.username;
-  if (activeAdminEmailDisplay) activeAdminEmailDisplay.textContent = adminSession.username + " (Super Admin)";
-  setupRealtimeCardsListener();
-} else {
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      if (userEmailBadge) userEmailBadge.textContent = user.email || "Admin";
-      if (activeAdminEmailDisplay) activeAdminEmailDisplay.textContent = user.email || "admin@ulasankuu.com";
-      setupRealtimeCardsListener();
-    } else {
-      window.location.replace("/login");
-    }
-  });
-}
-
-btnLogout.addEventListener("click", () => {
-  if (confirm("Apakah Anda yakin ingin logout?")) {
-    localStorage.removeItem("ulasankuu_admin_session");
-    signOut(auth).finally(() => {
-      window.location.replace("/login");
-    });
-  }
-});
-
-// SIDEBAR MOBILE DRAWER TOGGLE
-const sbSide = document.getElementById("sb-collapse-side");
-const sbScrim = document.getElementById("sb-collapse-scrim");
-const sbOpenBtn = document.getElementById("sb-collapse-open");
-const sbCloseBtn = document.getElementById("sb-collapse-close");
-
-function openMobileSidebar() {
-  if (!sbSide || !sbScrim) return;
-  sbSide.classList.remove("max-lg:hidden");
-  sbSide.classList.add("flex");
-  sbScrim.removeAttribute("hidden");
-  document.body.classList.add("overflow-hidden");
-}
-function closeMobileSidebar() {
-  if (!sbSide || !sbScrim) return;
-  sbSide.classList.add("max-lg:hidden");
-  sbSide.classList.remove("flex");
-  sbScrim.setAttribute("hidden", "");
-  document.body.classList.remove("overflow-hidden");
-}
-
-if (sbOpenBtn) sbOpenBtn.addEventListener("click", openMobileSidebar);
-if (sbCloseBtn) sbCloseBtn.addEventListener("click", closeMobileSidebar);
-if (sbScrim) sbScrim.addEventListener("click", closeMobileSidebar);
-
-// NAV SWITCHER
-window.switchNav = function(viewId) {
-  if (!viewId) return;
-
-  // Update status active pada link sidebar
-  document.querySelectorAll(".sb-nav-link").forEach(b => {
-    if (b.dataset.view === viewId) {
-      b.setAttribute("aria-current", "page");
-    } else {
-      b.removeAttribute("aria-current");
-    }
-  });
-
-  // Tampilkan tab view yang dipilih
-  document.querySelectorAll(".tab-view").forEach(v => {
-    v.classList.toggle("active", v.id === viewId);
-  });
-
-  // Tutup sidebar mobile setelah menu ditekan
-  closeMobileSidebar();
-
-  const titles = {
-    'view-overview': ['Dashboard', 'Ringkasan performa ulasan dan kartu aktif'],
-    'view-cards': ['NFC Cards', 'Daftar semua kartu yang tersimpan di database'],
-    'view-studio': ['Template Desain', 'Koleksi template & generator cetak kartu Google Review'],
-    'view-layout-sticker': ['Layout Sticker', 'Cetak multi-sticker lembar A4/A3/Kustom PDF & PNG'],
-    'view-reset': ['QR Reset Kartu', 'Hapus kaitan bisnis agar kartu dapat diaktivasi ulang'],
-    'view-admins': ['Kelola Admin', 'Daftar pengelola akun administrator'],
-    'view-settings': ['Pengaturan', 'Nama aplikasi, logo kustom, dan mode tampilan']
-  };
-
-  const cur = titles[viewId] || ['Dashboard', ''];
-  const topTitle = document.getElementById("topbarTitle");
-  if (topTitle) topTitle.textContent = cur[0];
-  const sub = document.getElementById("topbarSub");
-  if (sub) sub.textContent = cur[1];
-};
-
-// Delegasi event klik ke document untuk memastikan semua tombol sb-nav-link selalu responsif
-document.addEventListener("click", (e) => {
-  const btn = e.target.closest(".sb-nav-link");
-  if (btn && btn.dataset.view) {
-    e.preventDefault();
-    window.switchNav(btn.dataset.view);
-  }
-});
-
-// OVERVIEW & TABLE DATA LOADER (DENGAN REAL-TIME ONSNAPSHOT FIRESTORE)
-let allFirestoreCardsList = [];
-let cardsUnsubscribe = null;
+// ========================================================
+// OVERVIEW & TABLE DATA LOADER (REAL-TIME FIRESTORE LISTENER)
+// ========================================================
+var allFirestoreCardsList = [];
+var cardsUnsubscribe = null;
 
 function renderCardsData(cards) {
   let total = cards.length;
@@ -1453,7 +1342,9 @@ function renderCardsData(cards) {
 
 // REALTIME LISTENER KE KOLEKSI FIRESTORE "cards"
 function setupRealtimeCardsListener() {
-  if (cardsUnsubscribe) cardsUnsubscribe();
+  if (cardsUnsubscribe) {
+    try { cardsUnsubscribe(); } catch(e){}
+  }
 
   try {
     cardsUnsubscribe = onSnapshot(collection(db, "cards"), (snapshot) => {
@@ -1483,6 +1374,121 @@ async function loadOverviewAndTable() {
   } catch (err) {
     console.error("Gagal load kartu:", err);
   }
+}
+
+// SIDEBAR MOBILE DRAWER TOGGLE
+const sbSide = document.getElementById("sb-collapse-side");
+const sbScrim = document.getElementById("sb-collapse-scrim");
+const sbOpenBtn = document.getElementById("sb-collapse-open");
+const sbCloseBtn = document.getElementById("sb-collapse-close");
+
+function openMobileSidebar() {
+  if (!sbSide || !sbScrim) return;
+  sbSide.classList.remove("max-lg:hidden");
+  sbSide.classList.add("flex");
+  sbScrim.removeAttribute("hidden");
+  document.body.classList.add("overflow-hidden");
+}
+function closeMobileSidebar() {
+  if (!sbSide || !sbScrim) return;
+  sbSide.classList.add("max-lg:hidden");
+  sbSide.classList.remove("flex");
+  sbScrim.setAttribute("hidden", "");
+  document.body.classList.remove("overflow-hidden");
+}
+
+if (sbOpenBtn) sbOpenBtn.addEventListener("click", openMobileSidebar);
+if (sbCloseBtn) sbCloseBtn.addEventListener("click", closeMobileSidebar);
+if (sbScrim) sbScrim.addEventListener("click", closeMobileSidebar);
+
+// NAV SWITCHER
+window.switchNav = function(viewId) {
+  if (!viewId) return;
+
+  // Update status active pada link sidebar
+  document.querySelectorAll(".sb-nav-link").forEach(b => {
+    if (b.dataset.view === viewId) {
+      b.setAttribute("aria-current", "page");
+    } else {
+      b.removeAttribute("aria-current");
+    }
+  });
+
+  // Tampilkan tab view yang dipilih
+  document.querySelectorAll(".tab-view").forEach(v => {
+    v.classList.toggle("active", v.id === viewId);
+  });
+
+  // Tutup sidebar mobile setelah menu ditekan
+  closeMobileSidebar();
+
+  const titles = {
+    'view-overview': ['Dashboard', 'Ringkasan performa ulasan dan kartu aktif'],
+    'view-cards': ['NFC Cards', 'Daftar semua kartu yang tersimpan di database'],
+    'view-studio': ['Template Desain', 'Koleksi template & generator cetak kartu Google Review'],
+    'view-layout-sticker': ['Layout Sticker', 'Cetak multi-sticker lembar A4/A3/Kustom PDF & PNG'],
+    'view-reset': ['QR Reset Kartu', 'Hapus kaitan bisnis agar kartu dapat diaktivasi ulang'],
+    'view-admins': ['Kelola Admin', 'Daftar pengelola akun administrator'],
+    'view-settings': ['Pengaturan', 'Nama aplikasi, logo kustom, dan mode tampilan']
+  };
+
+  const cur = titles[viewId] || ['Dashboard', ''];
+  const topTitle = document.getElementById("topbarTitle");
+  if (topTitle) topTitle.textContent = cur[0];
+  const sub = document.getElementById("topbarSub");
+  if (sub) sub.textContent = cur[1];
+};
+
+// Delegasi event klik ke document untuk memastikan semua tombol sb-nav-link selalu responsif
+document.addEventListener("click", (e) => {
+  const btn = e.target.closest(".sb-nav-link");
+  if (btn && btn.dataset.view) {
+    e.preventDefault();
+    window.switchNav(btn.dataset.view);
+  }
+});
+
+// 1. AUTHENTICATION & LOGIN CHECK
+const userEmailBadge = document.getElementById("userEmailBadge");
+const activeAdminEmailDisplay = document.getElementById("activeAdminEmailDisplay");
+const btnLogout = document.getElementById("btnLogout");
+
+function getAdminSession() {
+  const sessionStr = localStorage.getItem("ulasankuu_admin_session");
+  if (sessionStr) {
+    try {
+      return JSON.parse(sessionStr);
+    } catch(e){}
+  }
+  return null;
+}
+
+const adminSession = getAdminSession();
+if (adminSession && adminSession.username) {
+  if (userEmailBadge) userEmailBadge.textContent = adminSession.username;
+  if (activeAdminEmailDisplay) activeAdminEmailDisplay.textContent = adminSession.username + " (Super Admin)";
+  setupRealtimeCardsListener();
+} else {
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      if (userEmailBadge) userEmailBadge.textContent = user.email || "Admin";
+      if (activeAdminEmailDisplay) activeAdminEmailDisplay.textContent = user.email || "admin@ulasankuu.com";
+      setupRealtimeCardsListener();
+    } else {
+      window.location.replace("/login");
+    }
+  });
+}
+
+if (btnLogout) {
+  btnLogout.addEventListener("click", () => {
+    if (confirm("Apakah Anda yakin ingin logout?")) {
+      localStorage.removeItem("ulasankuu_admin_session");
+      signOut(auth).finally(() => {
+        window.location.replace("/login");
+      });
+    }
+  });
 }
 document.getElementById("btnReloadTable").addEventListener("click", loadOverviewAndTable);
 

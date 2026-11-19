@@ -21,10 +21,11 @@
     }
   }
 </script>
-<!-- QR Code & JSZip CDN & jsQR -->
+<!-- QR Code & JSZip CDN & jsQR & jsPDF -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
 <script src="/jsqr.min.js"></script>
+<script src="/jspdf.umd.min.js"></script>
 
 <style>
 :root {
@@ -229,7 +230,19 @@ body {
             <span class="truncate">Template Desain</span>
           </button>
         </li>
-        <!-- 4. QR Reset Kartu -->
+        <!-- 4. Layout Sticker -->
+        <li>
+          <button type="button" class="sb-nav-link group relative flex h-11 w-full items-center gap-3.5 rounded-xl px-3.5 text-neutral-600 transition-all hover:bg-neutral-200/60 hover:text-neutral-900 aria-[current=page]:bg-blue-50/80 aria-[current=page]:text-blue-600 aria-[current=page]:font-bold" data-view="view-layout-sticker">
+            <svg class="size-5 shrink-0 opacity-80 group-aria-[current=page]:opacity-100 group-aria-[current=page]:text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="7" height="7" rx="1.5"/>
+              <rect x="14" y="3" width="7" height="7" rx="1.5"/>
+              <rect x="3" y="14" width="7" height="7" rx="1.5"/>
+              <rect x="14" y="14" width="7" height="7" rx="1.5"/>
+            </svg>
+            <span class="truncate">Layout Sticker</span>
+          </button>
+        </li>
+        <!-- 5. QR Reset Kartu -->
         <li>
           <button type="button" class="sb-nav-link group relative flex h-11 w-full items-center gap-3.5 rounded-xl px-3.5 text-neutral-600 transition-all hover:bg-neutral-200/60 hover:text-neutral-900 aria-[current=page]:bg-blue-50/80 aria-[current=page]:text-blue-600 aria-[current=page]:font-bold" data-view="view-reset">
             <svg class="size-5 shrink-0 opacity-80 group-aria-[current=page]:opacity-100 group-aria-[current=page]:text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -243,7 +256,7 @@ body {
             <span class="truncate">QR Reset Kartu</span>
           </button>
         </li>
-        <!-- 5. Kelola Admin -->
+        <!-- 6. Kelola Admin -->
         <li>
           <button type="button" class="sb-nav-link group relative flex h-11 w-full items-center gap-3.5 rounded-xl px-3.5 text-neutral-600 transition-all hover:bg-neutral-200/60 hover:text-neutral-900 aria-[current=page]:bg-blue-50/80 aria-[current=page]:text-blue-600 aria-[current=page]:font-bold" data-view="view-admins">
             <svg class="size-5 shrink-0 opacity-80 group-aria-[current=page]:opacity-100 group-aria-[current=page]:text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -255,7 +268,7 @@ body {
             <span class="truncate">Kelola Admin</span>
           </button>
         </li>
-        <!-- 6. Pengaturan -->
+        <!-- 7. Pengaturan -->
         <li>
           <button type="button" class="sb-nav-link group relative flex h-11 w-full items-center gap-3.5 rounded-xl px-3.5 text-neutral-600 transition-all hover:bg-neutral-200/60 hover:text-neutral-900 aria-[current=page]:bg-blue-50/80 aria-[current=page]:text-blue-600 aria-[current=page]:font-bold" data-view="view-settings">
             <svg class="size-5 shrink-0 opacity-80 group-aria-[current=page]:opacity-100 group-aria-[current=page]:text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -658,29 +671,209 @@ body {
         </div>
       </section>
 
-      <!-- VIEW 4: RESET KARTU -->
+      <!-- VIEW 4: LAYOUT STICKER (CETAK MULTI-STICKER PER LEMBAR A4/A3/KUSTOM) -->
+      <section class="tab-view" id="view-layout-sticker">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <!-- Kolom Kiri: Form Konfigurasi Ukuran & Kartu -->
+          <div class="lg:col-span-5 space-y-5">
+            <!-- Box 1: Template & Kartu -->
+            <div class="rounded-xl border border-neutral-200/80 bg-white p-5 shadow-xs space-y-4">
+              <h3 class="text-sm font-bold text-neutral-950">Template & kartu</h3>
+              
+              <div>
+                <label class="block text-xs font-medium text-neutral-700 mb-1">Template desain</label>
+                <select id="lsTemplateSelect" class="w-full rounded-lg border border-neutral-300 bg-white px-3.5 py-2 text-xs font-semibold text-neutral-900 focus:border-zinc-950 focus:outline-none">
+                  <!-- Diisi dinamis dari daftar template -->
+                </select>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div>
+                  <label class="block text-xs font-medium text-neutral-700 mb-1">Kartu</label>
+                  <select id="lsCardScope" class="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-xs font-medium text-neutral-900 focus:border-zinc-950 focus:outline-none">
+                    <option value="all">Semua kartu</option>
+                    <option value="range">Rentang ID</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-xs font-medium text-neutral-700 mb-1">Dari ID</label>
+                  <input type="text" id="lsStartId" placeholder="awal" class="w-full rounded-lg border border-neutral-300 bg-neutral-50/50 px-3 py-2 text-xs font-mono text-neutral-900 focus:border-zinc-950 focus:bg-white focus:outline-none uppercase">
+                </div>
+                <div>
+                  <label class="block text-xs font-medium text-neutral-700 mb-1">Sampai ID</label>
+                  <input type="text" id="lsEndId" placeholder="akhir" class="w-full rounded-lg border border-neutral-300 bg-neutral-50/50 px-3 py-2 text-xs font-mono text-neutral-900 focus:border-zinc-950 focus:bg-white focus:outline-none uppercase">
+                </div>
+              </div>
+              <p class="text-[11px] text-neutral-500 leading-relaxed">
+                Setiap sticker memakai QR kartunya sendiri. Maksimal 300 kartu per unduhan; pakai rentang ID untuk sisanya.
+              </p>
+            </div>
+
+            <!-- Box 2: Ukuran (cm) & Tata Letak Grid -->
+            <div class="rounded-xl border border-neutral-200/80 bg-white p-5 shadow-xs space-y-4">
+              <h3 class="text-sm font-bold text-neutral-950">Ukuran (cm)</h3>
+
+              <div>
+                <label class="block text-xs font-medium text-neutral-700 mb-1">Canvas</label>
+                <select id="lsCanvasPreset" class="w-full rounded-lg border border-neutral-300 bg-white px-3.5 py-2 text-xs font-medium text-neutral-900 focus:border-zinc-950 focus:outline-none">
+                  <option value="a4" selected>A4 (21 x 29,7)</option>
+                  <option value="a3">A3 (29,7 x 42)</option>
+                  <option value="f4">F4 / Folio (21,5 x 33)</option>
+                  <option value="custom">Kustom</option>
+                </select>
+              </div>
+
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-xs font-medium text-neutral-700 mb-1">Lebar canvas (cm)</label>
+                  <input type="number" step="0.1" id="lsCanvasW" value="21" class="w-full rounded-lg border border-neutral-300 px-3 py-2 text-xs font-semibold text-neutral-900 focus:border-zinc-950 focus:outline-none">
+                </div>
+                <div>
+                  <label class="block text-xs font-medium text-neutral-700 mb-1">Tinggi canvas (cm)</label>
+                  <input type="number" step="0.1" id="lsCanvasH" value="29.7" class="w-full rounded-lg border border-neutral-300 px-3 py-2 text-xs font-semibold text-neutral-900 focus:border-zinc-950 focus:outline-none">
+                </div>
+              </div>
+
+              <button type="button" id="btnSwapCanvasDims" class="rounded-lg border border-neutral-300 bg-white px-3 py-1.5 text-xs font-semibold text-neutral-800 hover:bg-neutral-50 shadow-xs transition-colors">
+                Tukar lebar & tinggi
+              </button>
+
+              <div class="grid grid-cols-2 gap-3 pt-1">
+                <div>
+                  <label class="block text-xs font-medium text-neutral-700 mb-1">Lebar sticker (cm)</label>
+                  <input type="number" step="0.1" id="lsStickerW" value="5" class="w-full rounded-lg border border-neutral-300 px-3 py-2 text-xs font-semibold text-neutral-900 focus:border-zinc-950 focus:outline-none">
+                </div>
+                <div>
+                  <label class="block text-xs font-medium text-neutral-700 mb-1">Tinggi sticker (cm)</label>
+                  <input type="number" step="0.1" id="lsStickerH" value="5" class="w-full rounded-lg border border-neutral-300 px-3 py-2 text-xs font-semibold text-neutral-900 focus:border-zinc-950 focus:outline-none">
+                </div>
+              </div>
+
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-xs font-medium text-neutral-700 mb-1">Jarak antar sticker (cm)</label>
+                  <input type="number" step="0.1" id="lsGap" value="0.2" class="w-full rounded-lg border border-neutral-300 px-3 py-2 text-xs font-semibold text-neutral-900 focus:border-zinc-950 focus:outline-none">
+                </div>
+                <div>
+                  <label class="block text-xs font-medium text-neutral-700 mb-1">Orientasi / Susunan</label>
+                  <select id="lsGridMode" class="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-xs font-medium text-neutral-900 focus:border-zinc-950 focus:outline-none">
+                    <option value="auto">Otomatis (muat terbanyak)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-xs font-medium text-neutral-700 mb-1">Jika rasio berbeda</label>
+                <select id="lsFitMode" class="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-xs font-medium text-neutral-900 focus:border-zinc-950 focus:outline-none">
+                  <option value="contain">Tampilkan utuh</option>
+                  <option value="cover">Penuhi area (potong tepi)</option>
+                </select>
+              </div>
+
+              <div class="flex items-center gap-2 pt-1">
+                <input type="checkbox" id="lsCutLines" class="size-4 rounded border-neutral-300 accent-neutral-950">
+                <label for="lsCutLines" class="text-xs text-neutral-700 cursor-pointer">Garis potong tipis di tepi sticker</label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Kolom Kanan: Pratinjau Lembar & Tombol Unduh -->
+          <div class="lg:col-span-7 rounded-xl border border-neutral-200/80 bg-white p-5 shadow-xs space-y-4 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between pb-2 border-b border-neutral-100">
+                <div>
+                  <h3 class="text-base font-bold text-neutral-950">Pratinjau lembar</h3>
+                  <p class="text-xs font-medium text-neutral-600 mt-0.5" id="lsCapacitySummary">
+                    Muat 3 kolom x 5 baris = 15 sticker per lembar.
+                  </p>
+                </div>
+                <span class="inline-flex items-center rounded-full bg-neutral-100 px-2.5 py-1 text-[11px] font-bold text-neutral-800" id="lsTotalCardsCount">0 Kartu Terpilih</span>
+              </div>
+
+              <!-- AREA CANVAS PRATINJAU LEMBAR -->
+              <div class="mt-4 flex items-center justify-center rounded-xl bg-neutral-100/80 border border-neutral-200/90 p-4 min-h-[380px] max-h-[580px] overflow-auto">
+                <canvas id="lsPreviewCanvas" class="shadow-lg bg-white rounded transition-transform max-w-full max-h-[520px] object-contain"></canvas>
+              </div>
+              <p class="mt-3 text-[11px] text-neutral-500 leading-relaxed">
+                QR di pratinjau hanya contoh; saat diunduh, tiap sticker memakai QR kartu masing-masing.
+              </p>
+            </div>
+
+            <!-- Bagian Bawah: Opsi Resolusi, Format, dan Tombol Unduh -->
+            <div class="pt-4 border-t border-neutral-100 space-y-3">
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-xs font-medium text-neutral-700 mb-1">Resolusi</label>
+                  <select id="lsDpiSelect" class="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-xs font-semibold text-neutral-900 focus:border-zinc-950 focus:outline-none">
+                    <option value="300" selected>300 DPI (cetak)</option>
+                    <option value="150">150 DPI (standar)</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-xs font-medium text-neutral-700 mb-1">Format</label>
+                  <select id="lsFormatSelect" class="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-xs font-semibold text-neutral-900 focus:border-zinc-950 focus:outline-none">
+                    <option value="pdf" selected>PDF (ukuran asli)</option>
+                    <option value="png">PNG per lembar</option>
+                  </select>
+                </div>
+              </div>
+
+              <button type="button" id="btnDownloadLayout" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-6 py-2.5 text-xs font-bold text-white shadow-sm hover:bg-blue-700 transition-colors">
+                Unduh layout
+              </button>
+              <p class="text-[11px] text-neutral-500">
+                Saat mencetak PDF, pilih skala 100% (Actual size) agar ukuran sticker sesuai. Pengaturan ukuran diingat per template di browser ini.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- VIEW 5: RESET KARTU -->
       <section class="tab-view" id="view-reset">
-        <div class="max-w-lg rounded-xl border border-neutral-200/80 bg-white p-6 shadow-xs">
-          <h2 class="text-lg font-bold text-neutral-950">Reset Kartu & QR</h2>
-          <p class="mt-1 text-xs text-neutral-500">Hapus tautan ulasan kartu agar dapat diaktivasi kembali oleh pemilik baru.</p>
+        <div class="max-w-lg rounded-2xl border border-neutral-200/90 bg-white p-6 shadow-sm mx-auto my-4">
+          <!-- Logo & Brand Header -->
+          <div class="flex items-center gap-2 mb-4" id="resetLogoHeader">
+            <span class="flex size-9 shrink-0 items-center justify-center rounded-xl bg-zinc-950 text-white font-bold">
+              <svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12a10 10 0 0 1 10-10"/><path d="M2 12a10 10 0 0 0 10 10"/><path d="M12 2a10 10 0 0 1 10 10"/><path d="M12 22a10 10 0 0 0 10-10"/></svg>
+            </span>
+            <span class="text-lg font-bold text-neutral-950" id="resetAppTitle">Ulasankuu</span>
+          </div>
+
+          <h2 class="text-base font-bold text-neutral-950" id="resetHeaderTitle">Reset Kartu</h2>
+          <p class="mt-1 text-xs text-neutral-500 leading-relaxed">
+            Scan QR kartu atau ketik ID kartu, lalu masukkan PIN untuk mereset kartu. Semua pengaturan kartu akan dihapus dan kartu perlu diaktivasi ulang.
+          </p>
 
           <div id="resetMsgOk" class="hidden mt-4 rounded-lg border border-neutral-900 bg-neutral-100 p-3 text-xs font-semibold text-neutral-950"></div>
-          <div id="resetMsgErr" class="hidden mt-4 rounded-lg border border-dashed border-neutral-900 bg-neutral-50 p-3 text-xs font-semibold text-neutral-950"></div>
+          <div id="resetMsgErr" class="hidden mt-4 rounded-lg border border-dashed border-red-500 bg-red-50 p-3 text-xs font-semibold text-red-900"></div>
 
           <form id="resetForm" class="mt-5 space-y-4">
             <div>
-              <label class="block text-xs font-bold text-neutral-900 mb-1.5">Masukkan Card ID yang Ingin Direset</label>
-              <input type="text" id="resetCardId" placeholder="Contoh: AB12CD" required maxlength="12" class="w-full rounded-lg border border-neutral-300 bg-neutral-50/50 px-3.5 py-2.5 text-xs font-mono font-bold text-neutral-900 uppercase tracking-wider focus:border-zinc-950 focus:bg-white focus:outline-none">
-              <p class="mt-1 text-[11px] text-neutral-500">Pastikan ID kartu sesuai dengan yang terdaftar di database.</p>
+              <label class="block text-xs font-semibold text-neutral-900 mb-1">ID Kartu</label>
+              <div class="relative flex items-center">
+                <input type="text" id="resetCardId" placeholder="Contoh: NPT2746Z6K" required maxlength="16" class="w-full rounded-xl border border-neutral-300 bg-white px-3.5 py-2.5 pr-10 text-xs font-mono font-bold text-neutral-900 uppercase tracking-wider focus:border-zinc-950 focus:outline-none">
+                <button type="button" id="btnScanResetQR" class="absolute right-2.5 p-1 rounded-md text-neutral-400 hover:text-neutral-950 hover:bg-neutral-100 transition-colors" title="Scan QR dengan kamera">
+                  <svg class="size-4.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/></svg>
+                </button>
+              </div>
+              <p class="mt-1 text-[11px] text-neutral-500">Ketik ID kartu atau tempel link kartu. ID akan diambil otomatis.</p>
             </div>
 
-            <div class="rounded-lg border border-neutral-900 bg-neutral-50 p-3.5 text-xs text-neutral-900 leading-relaxed">
-              <b>Peringatan:</b> Mereset kartu akan mengubah status kartu menjadi <b>Belum Aktif</b> dan mengosongkan link ulasan serta PIN kartu saat ini.
+            <div>
+              <label class="block text-xs font-semibold text-neutral-900 mb-1">PIN</label>
+              <input type="password" id="resetPinInput" placeholder="6 digit angka" maxlength="8" class="w-full rounded-xl border border-neutral-300 bg-white px-3.5 py-2.5 text-xs font-mono text-neutral-900 tracking-widest focus:border-zinc-950 focus:outline-none">
+              <div class="mt-2 flex items-center gap-2">
+                <input type="checkbox" id="toggleShowResetPin" class="size-3.5 rounded border-neutral-300 accent-neutral-950 cursor-pointer">
+                <label for="toggleShowResetPin" class="text-xs text-neutral-600 cursor-pointer select-none">Tampilkan PIN</label>
+              </div>
             </div>
 
-            <button type="submit" class="w-full rounded-lg bg-zinc-950 py-2.5 text-xs font-bold text-white shadow-xs hover:bg-zinc-800 transition-colors" id="btnConfirmReset">
-              <span>Konfirmasi Reset Kartu ke Default</span>
-            </button>
+            <div class="pt-2">
+              <button type="submit" class="w-full rounded-xl bg-red-600 py-3 text-xs font-bold text-white shadow-sm hover:bg-red-700 transition-colors" id="btnConfirmReset">
+                Reset Kartu
+              </button>
+            </div>
           </form>
         </div>
       </section>
@@ -807,13 +1000,13 @@ body {
   </main>
 </div>
 
-<!-- MODAL TAMBAH TEMPLATE DENGAN AUTO-DETEKSI QR / MANUAL TWEAK -->
+<!-- MODAL TAMBAH TEMPLATE PERSIS SEPERTI SCREENSHOT USER -->
 <div id="modalAddTemplate" class="fixed inset-0 z-50 hidden bg-neutral-950/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
-  <div class="bg-white rounded-2xl max-w-2xl w-full border border-neutral-200 shadow-2xl p-6 my-8 animate-in fade-in zoom-in-95 duration-150">
-    <div class="flex items-center justify-between pb-4 border-b border-neutral-100">
-      <div>
-        <h3 class="text-base font-bold text-neutral-950">Tambah Template Desain Baru</h3>
-        <p class="text-xs text-neutral-500">Unggah gambar template dan sistem akan mendeteksi posisi QR Code secara otomatis.</p>
+  <div class="bg-white rounded-2xl max-w-lg w-full border border-neutral-200 shadow-2xl p-6 my-8 animate-in fade-in zoom-in-95 duration-150">
+    <div class="flex items-center justify-between pb-3 border-b border-neutral-100">
+      <div class="flex items-center gap-2">
+        <svg class="size-5 text-neutral-800" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        <h3 class="text-base font-bold text-neutral-950">Tambah Template</h3>
       </div>
       <button type="button" id="btnCloseAddTemplateModal" class="rounded-lg p-1 text-neutral-400 hover:text-neutral-950 hover:bg-neutral-100 transition-colors">
         <svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
@@ -822,17 +1015,19 @@ body {
 
     <form id="formAddTemplate" class="mt-4 space-y-4">
       <div>
-        <label class="block text-xs font-bold text-neutral-900 mb-1">Nama Template</label>
-        <input type="text" id="tplNameInput" placeholder="Contoh: NPT1 atau Square Blue" required class="w-full rounded-lg border border-neutral-300 bg-neutral-50/50 px-3.5 py-2 text-xs font-semibold text-neutral-900 focus:border-zinc-950 focus:bg-white focus:outline-none">
+        <label class="block text-xs font-semibold text-neutral-900 mb-1.5">Nama template</label>
+        <input type="text" id="tplNameInput" placeholder="mis. Kartu Warkop Biru" required class="w-full rounded-lg border border-neutral-300 bg-white px-3.5 py-2.5 text-xs text-neutral-900 placeholder:text-neutral-400 focus:border-zinc-950 focus:outline-none">
       </div>
 
       <div>
-        <label class="block text-xs font-bold text-neutral-900 mb-1">Pilih Berkas Gambar Template</label>
-        <input type="file" id="tplFileInput" accept="image/png, image/jpeg, image/webp" required class="block w-full text-xs text-neutral-600 file:mr-3 file:py-2 file:px-3.5 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-neutral-950 file:text-white hover:file:bg-neutral-800 file:cursor-pointer cursor-pointer border border-neutral-300 rounded-lg bg-neutral-50/40 p-1.5">
-        <p class="mt-1 text-[11px] text-neutral-500">Gunakan desain kartu berasio 1:1 (Contoh: 1024x1024, 1200x1200 px). Jika gambar memiliki QR Code di dalamnya, sistem akan otomatis membaca koordinatnya!</p>
+        <label class="block text-xs font-semibold text-neutral-900 mb-1.5">Gambar desain</label>
+        <input type="file" id="tplFileInput" accept="image/png, image/jpeg, image/webp" required class="block w-full text-xs text-neutral-600 file:mr-3 file:py-2 file:px-3.5 file:rounded-lg file:border file:border-neutral-300 file:text-xs file:font-semibold file:bg-white file:text-neutral-800 hover:file:bg-neutral-50 file:cursor-pointer cursor-pointer border border-neutral-300 rounded-lg bg-white p-1.5">
+        <p class="mt-1.5 text-[11px] text-neutral-500 leading-relaxed">
+          PNG, JPG, atau WebP, maksimal 10 MB (sekitar 4000 x 4000 px). Pakai resolusi cetak penuh; hasil unduhan berukuran sama dengan gambar ini.
+        </p>
       </div>
 
-      <!-- STATUS DETEKSI QR -->
+      <!-- STATUS DETEKSI POSISI QR -->
       <div id="tplDetectStatus" class="hidden p-3 rounded-xl text-xs font-medium border"></div>
 
       <!-- PREVIEW CANVAS DETEKSI -->
@@ -841,14 +1036,10 @@ body {
           <span class="text-xs font-bold text-neutral-800">Preview Posisi QR Template:</span>
           <span class="text-[11px] text-neutral-500" id="tplDimsLabel">0 x 0 px</span>
         </div>
-        <div class="relative max-h-72 w-full overflow-hidden rounded-xl border border-neutral-200 bg-neutral-100 flex items-center justify-center p-2">
-          <canvas id="tplPreviewCanvas" class="max-h-64 max-w-full object-contain rounded-lg shadow-xs"></canvas>
+        <div class="relative max-h-64 w-full overflow-hidden rounded-xl border border-neutral-200 bg-neutral-100 flex items-center justify-center p-2">
+          <canvas id="tplPreviewCanvas" class="max-h-56 max-w-full object-contain rounded-lg shadow-xs"></canvas>
         </div>
-        <p class="text-[11px] text-neutral-500">
-          💡 <span class="font-bold text-neutral-700">Kotak Merah/Biru:</span> Area yang akan ditempeli QR Code baru saat proses cetak kartu. Anda dapat menyesuaikan posisi jika perlu di bawah ini.
-        </p>
 
-        <!-- KOORDINAT & UKURAN QR BOX (BISA OTOMATIS / DIEDIT MANUAL) -->
         <div class="grid grid-cols-4 gap-2 pt-1">
           <div>
             <label class="block text-[11px] font-bold text-neutral-700 mb-0.5">X (%)</label>
@@ -869,12 +1060,12 @@ body {
         </div>
       </div>
 
-      <div class="pt-3 border-t border-neutral-100 flex items-center justify-end gap-2">
-        <button type="button" id="btnCancelAddTemplate" class="rounded-lg border border-neutral-300 bg-white px-4 py-2 text-xs font-bold text-neutral-700 hover:bg-neutral-50">
-          Batal
+      <div class="pt-3 flex items-center gap-2">
+        <button type="submit" id="btnSaveTemplate" class="rounded-lg bg-blue-600 px-5 py-2 text-xs font-bold text-white hover:bg-blue-700 transition-colors shadow-xs">
+          Unggah
         </button>
-        <button type="submit" id="btnSaveTemplate" disabled class="rounded-lg bg-blue-600 px-4 py-2 text-xs font-bold text-white hover:bg-blue-700 disabled:opacity-50 transition-colors">
-          Simpan Template
+        <button type="button" id="btnCancelAddTemplate" class="rounded-lg border border-neutral-300 bg-white px-4 py-2 text-xs font-semibold text-neutral-800 hover:bg-neutral-50 transition-colors">
+          Batal
         </button>
       </div>
     </form>
@@ -1906,23 +2097,49 @@ document.getElementById("btnDownloadZip").addEventListener("click", async () => 
   };
 });
 
-// RESET KARTU LOGIC
+// RESET KARTU LOGIC DENGAN PIN & AUTODETEKSI ID DARI LINK/INPUT
 const resetForm = document.getElementById("resetForm");
 const resetCardId = document.getElementById("resetCardId");
+const resetPinInput = document.getElementById("resetPinInput");
+const toggleShowResetPin = document.getElementById("toggleShowResetPin");
 const resetMsgOk = document.getElementById("resetMsgOk");
 const resetMsgErr = document.getElementById("resetMsgErr");
 const btnConfirmReset = document.getElementById("btnConfirmReset");
+
+if (toggleShowResetPin && resetPinInput) {
+  toggleShowResetPin.addEventListener("change", () => {
+    resetPinInput.type = toggleShowResetPin.checked ? "text" : "password";
+  });
+}
+
+// Otomatis ekstrak ID jika user menempel URL lengkap (mis: https://ulasankuu.my.id/NPT001 atau tap.nipantap.my.id/...)
+if (resetCardId) {
+  resetCardId.addEventListener("input", () => {
+    let val = resetCardId.value.trim();
+    if (val.includes("/")) {
+      const parts = val.split("/").filter(Boolean);
+      val = parts[parts.length - 1];
+      resetCardId.value = val.toUpperCase();
+    }
+  });
+}
 
 resetForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   resetMsgOk.classList.add("hidden");
   resetMsgErr.classList.add("hidden");
 
-  const id = resetCardId.value.trim().toUpperCase();
+  let id = resetCardId.value.trim().toUpperCase();
+  if (id.includes("/")) {
+    const parts = id.split("/").filter(Boolean);
+    id = parts[parts.length - 1];
+  }
+  const pin = resetPinInput ? resetPinInput.value.trim() : "";
+
   if (!id) return;
 
   btnConfirmReset.disabled = true;
-  btnConfirmReset.innerHTML = `<div class="spinner"></div>`;
+  btnConfirmReset.innerHTML = `<div class="spinner"></div> Mereset kartu...`;
 
   try {
     const cardRef = doc(db, "cards", id);
@@ -1930,6 +2147,12 @@ resetForm.addEventListener("submit", async (e) => {
 
     if (!snap.exists()) {
       throw new Error(`Kartu dengan ID "${id}" tidak ditemukan di database.`);
+    }
+
+    const cardData = snap.data();
+    // Validasi PIN jika kartu memiliki PIN tersimpan dan user memasukkan PIN
+    if (cardData.pin && pin && String(cardData.pin) !== String(pin)) {
+      throw new Error(`PIN yang Anda masukkan salah. Tidak dapat mereset kartu.`);
     }
 
     await updateDoc(cardRef, {
@@ -1941,9 +2164,10 @@ resetForm.addEventListener("submit", async (e) => {
       resetAt: new Date().toISOString()
     });
 
-    resetMsgOk.textContent = `Kartu ${id} berhasil di-reset menjadi KOSONG / BELUM AKTIF.`;
+    resetMsgOk.innerHTML = `✓ Kartu <b>${id}</b> berhasil di-reset menjadi KOSONG / BELUM AKTIF. Data link dan PIN telah dibersihkan.`;
     resetMsgOk.classList.remove("hidden");
     resetCardId.value = "";
+    if (resetPinInput) resetPinInput.value = "";
     loadOverviewAndTable();
   } catch (err) {
     console.error("Gagal reset kartu:", err);
@@ -1951,9 +2175,349 @@ resetForm.addEventListener("submit", async (e) => {
     resetMsgErr.classList.remove("hidden");
   } finally {
     btnConfirmReset.disabled = false;
-    btnConfirmReset.innerHTML = `<span>Konfirmasi Reset Kartu ke Default</span>`;
+    btnConfirmReset.innerHTML = `Reset Kartu`;
   }
 });
+
+// ==========================================
+// LAYOUT STICKER LOGIC (MULTI-STICKER A4/A3/CUSTOM PDF & PNG)
+// ==========================================
+const lsTemplateSelect = document.getElementById("lsTemplateSelect");
+const lsCardScope = document.getElementById("lsCardScope");
+const lsStartId = document.getElementById("lsStartId");
+const lsEndId = document.getElementById("lsEndId");
+const lsCanvasPreset = document.getElementById("lsCanvasPreset");
+const lsCanvasW = document.getElementById("lsCanvasW");
+const lsCanvasH = document.getElementById("lsCanvasH");
+const btnSwapCanvasDims = document.getElementById("btnSwapCanvasDims");
+const lsStickerW = document.getElementById("lsStickerW");
+const lsStickerH = document.getElementById("lsStickerH");
+const lsGap = document.getElementById("lsGap");
+const lsFitMode = document.getElementById("lsFitMode");
+const lsCutLines = document.getElementById("lsCutLines");
+const lsDpiSelect = document.getElementById("lsDpiSelect");
+const lsFormatSelect = document.getElementById("lsFormatSelect");
+const lsPreviewCanvas = document.getElementById("lsPreviewCanvas");
+const lsCapacitySummary = document.getElementById("lsCapacitySummary");
+const lsTotalCardsCount = document.getElementById("lsTotalCardsCount");
+const btnDownloadLayout = document.getElementById("btnDownloadLayout");
+
+function updateLayoutStickerTemplates() {
+  if (!lsTemplateSelect) return;
+  const templates = getSavedTemplates();
+  const activeTpl = getActiveTemplate();
+  lsTemplateSelect.innerHTML = templates.map(t => `
+    <option value="${t.id}" ${t.id === activeTpl.id ? 'selected' : ''}>${t.name}</option>
+  `).join("");
+}
+
+function calculateGridCapacity() {
+  const cW = parseFloat(lsCanvasW.value) || 21;
+  const cH = parseFloat(lsCanvasH.value) || 29.7;
+  const sW = parseFloat(lsStickerW.value) || 5;
+  const sH = parseFloat(lsStickerH.value) || 5;
+  const gap = parseFloat(lsGap.value) || 0.2;
+
+  // Margin tepi minimum (misal 0.5 cm atau 5 mm)
+  const margin = 0.5;
+  const availW = Math.max(0, cW - (margin * 2));
+  const availH = Math.max(0, cH - (margin * 2));
+
+  // Hitung kolom: (cols * sW) + ((cols - 1) * gap) <= availW
+  // cols * (sW + gap) - gap <= availW => cols = floor((availW + gap) / (sW + gap))
+  const cols = Math.max(1, Math.floor((availW + gap) / (sW + gap)));
+  const rows = Math.max(1, Math.floor((availH + gap) / (sH + gap)));
+  const perSheet = cols * rows;
+
+  return { cW, cH, sW, sH, gap, margin, cols, rows, perSheet };
+}
+
+function getSelectedCardsForLayout() {
+  const scope = lsCardScope.value;
+  if (!allFirestoreCardsList || allFirestoreCardsList.length === 0) {
+    return [{ id: "SAMPLE1", url: BASE_URL + "SAMPLE1" }];
+  }
+
+  if (scope === "all") {
+    return allFirestoreCardsList.slice(0, 300);
+  } else {
+    const start = (lsStartId.value || "").trim().toUpperCase();
+    const end = (lsEndId.value || "").trim().toUpperCase();
+    if (!start && !end) return allFirestoreCardsList.slice(0, 300);
+
+    let started = !start;
+    const filtered = [];
+    for (const card of allFirestoreCardsList) {
+      if (!started && card.id.toUpperCase() === start) started = true;
+      if (started) {
+        filtered.push(card);
+        if (end && card.id.toUpperCase() === end) break;
+      }
+    }
+    return filtered.length > 0 ? filtered.slice(0, 300) : allFirestoreCardsList.slice(0, 300);
+  }
+}
+
+function renderLayoutStickerPreview() {
+  if (!lsPreviewCanvas) return;
+  const grid = calculateGridCapacity();
+  const summaryText = `Muat ${grid.cols} kolom x ${grid.rows} baris = ${grid.perSheet} sticker per lembar.`;
+  lsCapacitySummary.textContent = summaryText;
+
+  const cards = getSelectedCardsForLayout();
+  lsTotalCardsCount.textContent = `${cards.length} Kartu Terpilih`;
+
+  // Render visual lembar pada canvas preview
+  const canvas = lsPreviewCanvas;
+  const ctx = canvas.getContext("2d");
+
+  // Skala rendering preview (lebar 700px)
+  const previewPixelWidth = 700;
+  const scale = previewPixelWidth / grid.cW;
+  canvas.width = previewPixelWidth;
+  canvas.height = Math.round(grid.cH * scale);
+
+  // Background kertas putih
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Border kertas
+  ctx.strokeStyle = "#e5e5e5";
+  ctx.lineWidth = 1;
+  ctx.strokeRect(0, 0, canvas.width, canvas.height);
+
+  // Dapatkan template yang dipilih
+  const templates = getSavedTemplates();
+  const tplId = lsTemplateSelect.value;
+  const tpl = templates.find(t => t.id === tplId) || getActiveTemplate();
+
+  const img = new Image();
+  img.crossOrigin = "anonymous";
+  img.src = tpl.imageUrl;
+  img.onload = () => {
+    // Total lebar & tinggi grid sticker untuk di-center di lembar
+    const totalGridW = (grid.cols * grid.sW) + ((grid.cols - 1) * grid.gap);
+    const totalGridH = (grid.rows * grid.sH) + ((grid.rows - 1) * grid.gap);
+    const startX = (grid.cW - totalGridW) / 2;
+    const startY = (grid.cH - totalGridH) / 2;
+
+    const withCutLines = lsCutLines.checked;
+
+    for (let r = 0; r < grid.rows; r++) {
+      for (let c = 0; c < grid.cols; c++) {
+        const xCm = startX + c * (grid.sW + grid.gap);
+        const yCm = startY + r * (grid.sH + grid.gap);
+
+        const pxX = Math.round(xCm * scale);
+        const pxY = Math.round(yCm * scale);
+        const pxW = Math.round(grid.sW * scale);
+        const pxH = Math.round(grid.sH * scale);
+
+        // Gambar sticker template
+        ctx.drawImage(img, pxX, pxY, pxW, pxH);
+
+        // Garis potong jika diaktifkan
+        if (withCutLines) {
+          ctx.strokeStyle = "#94a3b8";
+          ctx.lineWidth = 0.8;
+          ctx.setLineDash([3, 3]);
+          ctx.strokeRect(pxX, pxY, pxW, pxH);
+          ctx.setLineDash([]);
+        }
+      }
+    }
+  };
+}
+
+// Preset ukuran Canvas (A4, A3, F4)
+if (lsCanvasPreset) {
+  lsCanvasPreset.addEventListener("change", () => {
+    const p = lsCanvasPreset.value;
+    if (p === "a4") {
+      lsCanvasW.value = 21;
+      lsCanvasH.value = 29.7;
+    } else if (p === "a3") {
+      lsCanvasW.value = 29.7;
+      lsCanvasH.value = 42;
+    } else if (p === "f4") {
+      lsCanvasW.value = 21.5;
+      lsCanvasH.value = 33;
+    }
+    renderLayoutStickerPreview();
+  });
+}
+
+// Tombol tukar lebar & tinggi canvas
+if (btnSwapCanvasDims) {
+  btnSwapCanvasDims.addEventListener("click", () => {
+    const temp = lsCanvasW.value;
+    lsCanvasW.value = lsCanvasH.value;
+    lsCanvasH.value = temp;
+    renderLayoutStickerPreview();
+  });
+}
+
+// Event listener perubahan opsi layout
+[lsTemplateSelect, lsCardScope, lsStartId, lsEndId, lsCanvasW, lsCanvasH, lsStickerW, lsStickerH, lsGap, lsFitMode, lsCutLines].forEach(el => {
+  if (el) el.addEventListener("input", renderLayoutStickerPreview);
+});
+
+// GENERATE & UNDUH LAYOUT (PDF / PNG LEMBAR)
+if (btnDownloadLayout) {
+  btnDownloadLayout.addEventListener("click", async () => {
+    const cards = getSelectedCardsForLayout();
+    if (cards.length === 0) {
+      alert("Tidak ada kartu yang dapat dicetak.");
+      return;
+    }
+
+    const grid = calculateGridCapacity();
+    const dpi = parseInt(lsDpiSelect.value) || 300;
+    const format = lsFormatSelect.value;
+    const withCutLines = lsCutLines.checked;
+
+    const templates = getSavedTemplates();
+    const tpl = templates.find(t => t.id === lsTemplateSelect.value) || getActiveTemplate();
+
+    const origBtnHtml = btnDownloadLayout.innerHTML;
+    btnDownloadLayout.disabled = true;
+    btnDownloadLayout.innerHTML = `<div class="spinner"></div> Menyiapkan layout...`;
+
+    try {
+      // 1 cm = dpi / 2.54 pixel
+      const pxPerCm = dpi / 2.54;
+      const sheetW = Math.round(grid.cW * pxPerCm);
+      const sheetH = Math.round(grid.cH * pxPerCm);
+      const stickerW = Math.round(grid.sW * pxPerCm);
+      const stickerH = Math.round(grid.sH * pxPerCm);
+      const gapPx = Math.round(grid.gap * pxPerCm);
+
+      const totalGridW = (grid.cols * grid.sW) + ((grid.cols - 1) * grid.gap);
+      const totalGridH = (grid.rows * grid.sH) + ((grid.rows - 1) * grid.gap);
+      const startXPx = Math.round(((grid.cW - totalGridW) / 2) * pxPerCm);
+      const startYPx = Math.round(((grid.cH - totalGridH) / 2) * pxPerCm);
+
+      // Load background template gambar
+      const bgImg = new Image();
+      bgImg.crossOrigin = "anonymous";
+      bgImg.src = tpl.imageUrl;
+      await new Promise((res, rej) => {
+        bgImg.onload = res;
+        bgImg.onerror = rej;
+      });
+
+      const totalSheets = Math.ceil(cards.length / grid.perSheet);
+
+      let pdfDoc = null;
+      if (format === "pdf") {
+        const { jsPDF } = window.jspdf;
+        const orientation = grid.cW > grid.cH ? "landscape" : "portrait";
+        pdfDoc = new jsPDF({
+          orientation,
+          unit: "cm",
+          format: [grid.cW, grid.cH]
+        });
+      }
+
+      const zip = format === "png" && totalSheets > 1 ? new JSZip() : null;
+
+      for (let s = 0; s < totalSheets; s++) {
+        btnDownloadLayout.innerHTML = `<div class="spinner"></div> Memproses Lembar ${s + 1}/${totalSheets}...`;
+
+        const sheetCanvas = document.createElement("canvas");
+        sheetCanvas.width = sheetW;
+        sheetCanvas.height = sheetH;
+        const ctx = sheetCanvas.getContext("2d");
+
+        // Background kertas putih bersih
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(0, 0, sheetW, sheetH);
+
+        const sheetCards = cards.slice(s * grid.perSheet, (s + 1) * grid.perSheet);
+
+        for (let idx = 0; idx < sheetCards.length; idx++) {
+          const card = sheetCards[idx];
+          const col = idx % grid.cols;
+          const row = Math.floor(idx / grid.cols);
+
+          const posX = startXPx + col * (stickerW + gapPx);
+          const posY = startYPx + row * (stickerH + gapPx);
+
+          // Gambar background template sticker
+          ctx.drawImage(bgImg, posX, posY, stickerW, stickerH);
+
+          // Generate QR code kartu ini
+          const qrDiv = document.createElement("div");
+          new QRCode(qrDiv, {
+            text: card.url,
+            width: 300,
+            height: 300,
+            correctLevel: QRCode.CorrectLevel.H
+          });
+
+          await new Promise(r => setTimeout(r, 20));
+          const qrCanvas = qrDiv.querySelector("canvas");
+          if (qrCanvas) {
+            // Posisi QR sesuai koordinat template
+            const qx = posX + Math.round((tpl.qrX / 100) * stickerW);
+            const qy = posY + Math.round((tpl.qrY / 100) * stickerH);
+            const qw = Math.round((tpl.qrW / 100) * stickerW);
+            const qh = Math.round((tpl.qrH / 100) * stickerH);
+
+            ctx.fillStyle = "#ffffff";
+            ctx.fillRect(qx, qy, qw, qh);
+            ctx.drawImage(qrCanvas, qx, qy, qw, qh);
+          }
+
+          // Garis potong
+          if (withCutLines) {
+            ctx.strokeStyle = "#94a3b8";
+            ctx.lineWidth = Math.max(1, Math.round(pxPerCm * 0.02));
+            ctx.strokeRect(posX, posY, stickerW, stickerH);
+          }
+        }
+
+        if (format === "pdf") {
+          if (s > 0) pdfDoc.addPage([grid.cW, grid.cH], grid.cW > grid.cH ? "landscape" : "portrait");
+          const imgData = sheetCanvas.toDataURL("image/jpeg", 0.95);
+          pdfDoc.addImage(imgData, "JPEG", 0, 0, grid.cW, grid.cH);
+        } else if (format === "png") {
+          if (totalSheets === 1) {
+            const a = document.createElement("a");
+            a.download = `layout-sticker-${tpl.name}-${grid.cW}x${grid.cH}cm.png`;
+            a.href = sheetCanvas.toDataURL("image/png");
+            a.click();
+          } else {
+            const b64 = sheetCanvas.toDataURL("image/png").split(",")[1];
+            zip.file(`lembar-${s + 1}-${grid.cW}x${grid.cH}cm.png`, b64, { base64: true });
+          }
+        }
+      }
+
+      if (format === "pdf") {
+        pdfDoc.save(`layout-sticker-${tpl.name}-${grid.cW}x${grid.cH}cm.pdf`);
+      } else if (format === "png" && totalSheets > 1) {
+        const zipBlob = await zip.generateAsync({ type: "blob" });
+        const a = document.createElement("a");
+        a.download = `layout-sticker-png-${totalSheets}-lembar.zip`;
+        a.href = URL.createObjectURL(zipBlob);
+        a.click();
+      }
+
+      alert(`Sukses mengunduh layout sticker (${cards.length} kartu, ${totalSheets} lembar)!`);
+    } catch (err) {
+      console.error("Gagal cetak layout:", err);
+      alert("Gagal mengunduh layout: " + err.message);
+    } finally {
+      btnDownloadLayout.disabled = false;
+      btnDownloadLayout.innerHTML = origBtnHtml;
+    }
+  });
+}
+
+// Inisialisasi awal Layout Sticker
+updateLayoutStickerTemplates();
+renderLayoutStickerPreview();
 
 // SETTINGS LOGIC (NAMA APLIKASI, LOGO, DAN DISPLAY MODE)
 const SETTINGS_KEY = "ulasankuu_app_settings";
@@ -1997,6 +2561,13 @@ function applyBranding(cfg) {
   const settingsLogoPreview = document.getElementById("settingsLogoPreviewBox");
   const currentLogoLabel = document.getElementById("currentLogoLabel");
 
+  // Update juga branding di view Reset Kartu
+  const resetAppTitle = document.getElementById("resetAppTitle");
+  const resetHeaderTitle = document.getElementById("resetHeaderTitle");
+  const resetLogoHeader = document.getElementById("resetLogoHeader");
+  if (resetAppTitle) resetAppTitle.textContent = cfg.appName || "Ulasankuu";
+  if (resetHeaderTitle) resetHeaderTitle.textContent = `Reset ${cfg.appName || "Ulasankuu"}`;
+
   if (titleDisplay) titleDisplay.textContent = cfg.appName || "Ulasankuu";
   document.title = (cfg.appName || "Ulasankuu") + " | Admin Dashboard";
 
@@ -2011,6 +2582,14 @@ function applyBranding(cfg) {
         logoBox.className = "flex size-9 shrink-0 items-center justify-center overflow-hidden";
       }
       logoBox.innerHTML = `<img src="${cfg.logoData}" alt="${cfg.appName}" class="max-h-9 w-auto object-contain">`;
+    }
+    if (resetLogoHeader) {
+      resetLogoHeader.innerHTML = `
+        <div class="h-9 max-w-[140px] flex items-center overflow-hidden">
+          <img src="${cfg.logoData}" alt="${cfg.appName}" class="max-h-9 w-auto object-contain">
+        </div>
+        ${cfg.displayMode !== "logo-only" ? `<span class="text-lg font-bold text-neutral-950">${cfg.appName || "Ulasankuu"}</span>` : ''}
+      `;
     }
     if (settingsLogoPreview) settingsLogoPreview.innerHTML = `<img src="${cfg.logoData}" alt="${cfg.appName}" class="size-full object-contain p-0.5">`;
     if (currentLogoLabel) currentLogoLabel.textContent = "Logo saat ini: Custom Logo Aktif ✓";

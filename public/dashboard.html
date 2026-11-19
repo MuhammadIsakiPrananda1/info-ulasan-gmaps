@@ -1150,10 +1150,13 @@ function renderCardPreview(cardData) {
 
     <div style="display:flex;justify-content:space-between;align-items:center;width:100%">
       <span class="card-id-badge">ID: ${id}</span>
-      <a class="btn btn-secondary btn-sm" href="${url}" target="_blank">Buka</a>
+      <a class="btn btn-secondary btn-sm" href="${url}" target="_blank">Buka Link</a>
     </div>
 
-    <button type="button" class="btn btn-secondary btn-sm w-full" id="dl-png-${id}">Download PNG Kartu</button>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%">
+      <button type="button" class="btn btn-primary btn-sm" id="dl-png-${id}" title="Download Kartu Desain Google Review (10x10 cm)">Unduh Kartu</button>
+      <button type="button" class="btn btn-secondary btn-sm" id="dl-qr-${id}" title="Download Gambar QR Code saja">Unduh QR Saja</button>
+    </div>
   `;
 
   cardsCatalog.appendChild(wrap);
@@ -1167,6 +1170,16 @@ function renderCardPreview(cardData) {
   });
 
   wrap.querySelector(`#dl-png-${id}`).onclick = () => downloadMergedCardPNG(id, wrap);
+  wrap.querySelector(`#dl-qr-${id}`).onclick = () => downloadSingleQRPNG(id, wrap);
+}
+
+function downloadSingleQRPNG(id, wrapElement) {
+  const qrCanvas = wrapElement.querySelector(".qr-overlay-box canvas");
+  if (!qrCanvas) return;
+  const a = document.createElement("a");
+  a.download = `qrcode-${id}.png`;
+  a.href = qrCanvas.toDataURL("image/png");
+  a.click();
 }
 
 function downloadMergedCardPNG(id, wrapElement) {
@@ -1177,20 +1190,20 @@ function downloadMergedCardPNG(id, wrapElement) {
   bgImg.crossOrigin = "anonymous";
   bgImg.src = "/card-base.png";
   bgImg.onload = () => {
+    // Ukuran 10 x 10 cm pada 300 DPI = 1181 x 1181 piksel
     const canvas = document.createElement("canvas");
-    canvas.width = 1024;
-    canvas.height = 1024;
+    canvas.width = 1181;
+    canvas.height = 1181;
     const ctx = canvas.getContext("2d");
 
-    ctx.drawImage(bgImg, 0, 0, 1024, 1024);
-    ctx.drawImage(qrCanvas, 612, 585, 253, 245);
-    ctx.fillStyle = "#141414";
-    ctx.font = "bold 20px monospace";
-    ctx.textAlign = "center";
-    ctx.fillText("ID: " + id, 740, 915);
+    // Gambar background template kartu
+    ctx.drawImage(bgImg, 0, 0, 1181, 1181);
+    // Pasang QR Code tepat pada posisi kotak template (skala proporsional 10x10 cm)
+    // 612/1024 * 1181 = ~706, 585/1024 * 1181 = ~675, 253/1024 * 1181 = ~292, 245/1024 * 1181 = ~282
+    ctx.drawImage(qrCanvas, 706, 675, 292, 282);
 
     const a = document.createElement("a");
-    a.download = `kartu-nfc-review-${id}.png`;
+    a.download = `kartu-nfc-review-${id}-10x10cm.png`;
     a.href = canvas.toDataURL("image/png");
     a.click();
   };
@@ -1267,11 +1280,11 @@ btnRunGenerate.addEventListener("click", async () => {
   btnRunGenerate.textContent = "Generate Desain Kartu";
 });
 
-// DOWNLOAD ZIP SEMUA KARTU HASIL MERGE TEMPLATE
+// DOWNLOAD ZIP SEMUA KARTU HASIL MERGE TEMPLATE (2 FOTO PER KARTU: KARTU 10x10 & QR CODE)
 document.getElementById("btnDownloadZip").addEventListener("click", async () => {
   if (generatedCards.length === 0) return;
   const zip = new JSZip();
-  logStudio("Menyiapkan berkas ZIP kartu template...");
+  logStudio("Menyiapkan berkas ZIP: Kartu 10x10 cm + QR Code...");
 
   const bgImg = new Image();
   bgImg.crossOrigin = "anonymous";
@@ -1283,29 +1296,30 @@ document.getElementById("btnDownloadZip").addEventListener("click", async () => 
       const qrCanvas = wrap.querySelector(".qr-overlay-box canvas");
       if(!qrCanvas) continue;
 
+      // 1. Gambar Desain Kartu Ukuran 10 x 10 cm (1181 x 1181 px pada 300 DPI cetak)
       const canvas = document.createElement("canvas");
-      canvas.width = 1024;
-      canvas.height = 1024;
+      canvas.width = 1181;
+      canvas.height = 1181;
       const ctx = canvas.getContext("2d");
 
-      ctx.drawImage(bgImg, 0, 0, 1024, 1024);
-      ctx.drawImage(qrCanvas, 612, 585, 253, 245);
-      ctx.fillStyle = "#141414";
-      ctx.font = "bold 20px monospace";
-      ctx.textAlign = "center";
-      ctx.fillText("ID: " + c.id, 740, 915);
+      ctx.drawImage(bgImg, 0, 0, 1181, 1181);
+      ctx.drawImage(qrCanvas, 706, 675, 292, 282);
 
-      const b64 = canvas.toDataURL("image/png").split(",")[1];
-      zip.file(`kartu-${c.id}.png`, b64, { base64: true });
+      const cardB64 = canvas.toDataURL("image/png").split(",")[1];
+      zip.file(`kartu-${c.id}-10x10cm.png`, cardB64, { base64: true });
+
+      // 2. Gambar QR Code Terpisah
+      const qrB64 = qrCanvas.toDataURL("image/png").split(",")[1];
+      zip.file(`qrcode-${c.id}.png`, qrB64, { base64: true });
     }
 
-    zip.file("daftar-kartu.txt", generatedCards.map(c => `${c.id} -> ${c.url}`).join("\n"));
+    zip.file("daftar-kartu.txt", generatedCards.map(c => `ID: ${c.id}\nURL: ${c.url}\nUkuran Kartu: 10x10 cm\n-------------------------`).join("\n"));
     const blob = await zip.generateAsync({ type: "blob" });
     const a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
-    a.download = "kartu-nfc-google-review.zip";
+    a.download = "paket-kartu-nfc-10x10cm.zip";
     a.click();
-    logStudio("Semua kartu template berhasil di-download.");
+    logStudio("Berkas ZIP berhasil diunduh (terisi 2 foto: Kartu 10x10 cm & QR Code terpisah).");
   };
 });
 

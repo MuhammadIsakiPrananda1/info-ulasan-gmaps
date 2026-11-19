@@ -817,12 +817,13 @@ tr:hover td { background: #fafafa; }
                 <th>Status</th>
                 <th>Nama Bisnis</th>
                 <th>Tujuan Review Google Maps</th>
+                <th>Unduh Desain (10x10)</th>
                 <th>Aksi</th>
               </tr>
             </thead>
             <tbody id="tableCardsBody">
               <tr>
-                <td colspan="5" style="text-align:center;padding:24px;color:var(--text-muted)">Memuat data kartu...</td>
+                <td colspan="6" style="text-align:center;padding:24px;color:var(--text-muted)">Memuat data kartu...</td>
               </tr>
             </tbody>
           </table>
@@ -1052,6 +1053,18 @@ async function loadOverviewAndTable() {
             ${data.destination ? `<a href="${data.destination}" target="_blank" style="color:#141414;text-decoration:underline;font-weight:600">${data.destination}</a>` : '<span style="color:var(--text-muted)">Belum diaktivasi</span>'}
           </td>
           <td>
+            <div style="display:flex;gap:6px;align-items:center">
+              <button type="button" class="btn btn-secondary btn-sm" onclick="downloadCardById('${id}')" title="Unduh Kartu 10x10 cm" style="padding:4px 9px;font-size:11.5px;display:inline-flex;align-items:center;gap:4px">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Kartu
+              </button>
+              <button type="button" class="btn btn-secondary btn-sm" onclick="downloadQRById('${id}')" title="Unduh QR Code Saja" style="padding:4px 9px;font-size:11.5px;display:inline-flex;align-items:center;gap:4px">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 7h.01M17 7h.01M7 17h.01M17 17h.01"/></svg>
+                QR
+              </button>
+            </div>
+          </td>
+          <td>
             <a href="${BASE_URL + id}" target="_blank" class="btn btn-secondary btn-sm" style="padding:4px 8px;font-size:11px">Tes Link</a>
           </td>
         </tr>
@@ -1063,7 +1076,7 @@ async function loadOverviewAndTable() {
     document.getElementById("statInactiveCards").textContent = total - active;
 
     const tbody = document.getElementById("tableCardsBody");
-    tbody.innerHTML = total > 0 ? html : `<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--text-muted)">Belum ada kartu di database.</td></tr>`;
+    tbody.innerHTML = total > 0 ? html : `<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--text-muted)">Belum ada kartu di database.</td></tr>`;
   } catch (err) {
     console.error("Gagal load kartu:", err);
   }
@@ -1173,14 +1186,60 @@ function renderCardPreview(cardData) {
   wrap.querySelector(`#dl-qr-${id}`).onclick = () => downloadSingleQRPNG(id, wrap);
 }
 
-function downloadSingleQRPNG(id, wrapElement) {
-  const qrCanvas = wrapElement.querySelector(".qr-overlay-box canvas");
-  if (!qrCanvas) return;
-  const a = document.createElement("a");
-  a.download = `qrcode-${id}.png`;
-  a.href = qrCanvas.toDataURL("image/png");
-  a.click();
-}
+// DOWNLOAD INDIVIDUAL CARD & QR FROM FIRESTORE TABLE
+window.downloadQRById = function(id) {
+  const url = BASE_URL + id;
+  const tempDiv = document.createElement("div");
+  new QRCode(tempDiv, {
+    text: url,
+    width: 300,
+    height: 300,
+    correctLevel: QRCode.CorrectLevel.H
+  });
+
+  setTimeout(() => {
+    const qrCanvas = tempDiv.querySelector("canvas");
+    if (!qrCanvas) return;
+    const a = document.createElement("a");
+    a.download = `qrcode-${id}.png`;
+    a.href = qrCanvas.toDataURL("image/png");
+    a.click();
+  }, 100);
+};
+
+window.downloadCardById = function(id) {
+  const url = BASE_URL + id;
+  const tempDiv = document.createElement("div");
+  new QRCode(tempDiv, {
+    text: url,
+    width: 300,
+    height: 300,
+    correctLevel: QRCode.CorrectLevel.H
+  });
+
+  setTimeout(() => {
+    const qrCanvas = tempDiv.querySelector("canvas");
+    if (!qrCanvas) return;
+
+    const bgImg = new Image();
+    bgImg.crossOrigin = "anonymous";
+    bgImg.src = "/card-base.png";
+    bgImg.onload = () => {
+      const canvas = document.createElement("canvas");
+      canvas.width = 1181;
+      canvas.height = 1181;
+      const ctx = canvas.getContext("2d");
+
+      ctx.drawImage(bgImg, 0, 0, 1181, 1181);
+      ctx.drawImage(qrCanvas, 706, 675, 292, 282);
+
+      const a = document.createElement("a");
+      a.download = `kartu-nfc-review-${id}-10x10cm.png`;
+      a.href = canvas.toDataURL("image/png");
+      a.click();
+    };
+  }, 100);
+};
 
 function downloadMergedCardPNG(id, wrapElement) {
   const qrCanvas = wrapElement.querySelector(".qr-overlay-box canvas");

@@ -800,7 +800,11 @@ tr:hover td { background: #fafafa; }
             <h2>Daftar Semua Kartu di Firestore</h2>
             <p>Data kartu tersimpan, status aktivasi, dan tujuan Google Maps.</p>
           </div>
-          <div style="display:flex;gap:10px;align-items:center">
+          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+            <button type="button" class="btn btn-primary btn-sm" id="btnDownloadAllTableZip" style="display:inline-flex;align-items:center;gap:6px">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Download Semua ZIP
+            </button>
             <button type="button" class="btn btn-secondary btn-sm" id="btnReloadTable">Refresh Data</button>
             <button type="button" class="btn btn-danger btn-sm" id="btnResetAllFirestore" style="border: 1.5px solid #141414; background: #ffffff; color: #141414;">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
@@ -1026,12 +1030,15 @@ document.querySelectorAll(".sb-btn").forEach(btn => {
 });
 
 // OVERVIEW & TABLE DATA LOADER
+let allFirestoreCardsList = [];
+
 async function loadOverviewAndTable() {
   try {
     const snap = await getDocs(collection(db, "cards"));
     let total = 0;
     let active = 0;
     let html = "";
+    allFirestoreCardsList = [];
 
     snap.forEach(docSnap => {
       total++;
@@ -1039,6 +1046,8 @@ async function loadOverviewAndTable() {
       const id = docSnap.id;
       const isActive = data.active === true;
       if (isActive) active++;
+
+      allFirestoreCardsList.push({ id, url: BASE_URL + id, ...data });
 
       html += `
         <tr>
@@ -1082,6 +1091,86 @@ async function loadOverviewAndTable() {
   }
 }
 document.getElementById("btnReloadTable").addEventListener("click", loadOverviewAndTable);
+
+// DOWNLOAD SEMUA KARTU DARI FIRESTORE KE DALAM ZIP (KARTU 10X10 + QR CODE)
+document.getElementById("btnDownloadAllTableZip").addEventListener("click", async () => {
+  if (allFirestoreCardsList.length === 0) {
+    alert("Belum ada kartu di database untuk diunduh.");
+    return;
+  }
+
+  const btn = document.getElementById("btnDownloadAllTableZip");
+  const origText = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = `<div class="spinner"></div> Menyiapkan ZIP (${allFirestoreCardsList.length} kartu)...`;
+
+  try {
+    const zip = new JSZip();
+    const bgImg = new Image();
+    bgImg.crossOrigin = "anonymous";
+    bgImg.src = "/card-base.png";
+
+    await new Promise((resolve, reject) => {
+      bgImg.onload = resolve;
+      bgImg.onerror = reject;
+    });
+
+    for (let i = 0; i < allFirestoreCardsList.length; i++) {
+      const card = allFirestoreCardsList[i];
+      const id = card.id;
+      const url = card.url;
+
+      btn.innerHTML = `<div class="spinner"></div> Memproses ${i+1}/${allFirestoreCardsList.length}...`;
+
+      // Buat QR Code offscreen
+      const tempDiv = document.createElement("div");
+      new QRCode(tempDiv, {
+        text: url,
+        width: 300,
+        height: 300,
+        correctLevel: QRCode.CorrectLevel.H
+      });
+
+      // Tunggu canvas QR ter-render
+      await new Promise(r => setTimeout(r, 60));
+      const qrCanvas = tempDiv.querySelector("canvas");
+      if (!qrCanvas) continue;
+
+      // 1. Desain Kartu 10x10 cm (1181x1181 px @ 300 DPI)
+      const canvas = document.createElement("canvas");
+      canvas.width = 1181;
+      canvas.height = 1181;
+      const ctx = canvas.getContext("2d");
+
+      ctx.drawImage(bgImg, 0, 0, 1181, 1181);
+      ctx.drawImage(qrCanvas, 706, 675, 292, 282);
+
+      const cardB64 = canvas.toDataURL("image/png").split(",")[1];
+      zip.file(`kartu-${id}-10x10cm.png`, cardB64, { base64: true });
+
+      // 2. Foto QR Code Saja
+      const qrB64 = qrCanvas.toDataURL("image/png").split(",")[1];
+      zip.file(`qrcode-${id}.png`, qrB64, { base64: true });
+    }
+
+    zip.file("daftar-semua-kartu.txt", allFirestoreCardsList.map(c => 
+      `ID: ${c.id}\nStatus: ${c.active ? 'Aktif' : 'Belum Aktif'}\nBisnis: ${c.businessName || '-'}\nURL: ${c.url}\nTujuan: ${c.destination || '-'}\n----------------------------------`
+    ).join("\n"));
+
+    btn.innerHTML = `<div class="spinner"></div> Mengompres berkas ZIP...`;
+    const blob = await zip.generateAsync({ type: "blob" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = `semua-kartu-ulasankuu-${allFirestoreCardsList.length}-kartu.zip`;
+    a.click();
+  } catch (err) {
+    console.error("Gagal buat ZIP semua kartu:", err);
+    alert("Gagal mengunduh ZIP: " + err.message);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = origText;
+  }
+});
 
 // TOMBOL RESET / HAPUS SEMUA KARTU DARI NOL
 document.getElementById("btnResetAllFirestore").addEventListener("click", async () => {

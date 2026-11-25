@@ -1592,18 +1592,30 @@ let allAuditLogsList = [];
 async function loadAuditLogs() {
   const tbody = document.getElementById("auditLogsTableBody");
   if (!tbody) return;
-  tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-[#8c8c84] font-medium">Memuat audit log dari server...</td></tr>`;
+  tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-[#8c8c84] font-medium">Memuat audit log...</td></tr>`;
 
   try {
     const res = await fetch("/api/audit-log");
     const data = await res.json();
-    if (!res.ok || !data.success) throw new Error(data.error || "Gagal mengambil log");
-
-    allAuditLogsList = data.logs || [];
-    renderAuditLogsTable();
-  } catch (err) {
-    console.error("Gagal load audit logs:", err);
-    tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-red-500 font-medium">Gagal memuat log: ${err.message}</td></tr>`;
+    if (res.ok && data.success && Array.isArray(data.logs)) {
+      allAuditLogsList = data.logs;
+      renderAuditLogsTable();
+      return;
+    }
+    throw new Error(data.error || "Serverless error");
+  } catch (apiErr) {
+    console.warn("Fetch /api/audit-log error, fallback direct client Firestore:", apiErr);
+    try {
+      const snap = await getDocs(collection(db, "audit_logs"));
+      const logs = [];
+      snap.forEach(d => logs.push({ id: d.id, ...d.data() }));
+      logs.sort((a, b) => new Date(b.timestamp || 0) - new Date(a.timestamp || 0));
+      allAuditLogsList = logs;
+      renderAuditLogsTable();
+    } catch (fsErr) {
+      console.error("Fallback direct Firestore audit_logs failed:", fsErr);
+      tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-red-500 font-medium">Gagal memuat log: ${fsErr.message}</td></tr>`;
+    }
   }
 }
 

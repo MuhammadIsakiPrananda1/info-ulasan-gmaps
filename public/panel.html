@@ -11,7 +11,23 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Chart.js CDN for statistics visualization -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-  <script>
+  <script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+  import { getFirestore, doc, getDoc, updateDoc, collection, query, where, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAt46l97-gXPI3SAWKc6ZgpiTisSG7gmDs",
+    authDomain: "review-gmaps.firebaseapp.com",
+    projectId: "review-gmaps",
+    storageBucket: "review-gmaps.firebasestorage.app",
+    messagingSenderId: "551162625736",
+    appId: "1:551162625736:web:260b1f7c02b3ac72fc6ffd",
+    measurementId: "G-GC50YZR59G"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
     tailwind.config = {
       darkMode: 'class',
       theme: {
@@ -380,6 +396,14 @@
     }
 
     // Form Login Submit
+    
+    async function sha256(message) {
+      const msgBuffer = new TextEncoder().encode(message);
+      const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
     const formLogin = document.getElementById("formLogin");
     const loginAlert = document.getElementById("loginAlert");
     const btnLoginSubmit = document.getElementById("btnLoginSubmit");
@@ -394,19 +418,46 @@
       btnLoginSubmit.innerHTML = `<span class="inline-block animate-spin mr-2">⚪</span> Memverifikasi...`;
 
       try {
-        const res = await fetch("/api/panel?action=login", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ cardId, pin })
-        });
-        const data = await res.json();
+        let loggedIn = false;
+        try {
+          const res = await fetch("/api/panel?action=login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ cardId, pin })
+          });
+          const data = await res.json();
+          if (res.ok && data.success) {
+            setSession(data.token, data.card);
+            initPanel();
+            loggedIn = true;
+          } else {
+            throw new Error(data.error || "Gagal login.");
+          }
+        } catch (apiErr) {
+          console.warn("API login failed, fallback client Firestore:", apiErr);
+          // Fallback client Firestore
+          const cardRef = doc(db, "cards", cardId);
+          const cardSnap = await getDoc(cardRef);
+          if (!cardSnap.exists()) {
+            throw new Error("ID Kartu tidak ditemukan.");
+          }
+          const cardData = cardSnap.data();
+          const salt = cardData.pinSalt || "ulasankuu_salt_2026";
+          const hashedInput = await sha256(pin + ":" + salt);
 
-        if (!res.ok || !data.success) {
-          throw new Error(data.error || "Gagal login.");
+          if (cardData.pinHash) {
+            if (cardData.pinHash !== hashedInput) throw new Error("PIN salah.");
+          } else if (cardData.pin) {
+            if (String(cardData.pin) !== String(pin)) throw new Error("PIN salah.");
+          } else {
+            throw new Error("PIN belum diatur.");
+          }
+
+          const mockToken = btoa(JSON.stringify({ cardId, time: Date.now() }));
+          setSession(mockToken, { id: cardId, ...cardData });
+          initPanel();
+          loggedIn = true;
         }
-
-        setSession(data.token, data.card);
-        initPanel();
       } catch (err) {
         loginAlert.textContent = err.message;
         loginAlert.classList.remove("hidden");

@@ -141,7 +141,7 @@
                 <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
               </button>
             </div>
-            <p class="text-[11px] text-slate-400 mt-1.5">Sesi login tersimpan aman selama 24 jam di browser ini.</p>
+            
           </div>
 
           <button type="submit" id="btnLoginSubmit" class="w-full py-3.5 px-4 rounded-[14px] bg-[#f5b400] hover:bg-[#e0a400] text-[#141414] font-bold shadow-xs transition-colors text-white font-bold text-sm shadow-md shadow-emerald-600/25 transition-all flex items-center justify-center gap-2">
@@ -376,13 +376,7 @@
       try {
         const raw = localStorage.getItem(STORAGE_KEY);
         if (!raw) return null;
-        const parsed = JSON.parse(raw);
-        // Validasi expired 24 jam (86400 detik)
-        if (parsed.expiresAt && Date.now() > parsed.expiresAt) {
-          localStorage.removeItem(STORAGE_KEY);
-          return null;
-        }
-        return parsed;
+        return JSON.parse(raw);
       } catch (e) {
         return null;
       }
@@ -392,7 +386,7 @@
       const session = {
         token,
         cardId: card.id,
-        expiresAt: Date.now() + (24 * 60 * 60 * 1000) // 24 jam
+        
       };
       localStorage.setItem(STORAGE_KEY, JSON.stringify(session));
     }
@@ -501,7 +495,7 @@
         headers: { "Authorization": "Bearer " + token }
       });
       if (res.status === 401) {
-        alert("Sesi Anda telah berakhir (24 jam). Silakan login kembali.");
+        // Sesi dibersihkan saat error memuat
         clearSession();
         return;
       }

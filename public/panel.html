@@ -352,7 +352,23 @@
   </footer>
 
   <!-- SCRIPT LOGIKA PANEL PEMILIK -->
-  <script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+    import { getFirestore, doc, getDoc, updateDoc, collection, query, where, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAt46l97-gXPI3SAWKc6ZgpiTisSG7gmDs",
+      authDomain: "review-gmaps.firebaseapp.com",
+      projectId: "review-gmaps",
+      storageBucket: "review-gmaps.firebasestorage.app",
+      messagingSenderId: "551162625736",
+      appId: "1:551162625736:web:260b1f7c02b3ac72fc6ffd",
+      measurementId: "G-GC50YZR59G"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
     const STORAGE_KEY = "ulasankuu_owner_session";
     let ownerChart = null;
 

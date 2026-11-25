@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Panel Pemilik Kartu | Ulasankuu</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Tailwind CSS v3 CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Chart.js CDN for statistics visualization -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#fffbeb',
+              100: '#fef3c7',
+              200: '#fde68a',
+              300: '#fcd34d',
+              400: '#fbbf24',
+              500: '#f59e0b',
+              600: '#f5b400',
+              700: '#d97706',
+              800: '#b45309',
+              900: '#78350f',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    :root {
+      --brand: #f5b400;
+      --brand-hover: #e0a400;
+      --bg: #fafaf7;
+      --card-bg: #ffffff;
+      --text-title: #141414;
+      --text-muted: #5f5f5a;
+      --border: #e8e6dc;
+      --line: #e8e6dc;
+      --soft: #fff3c4;
+      --pt: #a16d00;
+      --ok: #16a34a;
+    }
+    body {
+      background-color: var(--bg);
+      color: var(--text-title);
+      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .badge-pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 10px;
+      border-radius: 9999px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-[#fafaf7] text-[#141414] flex flex-col justify-between">
+
+  <!-- TOP HEADER / NAV -->
+  <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-[#e8e6dc]/80 px-4 lg:px-8 py-3.5 transition-all">
+    <div class="max-w-6xl mx-auto flex items-center justify-between">
+      <a href="/panel" class="flex items-center gap-2.5 group">
+        <img src="/logo.png" alt="Ulasankuu Logo" class="h-8 w-auto object-contain">
+        <span class="font-extrabold text-sm tracking-tight text-[#141414] hidden sm:inline-block border-l border-[#e8e6dc] pl-2.5 text-[#5f5f5a]">Panel Pemilik Kartu</span>
+      </a>
+
+      <!-- USER PROFILE & LOGOUT -->
+      <div id="navUserArea" class="hidden items-center gap-3">
+        <div class="flex items-center gap-2 bg-amber-50 border border-emerald-200/70 text-amber-900 px-3 py-1.5 rounded-full text-xs font-bold font-mono">
+          <span class="size-2 rounded-full bg-amber-500 animate-pulse"></span>
+          <span id="navCardIdBadge">ID: ------</span>
+        </div>
+        <button type="button" id="btnLogout" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[14px] border border-[#e8e6dc] bg-white hover:bg-rose-50 hover:border-rose-200 hover:text-rose-600 text-xs font-bold text-[#2a2a28] transition-colors shadow-xs">
+          <svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          Keluar
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <main class="flex-1 max-w-6xl w-full mx-auto p-4 sm:p-6 lg:p-8">
+
+    <!-- 1. LOGIN VIEW (ID Kartu + PIN) -->
+    <section id="viewLogin" class="max-w-md mx-auto my-8 sm:my-16">
+      <div class="bg-white rounded-3xl border border-[#e8e6dc]/90 shadow-xl shadow-slate-200/50 p-6 sm:p-8 text-center animate-in fade-in duration-200">
+        <div class="flex justify-center mb-5">
+          <div class="size-16 rounded-[20px] bg-amber-50 border border-emerald-100 flex items-center justify-center text-amber-600 shadow-xs">
+            <svg class="size-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+          </div>
+        </div>
+
+        <h1 class="text-2xl font-extrabold text-[#141414] tracking-tight">Login Pemilik Kartu</h1>
+        <p class="text-xs text-[#5f5f5a] mt-1.5 mb-6">Masukkan ID Kartu NFC dan PIN yang Anda buat saat aktivasi.</p>
+
+        <!-- Alert Error -->
+        <div id="loginAlert" class="hidden mb-5 p-3 rounded-[14px] border border-rose-200 bg-rose-50 text-rose-800 text-xs font-medium text-left"></div>
+
+        <form id="formLogin" class="space-y-4 text-left">
+          <div>
+            <label for="loginCardId" class="block text-xs font-bold text-[#2a2a28] mb-1.5 uppercase tracking-wider">ID Kartu</label>
+            <input type="text" id="loginCardId" placeholder="Contoh: NPT2746Z6K" required class="w-full uppercase font-mono tracking-wider font-bold px-4 py-3 bg-[#fafaf7] border border-[#e8e6dc] rounded-[14px] text-sm focus:outline-none focus:border-[#f5b400] focus:bg-white focus:ring-2 focus:ring-amber-500/20 transition-all">
+          </div>
+
+          <div>
+            <label for="loginPin" class="block text-xs font-bold text-[#2a2a28] mb-1.5 uppercase tracking-wider">PIN Pengaman</label>
+            <div class="relative">
+              <input type="password" id="loginPin" placeholder="4 angka PIN" maxlength="6" inputmode="numeric" required class="w-full tracking-widest font-mono font-bold px-4 py-3 bg-[#fafaf7] border border-[#e8e6dc] rounded-[14px] text-sm focus:outline-none focus:border-[#f5b400] focus:bg-white focus:ring-2 focus:ring-amber-500/20 transition-all">
+              <button type="button" id="toggleLoginPinBtn" class="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-[#5f5f5a] p-1">
+                <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
+            <p class="text-[11px] text-slate-400 mt-1.5">Sesi login tersimpan aman selama 24 jam di browser ini.</p>
+          </div>
+
+          <button type="submit" id="btnLoginSubmit" class="w-full py-3.5 px-4 rounded-[14px] bg-[#f5b400] hover:bg-[#e0a400] text-[#141414] font-bold shadow-xs transition-colors text-white font-bold text-sm shadow-md shadow-emerald-600/25 transition-all flex items-center justify-center gap-2">
+            <span>Masuk ke Panel</span>
+            <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
+        </form>
+
+        <div class="mt-6 pt-5 border-t border-[#e8e6dc] text-center">
+          <p class="text-xs text-[#5f5f5a]">Kartu belum aktif? Tempelkan HP ke kartu fisik untuk aktivasi perdana.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. OWNER DASHBOARD VIEW -->
+    <section id="viewDashboard" class="hidden space-y-6 animate-in fade-in duration-200">
+      
+      <!-- WELCOME HERO BANNER -->
+      <div class="bg-gradient-to-br from-slate-900 via-slate-800 to-emerald-950 text-white rounded-3xl p-6 sm:p-8 shadow-xl relative overflow-hidden">
+        <div class="absolute -right-12 -top-12 size-56 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div>
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/20 border border-emerald-400/30 text-emerald-300 text-xs font-bold mb-3">
+              <span class="size-2 rounded-full bg-emerald-400"></span>
+              Kartu NFC Terhubung
+            </div>
+            <h1 id="shopNameHeading" class="text-2xl sm:text-3xl font-extrabold tracking-tight">Nama Bisnis</h1>
+            <p id="cardIdSubheading" class="text-xs sm:text-sm text-slate-300 font-mono mt-1">ID: ------</p>
+          </div>
+          
+          <div class="flex flex-wrap items-center gap-2.5">
+            <button type="button" id="btnTestCardUrl" class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-[14px] bg-white/10 hover:bg-white/20 border border-white/20 text-xs font-bold text-white transition-all">
+              <svg class="size-4 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+              Tes Link Review
+            </button>
+            <button type="button" id="btnScrollToSettings" class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-[14px] bg-amber-500 hover:bg-[#f5b400] text-[#141414] text-xs font-bold text-slate-950 transition-all shadow-md">
+              <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+              Kelola Kartu
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- STATISTIK KARTU STATS CARDS -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+        
+        <!-- 1. HARI INI -->
+        <div class="bg-white rounded-[20px] p-5 border border-[#e8e6dc]/90 shadow-xs">
+          <div class="flex items-center justify-between text-slate-400 mb-2">
+            <span class="text-xs font-bold uppercase tracking-wider text-[#5f5f5a]">Hari Ini</span>
+            <span class="size-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center">
+              <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            </span>
+          </div>
+          <div class="text-2xl sm:text-3xl font-extrabold text-[#141414]" id="statTapsToday">0</div>
+          <div class="text-[11px] text-amber-700 font-semibold mt-1 flex items-center gap-1">
+            <span id="statRedirectsToday">0</span> ulasan teralihkan
+          </div>
+        </div>
+
+        <!-- 2. MINGGU INI -->
+        <div class="bg-white rounded-[20px] p-5 border border-[#e8e6dc]/90 shadow-xs">
+          <div class="flex items-center justify-between text-slate-400 mb-2">
+            <span class="text-xs font-bold uppercase tracking-wider text-[#5f5f5a]">Minggu Ini</span>
+            <span class="size-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
+              <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            </span>
+          </div>
+          <div class="text-2xl sm:text-3xl font-extrabold text-[#141414]" id="statTapsThisWeek">0</div>
+          <div class="text-[11px] text-blue-700 font-semibold mt-1 flex items-center gap-1">
+            <span id="statRedirectsThisWeek">0</span> ulasan teralihkan
+          </div>
+        </div>
+
+        <!-- 3. BULAN INI -->
+        <div class="bg-white rounded-[20px] p-5 border border-[#e8e6dc]/90 shadow-xs">
+          <div class="flex items-center justify-between text-slate-400 mb-2">
+            <span class="text-xs font-bold uppercase tracking-wider text-[#5f5f5a]">Bulan Ini</span>
+            <span class="size-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center">
+              <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            </span>
+          </div>
+          <div class="text-2xl sm:text-3xl font-extrabold text-[#141414]" id="statTapsThisMonth">0</div>
+          <div class="text-[11px] text-amber-700 font-semibold mt-1 flex items-center gap-1">
+            <span id="statRedirectsThisMonth">0</span> ulasan teralihkan
+          </div>
+        </div>
+
+        <!-- 4. TOTAL SEPANJANG MASA -->
+        <div class="bg-white rounded-[20px] p-5 border border-[#e8e6dc]/90 shadow-xs">
+          <div class="flex items-center justify-between text-slate-400 mb-2">
+            <span class="text-xs font-bold uppercase tracking-wider text-[#5f5f5a]">Total Semua</span>
+            <span class="size-8 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center">
+              <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+            </span>
+          </div>
+          <div class="text-2xl sm:text-3xl font-extrabold text-[#141414]" id="statTapsAllTime">0</div>
+          <div class="text-[11px] text-purple-700 font-semibold mt-1 flex items-center gap-1">
+            <span id="statRedirectsAllTime">0</span> total review tercapai
+          </div>
+        </div>
+      </div>
+
+      <!-- GRAFIK PENGGUNAAN KARTU -->
+      <div class="bg-white rounded-3xl p-6 sm:p-7 border border-[#e8e6dc]/90 shadow-xs">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-6">
+          <div>
+            <h2 class="text-base font-extrabold text-[#141414]">Aktivitas Tap/Scan 7 Hari Terakhir</h2>
+            <p class="text-xs text-[#5f5f5a]">Perbandingan jumlah tap kartu NFC dengan ulasan yang berhasil terbuka.</p>
+          </div>
+          <div class="flex items-center gap-4 text-xs font-semibold">
+            <span class="inline-flex items-center gap-1.5 text-amber-700">
+              <span class="size-3 rounded-full bg-amber-500"></span> Tap/Scan NFC
+            </span>
+            <span class="inline-flex items-center gap-1.5 text-blue-700">
+              <span class="size-3 rounded-full bg-blue-500"></span> Dialihkan ke Review
+            </span>
+          </div>
+        </div>
+        <div class="h-64 sm:h-72 w-full">
+          <canvas id="ownerChartCanvas"></canvas>
+        </div>
+      </div>
+
+      <!-- KELOLA KARTU (RESET TUJUAN & GANTI PIN) -->
+      <div id="sectionSettings" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        
+        <!-- A. FORM UPDATE TUJUAN REVIEW -->
+        <div class="bg-white rounded-3xl p-6 sm:p-7 border border-[#e8e6dc]/90 shadow-xs flex flex-col justify-between">
+          <div>
+            <div class="flex items-center gap-2 mb-2">
+              <span class="size-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center font-bold">🎯</span>
+              <h3 class="text-base font-extrabold text-[#141414]">Ganti URL Tujuan Review</h3>
+            </div>
+            <p class="text-xs text-[#5f5f5a] mb-5 leading-relaxed">
+              Ubah link tujuan ulasan Google Maps jika cabang usaha pindah, ganti profil, atau menggunakan link spesifik lain.
+            </p>
+
+            <div id="destAlertOk" class="hidden mb-4 p-3 rounded-[14px] border border-emerald-200 bg-amber-50 text-amber-900 text-xs font-semibold"></div>
+            <div id="destAlertErr" class="hidden mb-4 p-3 rounded-[14px] border border-rose-200 bg-rose-50 text-rose-800 text-xs font-semibold"></div>
+
+            <form id="formUpdateDestination" class="space-y-4">
+              <div>
+                <label for="currentDestInput" class="block text-xs font-bold text-[#2a2a28] mb-1">URL Tujuan Saat Ini</label>
+                <input type="text" id="currentDestInput" readonly class="w-full text-xs font-mono px-3.5 py-2.5 bg-[#f4f4f0] border border-[#e8e6dc] rounded-[14px] text-[#5f5f5a] select-all focus:outline-none">
+              </div>
+
+              <div>
+                <label for="newDestInput" class="block text-xs font-bold text-[#2a2a28] mb-1">URL Tujuan Review Baru</label>
+                <input type="url" id="newDestInput" placeholder="https://search.google.com/local/writereview?placeid=..." required class="w-full text-xs font-mono px-3.5 py-2.5 bg-white border border-[#e8e6dc] rounded-[14px] text-[#141414] focus:outline-none focus:border-[#f5b400] focus:ring-2 focus:ring-amber-500/20">
+                <span class="text-[11px] text-slate-400 mt-1 block">Pastikan URL diawali https://</span>
+              </div>
+
+              <button type="submit" id="btnSaveDest" class="w-full py-3 px-4 rounded-[14px] bg-slate-900 hover:bg-[#f5b400] text-[#141414] text-white font-bold text-xs shadow-xs transition-colors">
+                Simpan URL Baru
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <!-- B. FORM GANTI PIN -->
+        <div class="bg-white rounded-3xl p-6 sm:p-7 border border-[#e8e6dc]/90 shadow-xs flex flex-col justify-between">
+          <div>
+            <div class="flex items-center gap-2 mb-2">
+              <span class="size-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center font-bold">🔒</span>
+              <h3 class="text-base font-extrabold text-[#141414]">Ganti PIN Pengaman Kartu</h3>
+            </div>
+            <p class="text-xs text-[#5f5f5a] mb-5 leading-relaxed">
+              PIN baru akan otomatis di-hash dengan standar enkripsi aman (SHA-256 + Salt) di backend database.
+            </p>
+
+            <div id="pinAlertOk" class="hidden mb-4 p-3 rounded-[14px] border border-emerald-200 bg-amber-50 text-amber-900 text-xs font-semibold"></div>
+            <div id="pinAlertErr" class="hidden mb-4 p-3 rounded-[14px] border border-rose-200 bg-rose-50 text-rose-800 text-xs font-semibold"></div>
+
+            <form id="formChangePin" class="space-y-4">
+              <div>
+                <label for="oldPinInput" class="block text-xs font-bold text-[#2a2a28] mb-1">PIN Lama</label>
+                <input type="password" id="oldPinInput" placeholder="Masukkan PIN lama" maxlength="6" inputmode="numeric" required class="w-full text-xs font-mono px-3.5 py-2.5 bg-white border border-[#e8e6dc] rounded-[14px] text-[#141414] focus:outline-none focus:border-[#f5b400] focus:ring-2 focus:ring-amber-500/20">
+              </div>
+
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label for="newPinInput" class="block text-xs font-bold text-[#2a2a28] mb-1">PIN Baru (4 Angka)</label>
+                  <input type="password" id="newPinInput" placeholder="4 angka" maxlength="6" inputmode="numeric" required class="w-full text-xs font-mono px-3.5 py-2.5 bg-white border border-[#e8e6dc] rounded-[14px] text-[#141414] focus:outline-none focus:border-[#f5b400] focus:ring-2 focus:ring-amber-500/20">
+                </div>
+                <div>
+                  <label for="confirmPinInput" class="block text-xs font-bold text-[#2a2a28] mb-1">Konfirmasi PIN</label>
+                  <input type="password" id="confirmPinInput" placeholder="Ulangi PIN" maxlength="6" inputmode="numeric" required class="w-full text-xs font-mono px-3.5 py-2.5 bg-white border border-[#e8e6dc] rounded-[14px] text-[#141414] focus:outline-none focus:border-[#f5b400] focus:ring-2 focus:ring-amber-500/20">
+                </div>
+              </div>
+
+              <button type="submit" id="btnSavePin" class="w-full py-3 px-4 rounded-[14px] bg-slate-900 hover:bg-[#f5b400] text-[#141414] text-white font-bold text-xs shadow-xs transition-colors">
+                Perbarui PIN Pengaman
+              </button>
+            </form>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- FOOTER RESMI -->
+  <footer class="py-6 text-center text-xs text-slate-400 border-t border-[#e8e6dc]/60 bg-white">
+    <p class="font-medium">Powered by <span class="font-bold text-[#2a2a28]">Ulasankuu</span></p>
+  </footer>
+
+  <!-- SCRIPT LOGIKA PANEL PEMILIK -->
+  <script>
+    const STORAGE_KEY = "ulasankuu_owner_session";
+    let ownerChart = null;
+
+    function getSession() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return null;
+        const parsed = JSON.parse(raw);
+        // Validasi expired 24 jam (86400 detik)
+        if (parsed.expiresAt && Date.now() > parsed.expiresAt) {
+          localStorage.removeItem(STORAGE_KEY);
+          return null;
+        }
+        return parsed;
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function setSession(token, card) {
+      const session = {
+        token,
+        cardId: card.id,
+        expiresAt: Date.now() + (24 * 60 * 60 * 1000) // 24 jam
+      };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(session));
+    }
+
+    function clearSession() {
+      localStorage.removeItem(STORAGE_KEY);
+      window.location.reload();
+    }
+
+    // Toggle PIN Visibility
+    const toggleLoginPinBtn = document.getElementById("toggleLoginPinBtn");
+    const loginPin = document.getElementById("loginPin");
+    if (toggleLoginPinBtn) {
+      toggleLoginPinBtn.addEventListener("click", () => {
+        loginPin.type = loginPin.type === "password" ? "text" : "password";
+      });
+    }
+
+    // Form Login Submit
+    const formLogin = document.getElementById("formLogin");
+    const loginAlert = document.getElementById("loginAlert");
+    const btnLoginSubmit = document.getElementById("btnLoginSubmit");
+
+    formLogin.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      loginAlert.classList.add("hidden");
+      const cardId = document.getElementById("loginCardId").value.trim().toUpperCase();
+      const pin = document.getElementById("loginPin").value.trim();
+
+      btnLoginSubmit.disabled = true;
+      btnLoginSubmit.innerHTML = `<span class="inline-block animate-spin mr-2">⚪</span> Memverifikasi...`;
+
+      try {
+        const res = await fetch("/api/panel?action=login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ cardId, pin })
+        });
+        const data = await res.json();
+
+        if (!res.ok || !data.success) {
+          throw new Error(data.error || "Gagal login.");
+        }
+
+        setSession(data.token, data.card);
+        initPanel();
+      } catch (err) {
+        loginAlert.textContent = err.message;
+        loginAlert.classList.remove("hidden");
+      } finally {
+        btnLoginSubmit.disabled = false;
+        btnLoginSubmit.innerHTML = `<span>Masuk ke Panel</span><svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>`;
+      }
+    });
+
+    // Logout
+    document.getElementById("btnLogout").addEventListener("click", () => {
+      if (confirm("Keluar dari Panel Pemilik Kartu?")) {
+        clearSession();
+      }
+    });
+
+    // Scroll to Settings button
+    document.getElementById("btnScrollToSettings").addEventListener("click", () => {
+      document.getElementById("sectionSettings").scrollIntoView({ behavior: "smooth" });
+    });
+
+    // Fetch and render owner data
+    async function loadOwnerData(token) {
+      const res = await fetch("/api/panel?action=get-data", {
+        headers: { "Authorization": "Bearer " + token }
+      });
+      if (res.status === 401) {
+        alert("Sesi Anda telah berakhir (24 jam). Silakan login kembali.");
+        clearSession();
+        return;
+      }
+      const data = await res.json();
+      if (!data.success) {
+        alert("Gagal memuat data: " + (data.error || ""));
+        return;
+      }
+
+      const { card, stats } = data;
+
+      // Update Header
+      document.getElementById("navCardIdBadge").textContent = "ID: " + card.id;
+      document.getElementById("shopNameHeading").textContent = card.shopName || "Nama Bisnis";
+      document.getElementById("cardIdSubheading").textContent = `ID Kartu: ${card.id} • Terhubung ke Google Review`;
+
+      // Update Link Button
+      const testBtn = document.getElementById("btnTestCardUrl");
+      testBtn.onclick = () => {
+        if (card.destination) window.open(card.destination, "_blank");
+      };
+
+      // Update Form Values
+      document.getElementById("currentDestInput").value = card.destination || "";
+      document.getElementById("newDestInput").value = card.destination || "";
+
+      // Update Statistics
+      document.getElementById("statTapsToday").textContent = stats.tapsToday || 0;
+      document.getElementById("statRedirectsToday").textContent = stats.redirectsToday || 0;
+
+      document.getElementById("statTapsThisWeek").textContent = stats.tapsThisWeek || 0;
+      document.getElementById("statRedirectsThisWeek").textContent = stats.redirectsThisWeek || 0;
+
+      document.getElementById("statTapsThisMonth").textContent = stats.tapsThisMonth || 0;
+      document.getElementById("statRedirectsThisMonth").textContent = stats.redirectsThisMonth || 0;
+
+      document.getElementById("statTapsAllTime").textContent = stats.tapsAllTime || 0;
+      document.getElementById("statRedirectsAllTime").textContent = stats.redirectsAllTime || 0;
+
+      // Render Chart
+      renderOwnerChart(stats.dailyChart || []);
+    }
+
+    // Render 7 Days Chart
+    function renderOwnerChart(dailyChart) {
+      const ctx = document.getElementById("ownerChartCanvas").getContext("2d");
+      const labels = dailyChart.map(item => {
+        const parts = item.date.split("-");
+        return parts[2] + "/" + parts[1]; // DD/MM
+      });
+      const tapsData = dailyChart.map(i => i.taps);
+      const redirectsData = dailyChart.map(i => i.redirects);
+
+      if (ownerChart) ownerChart.destroy();
+
+      ownerChart = new Chart(ctx, {
+        type: "bar",
+        data: {
+          labels,
+          datasets: [
+            {
+              label: "Tap/Scan NFC",
+              data: tapsData,
+              backgroundColor: "rgba(34, 197, 94, 0.8)",
+              borderRadius: 6
+            },
+            {
+              label: "Redirect Ulasan",
+              data: redirectsData,
+              backgroundColor: "rgba(59, 130, 246, 0.8)",
+              borderRadius: 6
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: { precision: 0, font: { family: "'Plus Jakarta Sans', sans-serif" } },
+              grid: { color: "#f1f5f9" }
+            },
+            x: {
+              ticks: { font: { family: "'Plus Jakarta Sans', sans-serif" } },
+              grid: { display: false }
+            }
+          }
+        }
+      });
+    }
+
+    // Form Update Destination Submit
+    document.getElementById("formUpdateDestination").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const alertOk = document.getElementById("destAlertOk");
+      const alertErr = document.getElementById("destAlertErr");
+      const btn = document.getElementById("btnSaveDest");
+      alertOk.classList.add("hidden");
+      alertErr.classList.add("hidden");
+
+      const session = getSession();
+      if (!session) return clearSession();
+
+      const newDestination = document.getElementById("newDestInput").value.trim();
+      btn.disabled = true;
+      btn.textContent = "Menyimpan...";
+
+      try {
+        const res = await fetch("/api/panel?action=update-destination", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + session.token
+          },
+          body: JSON.stringify({ destination: newDestination })
+        });
+        const data = await res.json();
+        if (!res.ok || !data.success) throw new Error(data.error || "Gagal mengubah URL");
+
+        alertOk.textContent = "✓ " + data.message;
+        alertOk.classList.remove("hidden");
+        document.getElementById("currentDestInput").value = newDestination;
+      } catch (err) {
+        alertErr.textContent = err.message;
+        alertErr.classList.remove("hidden");
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Simpan URL Baru";
+      }
+    });
+
+    // Form Change PIN Submit
+    document.getElementById("formChangePin").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const alertOk = document.getElementById("pinAlertOk");
+      const alertErr = document.getElementById("pinAlertErr");
+      const btn = document.getElementById("btnSavePin");
+      alertOk.classList.add("hidden");
+      alertErr.classList.add("hidden");
+
+      const session = getSession();
+      if (!session) return clearSession();
+
+      const oldPin = document.getElementById("oldPinInput").value.trim();
+      const newPin = document.getElementById("newPinInput").value.trim();
+      const confirmPin = document.getElementById("confirmPinInput").value.trim();
+
+      btn.disabled = true;
+      btn.textContent = "Menyimpan PIN...";
+
+      try {
+        const res = await fetch("/api/panel?action=change-pin", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + session.token
+          },
+          body: JSON.stringify({ oldPin, newPin, confirmPin })
+        });
+        const data = await res.json();
+        if (!res.ok || !data.success) throw new Error(data.error || "Gagal mengubah PIN");
+
+        alertOk.textContent = "✓ " + data.message;
+        alertOk.classList.remove("hidden");
+        document.getElementById("formChangePin").reset();
+      } catch (err) {
+        alertErr.textContent = err.message;
+        alertErr.classList.remove("hidden");
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Perbarui PIN Pengaman";
+      }
+    });
+
+    // Check auth on load
+    function initPanel() {
+      const session = getSession();
+      const viewLogin = document.getElementById("viewLogin");
+      const viewDashboard = document.getElementById("viewDashboard");
+      const navUserArea = document.getElementById("navUserArea");
+
+      if (session && session.token) {
+        viewLogin.classList.add("hidden");
+        viewDashboard.classList.remove("hidden");
+        navUserArea.classList.remove("hidden");
+        navUserArea.classList.add("flex");
+        loadOwnerData(session.token);
+      } else {
+        viewDashboard.classList.add("hidden");
+        navUserArea.classList.add("hidden");
+        navUserArea.classList.remove("flex");
+        viewLogin.classList.remove("hidden");
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", initPanel);
+  </script>
+</body>
+</html>

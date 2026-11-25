@@ -22,12 +22,24 @@
       "destination": "/dashboard.html"
     },
     {
+      "source": "/panel",
+      "destination": "/panel.html"
+    },
+    {
+      "source": "/pembeli",
+      "destination": "/pembeli.html"
+    },
+    {
+      "source": "/reseller",
+      "destination": "/reseller.html"
+    },
+    {
       "source": "/cetak",
       "destination": "/cetak.html"
     },
     {
       "source": "/",
-      "destination": "/index.html"
+      "destination": "/pembeli.html"
     },
     {
       "source": "/(.*)",

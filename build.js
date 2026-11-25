@@ -52,7 +52,7 @@ const replacements = {
   '__FIREBASE_APP_ID__': getEnv('FIREBASE_APP_ID'),
   '__FIREBASE_MEASUREMENT_ID__': getEnv('FIREBASE_MEASUREMENT_ID'),
 };
-const targets = ['index.html', 'cetak.html', 'dashboard.html', 'login.html'];
+const targets = ['index.html', 'cetak.html', 'dashboard.html', 'login.html', 'panel.html', 'pembeli.html', 'reseller.html'];
 for (const f of targets) {
   const fp = path.join(__dirname, 'public', f);
   if (!fs.existsSync(fp)) continue;

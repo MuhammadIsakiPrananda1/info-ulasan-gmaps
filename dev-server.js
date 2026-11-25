@@ -35,8 +35,53 @@ const server = http.createServer((req, res) => {
   else if (pathname === '/admin') pathname = '/login.html';
   else if (pathname === '/dashboard') pathname = '/dashboard.html';
   else if (pathname === '/admin-dashboard') pathname = '/dashboard.html';
+  else if (pathname === '/panel') pathname = '/panel.html';
+  else if (pathname === '/pembeli') pathname = '/pembeli.html';
+  else if (pathname === '/reseller') pathname = '/reseller.html';
   else if (pathname === '/cetak') pathname = '/cetak.html';
-  else if (pathname === '/') pathname = '/index.html';
+  else if (pathname === '/') pathname = '/pembeli.html';
+
+  // Support local /api/* endpoints in development
+  if (pathname.startsWith('/api/')) {
+    const apiName = pathname.replace('/api/', '').split('?')[0];
+    const apiPath = path.join(__dirname, 'api', `${apiName}.js`);
+    if (fs.existsSync(apiPath)) {
+      try {
+        let bodyBuffer = [];
+        req.on('data', chunk => bodyBuffer.push(chunk));
+        req.on('end', () => {
+          req.body = Buffer.concat(bodyBuffer).toString();
+          req.query = Object.fromEntries(parsedUrl.searchParams.entries());
+          res.status = (code) => { res.statusCode = code; return res; };
+          res.json = (data) => {
+            res.setHeader('Content-Type', 'application/json');
+            res.end(JSON.stringify(data));
+          };
+          res.set = (k, v) => {
+            if (typeof k === 'object') {
+              Object.entries(k).forEach(([key, val]) => res.setHeader(key, val));
+            } else {
+              res.setHeader(k, v);
+            }
+            return res;
+          };
+          res.send = (d) => res.end(d);
+          try {
+            delete require.cache[require.resolve(apiPath)];
+            const handler = require(apiPath);
+            handler(req, res);
+          } catch (handlerErr) {
+            console.error('API Handler Error:', handlerErr);
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: false, error: handlerErr.message }));
+          }
+        });
+        return;
+      } catch (err) {
+        console.error('Dev Server API error:', err);
+      }
+    }
+  }
 
   let filePath = path.join(PUBLIC_DIR, pathname);
 

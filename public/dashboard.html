@@ -29,14 +29,22 @@
 
 <style>
 :root {
-  --primary: #141414;
+  --pri: #f5b400;
+  --primary: #f5b400;
+  --pt: #a16d00;
+  --soft: #fff3c4;
   --bg: #fafaf7;
+  --card: #ffffff;
   --card-bg: #ffffff;
+  --ink: #141414;
   --text-title: #141414;
-  --text-body: #404040;
-  --text-muted: #737373;
-  --border: #e5e5e5;
-  --radius-lg: 18px;
+  --text-body: #5f5f5a;
+  --text-muted: #5f5f5a;
+  --line: #e8e6dc;
+  --border: #e8e6dc;
+  --ok: #16a34a;
+  --nav: #141414;
+  --radius-lg: 20px;
   --radius-md: 14px;
 }
 
@@ -170,30 +178,25 @@ body {
 }
 </style>
 </head>
-<body class="bg-neutral-100 text-neutral-950 antialiased">
+<body class="bg-[#f7f7f4] text-[#141414] antialiased">
 
-<div id="sb-collapse" class="flex min-h-screen bg-neutral-100">
+<div id="sb-collapse" class="flex min-h-screen bg-[#f7f7f4]">
   
   <!-- SIDEBAR COLLAPSE CONTAINER -->
-  <aside id="sb-collapse-side" class="group/sb flex-col transition-transform duration-300 ease-out motion-reduce:transition-none max-lg:fixed max-lg:inset-y-0 max-lg:left-0 max-lg:z-50 max-lg:hidden max-lg:w-72 max-lg:bg-neutral-100 max-lg:shadow-2xl max-lg:ring-1 max-lg:ring-neutral-950/10 lg:sticky lg:top-0 lg:flex lg:h-screen lg:w-64 lg:shrink-0 lg:transition-[width] lg:duration-200">
+  <aside id="sb-collapse-side" class="group/sb flex-col transition-transform duration-300 ease-out motion-reduce:transition-none max-lg:fixed max-lg:inset-y-0 max-lg:left-0 max-lg:z-50 max-lg:hidden max-lg:w-72 max-lg:bg-[#f7f7f4] max-lg:shadow-2xl max-lg:ring-1 max-lg:ring-neutral-950/10 lg:sticky lg:top-0 lg:flex lg:h-screen lg:w-64 lg:shrink-0 lg:transition-[width] lg:duration-200">
     
     <!-- BRAND / LOGO -->
     <div class="flex items-center justify-between px-4 pt-5 pb-3">
-      <a href="/dashboard" aria-label="Ulasankuu Management" class="flex min-w-0 flex-1 items-center gap-3 text-left">
-        <!-- Logo Image / Svg Container -->
-        <span id="brandLogoContainer" aria-hidden="true" class="flex size-9 shrink-0 items-center justify-center overflow-hidden">
-          <svg class="size-8 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M4 17l6-6 4 4 6-6"/>
-            <path d="M12 3a9 9 0 0 1 9 9"/>
-            <path d="M12 7a5 5 0 0 1 5 5"/>
-          </svg>
-        </span>
-        <!-- Text Container -->
-        <span class="min-w-0 flex-1" id="brandTextWrap">
-          <span class="block truncate text-xl font-bold tracking-tight text-neutral-900" id="brandTitleDisplay">Ulasankuu</span>
+      <a href="/dashboard" aria-label="Ulasankuu Management" class="flex min-w-0 flex-1 items-center text-left">
+        <!-- Logo Container: Full Logo Resmi Tanpa Teks Terpisah -->
+        <div id="brandLogoContainer" class="flex h-10 w-full max-w-[200px] items-center">
+          <img src="/logo.png" alt="Ulasankuu" class="h-9 max-h-10 w-auto object-contain" id="sidebarLogoImg">
+        </div>
+        <span class="hidden" id="brandTextWrap">
+          <span class="block truncate text-xl font-bold tracking-tight text-[#141414]" id="brandTitleDisplay">Ulasankuu</span>
         </span>
       </a>
-      <button type="button" id="sb-collapse-close" aria-label="Close menu" class="inline-flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-lg text-neutral-500 hover:bg-neutral-200/60 hover:text-neutral-900 lg:hidden">
+      <button type="button" id="sb-collapse-close" aria-label="Close menu" class="inline-flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-lg text-[#5f5f5a] hover:bg-neutral-200/60 hover:text-[#141414] lg:hidden">
         <svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
           <path d="M18 6 6 18" />
           <path d="m6 6 12 12" />
@@ -206,7 +209,7 @@ body {
       <ul class="flex flex-col gap-1 text-sm font-medium">
         <!-- 1. Dashboard / Overview -->
         <li>
-          <button type="button" onclick="window.switchNav('view-overview')" class="sb-nav-link group relative flex h-11 w-full items-center gap-3.5 rounded-xl px-3.5 text-neutral-600 transition-all hover:bg-neutral-200/60 hover:text-neutral-900 aria-[current=page]:bg-blue-50/80 aria-[current=page]:text-blue-600 aria-[current=page]:font-bold cursor-pointer" data-view="view-overview" aria-current="page">
+          <button type="button" onclick="window.switchNav('view-overview')" class="sb-nav-link group relative flex h-11 w-full items-center gap-3.5 rounded-[14px] px-3.5 text-[#5f5f5a] transition-all hover:bg-neutral-200/60 hover:text-[#141414] aria-[current=page]:bg-blue-50/80 aria-[current=page]:text-blue-600 aria-[current=page]:font-bold cursor-pointer" data-view="view-overview" aria-current="page">
             <svg class="size-5 shrink-0 opacity-80 group-aria-[current=page]:opacity-100 group-aria-[current=page]:text-blue-600 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
               <path d="M12 14l2-2m-8 2a8 8 0 1 1 12 0H6z" />
               <path d="M12 2v2" />
@@ -217,18 +220,18 @@ body {
         </li>
         <!-- 2. NFC Cards -->
         <li>
-          <button type="button" onclick="window.switchNav('view-cards')" class="sb-nav-link group relative flex h-11 w-full items-center gap-3.5 rounded-xl px-3.5 text-neutral-600 transition-all hover:bg-neutral-200/60 hover:text-neutral-900 aria-[current=page]:bg-blue-50/80 aria-[current=page]:text-blue-600 aria-[current=page]:font-bold cursor-pointer" data-view="view-cards">
+          <button type="button" onclick="window.switchNav('view-cards')" class="sb-nav-link group relative flex h-11 w-full items-center gap-3.5 rounded-[14px] px-3.5 text-[#5f5f5a] transition-all hover:bg-neutral-200/60 hover:text-[#141414] aria-[current=page]:bg-blue-50/80 aria-[current=page]:text-blue-600 aria-[current=page]:font-bold cursor-pointer" data-view="view-cards">
             <svg class="size-5 shrink-0 opacity-80 group-aria-[current=page]:opacity-100 group-aria-[current=page]:text-blue-600 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
               <rect x="2" y="5" width="20" height="14" rx="2" />
               <line x1="2" y1="10" x2="22" y2="10" />
             </svg>
             <span class="truncate pointer-events-none">NFC Cards</span>
-            <span class="ml-auto inline-flex items-center rounded-full bg-neutral-200/70 px-2 py-0.5 text-[11px] font-semibold text-neutral-700 pointer-events-none" id="sbBadgeTotalCards">0</span>
+            <span class="ml-auto inline-flex items-center rounded-full bg-neutral-200/70 px-2 py-0.5 text-[11px] font-semibold text-[#444440] pointer-events-none" id="sbBadgeTotalCards">0</span>
           </button>
         </li>
         <!-- 3. Template Desain -->
         <li>
-          <button type="button" onclick="window.switchNav('view-studio')" class="sb-nav-link group relative flex h-11 w-full items-center gap-3.5 rounded-xl px-3.5 text-neutral-600 transition-all hover:bg-neutral-200/60 hover:text-neutral-900 aria-[current=page]:bg-blue-50/80 aria-[current=page]:text-blue-600 aria-[current=page]:font-bold cursor-pointer" data-view="view-studio">
+          <button type="button" onclick="window.switchNav('view-studio')" class="sb-nav-link group relative flex h-11 w-full items-center gap-3.5 rounded-[14px] px-3.5 text-[#5f5f5a] transition-all hover:bg-neutral-200/60 hover:text-[#141414] aria-[current=page]:bg-blue-50/80 aria-[current=page]:text-blue-600 aria-[current=page]:font-bold cursor-pointer" data-view="view-studio">
             <svg class="size-5 shrink-0 opacity-80 group-aria-[current=page]:opacity-100 group-aria-[current=page]:text-blue-600 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/>
               <circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/>
@@ -241,7 +244,7 @@ body {
         </li>
         <!-- 4. Layout Sticker -->
         <li>
-          <button type="button" onclick="window.switchNav('view-layout-sticker')" class="sb-nav-link group relative flex h-11 w-full items-center gap-3.5 rounded-xl px-3.5 text-neutral-600 transition-all hover:bg-neutral-200/60 hover:text-neutral-900 aria-[current=page]:bg-blue-50/80 aria-[current=page]:text-blue-600 aria-[current=page]:font-bold cursor-pointer" data-view="view-layout-sticker">
+          <button type="button" onclick="window.switchNav('view-layout-sticker')" class="sb-nav-link group relative flex h-11 w-full items-center gap-3.5 rounded-[14px] px-3.5 text-[#5f5f5a] transition-all hover:bg-neutral-200/60 hover:text-[#141414] aria-[current=page]:bg-blue-50/80 aria-[current=page]:text-blue-600 aria-[current=page]:font-bold cursor-pointer" data-view="view-layout-sticker">
             <svg class="size-5 shrink-0 opacity-80 group-aria-[current=page]:opacity-100 group-aria-[current=page]:text-blue-600 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
               <rect x="3" y="3" width="7" height="7" rx="1.5"/>
               <rect x="14" y="3" width="7" height="7" rx="1.5"/>
@@ -253,7 +256,7 @@ body {
         </li>
         <!-- 5. QR Reset Kartu -->
         <li>
-          <button type="button" onclick="window.switchNav('view-reset')" class="sb-nav-link group relative flex h-11 w-full items-center gap-3.5 rounded-xl px-3.5 text-neutral-600 transition-all hover:bg-neutral-200/60 hover:text-neutral-900 aria-[current=page]:bg-blue-50/80 aria-[current=page]:text-blue-600 aria-[current=page]:font-bold cursor-pointer" data-view="view-reset">
+          <button type="button" onclick="window.switchNav('view-reset')" class="sb-nav-link group relative flex h-11 w-full items-center gap-3.5 rounded-[14px] px-3.5 text-[#5f5f5a] transition-all hover:bg-neutral-200/60 hover:text-[#141414] aria-[current=page]:bg-blue-50/80 aria-[current=page]:text-blue-600 aria-[current=page]:font-bold cursor-pointer" data-view="view-reset">
             <svg class="size-5 shrink-0 opacity-80 group-aria-[current=page]:opacity-100 group-aria-[current=page]:text-blue-600 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
               <rect x="3" y="3" width="7" height="7" rx="1"/>
               <rect x="14" y="3" width="7" height="7" rx="1"/>
@@ -265,10 +268,23 @@ body {
             <span class="truncate pointer-events-none">QR Reset Kartu</span>
           </button>
         </li>
-        <!-- 6. Kelola Admin -->
+        <!-- 6. Audit Log -->
         <li>
-          <button type="button" onclick="window.switchNav('view-admins')" class="sb-nav-link group relative flex h-11 w-full items-center gap-3.5 rounded-xl px-3.5 text-neutral-600 transition-all hover:bg-neutral-200/60 hover:text-neutral-900 aria-[current=page]:bg-blue-50/80 aria-[current=page]:text-blue-600 aria-[current=page]:font-bold cursor-pointer" data-view="view-admins">
-            <svg class="size-5 shrink-0 opacity-80 group-aria-[current=page]:opacity-100 group-aria-[current=page]:text-blue-600 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <button type="button" onclick="window.switchNav('view-audit-logs')" class="sb-nav-link group relative flex h-11 w-full items-center gap-3.5 rounded-[14px] px-3.5 text-[#5f5f5a] transition-all hover:bg-neutral-200/60 hover:text-[#141414] aria-[current=page]:bg-[#fff3c4] aria-[current=page]:text-[#a16d00] aria-[current=page]:font-bold border border-[#f5b400]/30 cursor-pointer" data-view="view-audit-logs">
+            <svg class="size-5 shrink-0 opacity-80 group-aria-[current=page]:opacity-100 group-aria-[current=page]:text-amber-700 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+              <line x1="16" y1="13" x2="8" y2="13"/>
+              <line x1="16" y1="17" x2="8" y2="17"/>
+              <polyline points="10 9 9 9 8 9"/>
+            </svg>
+            <span class="truncate pointer-events-none">Audit Log</span>
+          </button>
+        </li>
+        <!-- 7. Kelola Admin -->
+        <li>
+          <button type="button" onclick="window.switchNav('view-admins')" class="sb-nav-link group relative flex h-11 w-full items-center gap-3.5 rounded-[14px] px-3.5 text-[#5f5f5a] transition-all hover:bg-neutral-200/60 hover:text-[#141414] aria-[current=page]:bg-[#fff3c4] aria-[current=page]:text-[#a16d00] aria-[current=page]:font-bold border border-[#f5b400]/30 cursor-pointer" data-view="view-admins">
+            <svg class="size-5 shrink-0 opacity-80 group-aria-[current=page]:opacity-100 group-aria-[current=page]:text-amber-700 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
               <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
               <circle cx="9" cy="7" r="4" />
               <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
@@ -277,10 +293,10 @@ body {
             <span class="truncate pointer-events-none">Kelola Admin</span>
           </button>
         </li>
-        <!-- 7. Pengaturan -->
+        <!-- 8. Pengaturan -->
         <li>
-          <button type="button" onclick="window.switchNav('view-settings')" class="sb-nav-link group relative flex h-11 w-full items-center gap-3.5 rounded-xl px-3.5 text-neutral-600 transition-all hover:bg-neutral-200/60 hover:text-neutral-900 aria-[current=page]:bg-blue-50/80 aria-[current=page]:text-blue-600 aria-[current=page]:font-bold cursor-pointer" data-view="view-settings">
-            <svg class="size-5 shrink-0 opacity-80 group-aria-[current=page]:opacity-100 group-aria-[current=page]:text-blue-600 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <button type="button" onclick="window.switchNav('view-settings')" class="sb-nav-link group relative flex h-11 w-full items-center gap-3.5 rounded-[14px] px-3.5 text-[#5f5f5a] transition-all hover:bg-neutral-200/60 hover:text-[#141414] aria-[current=page]:bg-[#fff3c4] aria-[current=page]:text-[#a16d00] aria-[current=page]:font-bold border border-[#f5b400]/30 cursor-pointer" data-view="view-settings">
+            <svg class="size-5 shrink-0 opacity-80 group-aria-[current=page]:opacity-100 group-aria-[current=page]:text-amber-700 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="12" cy="12" r="3"/>
               <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
             </svg>
@@ -292,17 +308,17 @@ body {
 
     <!-- USER PROFILE / LOGOUT -->
     <div class="flex px-3 pb-3">
-      <div class="flex min-w-0 flex-1 items-center justify-between gap-2.5 rounded-lg border border-neutral-200/80 bg-white p-2">
+      <div class="flex min-w-0 flex-1 items-center justify-between gap-2.5 rounded-lg border border-[#e8e6dc]/80 bg-white p-2">
         <div class="flex min-w-0 items-center gap-2.5">
           <span aria-hidden="true" class="flex size-8 shrink-0 items-center justify-center rounded-full bg-zinc-950 text-xs font-semibold text-white">
             ZX
           </span>
           <div class="min-w-0 flex-1">
-            <span class="block truncate text-xs font-bold text-neutral-950" id="userEmailBadge">zinatxd</span>
-            <span class="block truncate text-[11px] text-neutral-500">Super Admin</span>
+            <span class="block truncate text-xs font-bold text-[#141414]" id="userEmailBadge">zinatxd</span>
+            <span class="block truncate text-[11px] text-[#5f5f5a]">Super Admin</span>
           </div>
         </div>
-        <button type="button" id="btnLogout" title="Keluar / Logout" class="inline-flex size-7 items-center justify-center rounded-md text-neutral-500 hover:bg-neutral-100 hover:text-neutral-950 transition-colors">
+        <button type="button" id="btnLogout" title="Keluar / Logout" class="inline-flex size-7 items-center justify-center rounded-md text-[#5f5f5a] hover:bg-[#f7f7f4] hover:text-[#141414] transition-colors">
           <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
         </button>
       </div>
@@ -313,12 +329,12 @@ body {
   <div id="sb-collapse-scrim" hidden class="fixed inset-0 z-40 bg-neutral-950/40 backdrop-blur-xs lg:hidden"></div>
 
   <!-- MAIN VIEWPORT -->
-  <main class="flex min-w-0 flex-1 flex-col bg-white lg:my-2 lg:mr-2 lg:rounded-xl lg:shadow-xs lg:ring-1 lg:ring-neutral-950/10">
+  <main class="flex min-w-0 flex-1 flex-col bg-white lg:my-2 lg:mr-2 lg:rounded-[14px] lg:shadow-xs lg:ring-1 lg:ring-neutral-950/10">
     
     <!-- TOP HEADER / BREADCRUMB -->
-    <header class="flex h-14 shrink-0 items-center justify-between border-b border-neutral-200 px-4 sm:px-6">
+    <header class="flex h-14 shrink-0 items-center justify-between border-b border-[#e8e6dc] px-4 sm:px-6">
       <div class="flex items-center gap-2">
-        <button type="button" id="sb-collapse-open" aria-label="Menu" aria-expanded="false" aria-controls="sb-collapse-side" class="group -ml-2 inline-flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-lg text-neutral-950 transition-colors duration-150 hover:bg-neutral-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-950 lg:hidden">
+        <button type="button" id="sb-collapse-open" aria-label="Menu" aria-expanded="false" aria-controls="sb-collapse-side" class="group -ml-2 inline-flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-lg text-[#141414] transition-colors duration-150 hover:bg-[#f7f7f4] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-950 lg:hidden">
           <svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <path d="M4 5h16" />
             <path d="M4 12h16" />
@@ -328,11 +344,11 @@ body {
         <nav aria-label="Breadcrumb" class="min-w-0">
           <ol class="flex items-center gap-1.5 text-sm">
             <li class="hidden items-center gap-1.5 sm:flex">
-              <a href="/dashboard" class="rounded-sm whitespace-nowrap text-neutral-600 transition-colors duration-150 hover:text-neutral-950">Ulasankuu</a>
-              <svg class="size-3.5 shrink-0 text-neutral-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6" /></svg>
+              <a href="/dashboard" class="rounded-sm whitespace-nowrap text-[#5f5f5a] transition-colors duration-150 hover:text-[#141414]">Ulasankuu</a>
+              <svg class="size-3.5 shrink-0 text-[#8c8c84]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6" /></svg>
             </li>
             <li class="min-w-0">
-              <span id="topbarTitle" class="block truncate font-medium text-neutral-950">Dashboard</span>
+              <span id="topbarTitle" class="block truncate font-medium text-[#141414]">Dashboard</span>
             </li>
           </ol>
         </nav>
@@ -346,17 +362,17 @@ body {
       <section class="tab-view active" id="view-overview">
         <div>
           <!-- Header Overview dengan Live Date & Badge -->
-          <div class="flex flex-wrap items-center justify-between gap-4 pb-6 border-b border-neutral-200">
+          <div class="flex flex-wrap items-center justify-between gap-4 pb-6 border-b border-[#e8e6dc]">
             <div>
-              <div class="inline-flex items-center gap-2 rounded-full border border-neutral-200 bg-neutral-50 px-2.5 py-0.5 text-[11px] font-semibold text-neutral-600 mb-2">
+              <div class="inline-flex items-center gap-2 rounded-full border border-[#e8e6dc] bg-[#fafaf7] px-2.5 py-0.5 text-[11px] font-semibold text-[#5f5f5a] mb-2">
                 <span class="size-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
                 Sistem Online · Real-time Sync
               </div>
-              <h1 class="text-2xl font-bold tracking-tight text-neutral-950 sm:text-3xl">Pusat Kendali Kartu Ulasankuu</h1>
-              <p class="mt-1 text-xs sm:text-sm text-neutral-500" id="topbarSub">Monitoring distribusi kartu NFC, rasio ulasan Google aktif, dan performa merchant.</p>
+              <h1 class="text-2xl font-bold tracking-tight text-[#141414] sm:text-3xl">Pusat Kendali Kartu Ulasankuu</h1>
+              <p class="mt-1 text-xs sm:text-sm text-[#5f5f5a]" id="topbarSub">Monitoring distribusi kartu NFC, rasio ulasan Google aktif, dan performa merchant.</p>
             </div>
             <div class="flex items-center gap-2">
-              <button type="button" onclick="loadOverviewAndTable()" class="inline-flex items-center gap-1.5 rounded-lg border border-neutral-300 bg-white px-3.5 py-2 text-xs font-bold text-neutral-800 hover:bg-neutral-50 shadow-xs transition-all">
+              <button type="button" onclick="loadOverviewAndTable()" class="inline-flex items-center gap-1.5 rounded-lg border border-[#e8e6dc] bg-white px-3.5 py-2 text-xs font-bold text-[#2a2a28] hover:bg-[#fafaf7] shadow-xs transition-all">
                 <svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
                 Sinkronkan Data
               </button>
@@ -370,60 +386,60 @@ body {
           <!-- Hero Metrics Cards Grid -->
           <dl class="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <!-- Card 1: Total Kartu -->
-            <div class="relative overflow-hidden rounded-2xl border border-neutral-200/90 bg-white p-5 shadow-xs hover:border-neutral-300 transition-all">
+            <div class="relative overflow-hidden rounded-[20px] border border-[#e8e6dc]/90 bg-white p-5 shadow-xs hover:border-[#e8e6dc] transition-all">
               <div class="flex items-center justify-between">
-                <dt class="text-xs font-bold uppercase tracking-wider text-neutral-500">Total Produksi Kartu</dt>
-                <div class="size-9 rounded-xl bg-neutral-100 flex items-center justify-center text-neutral-900 border border-neutral-200/60">
+                <dt class="text-xs font-bold uppercase tracking-wider text-[#5f5f5a]">Total Produksi Kartu</dt>
+                <div class="size-9 rounded-[14px] bg-[#f7f7f4] flex items-center justify-center text-[#141414] border border-[#e8e6dc]/60">
                   <svg class="size-4.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="3"/><line x1="7" y1="8" x2="17" y2="8"/><line x1="7" y1="12" x2="13" y2="12"/></svg>
                 </div>
               </div>
-              <dd class="mt-3 text-3xl font-extrabold tracking-tight text-neutral-950 tabular-nums" id="statTotalCards">0</dd>
-              <div class="mt-3 flex items-center gap-1.5 text-xs text-neutral-500 font-medium border-t border-neutral-100 pt-3">
-                <span class="inline-flex items-center text-neutral-800 font-bold">100%</span>
+              <dd class="mt-3 text-3xl font-extrabold tracking-tight text-[#141414] tabular-nums" id="statTotalCards">0</dd>
+              <div class="mt-3 flex items-center gap-1.5 text-xs text-[#5f5f5a] font-medium border-t border-neutral-100 pt-3">
+                <span class="inline-flex items-center text-[#2a2a28] font-bold">100%</span>
                 <span>tercatat di Cloud Firestore</span>
               </div>
             </div>
 
             <!-- Card 2: Kartu Aktif -->
-            <div class="relative overflow-hidden rounded-2xl border border-neutral-200/90 bg-white p-5 shadow-xs hover:border-neutral-300 transition-all">
+            <div class="relative overflow-hidden rounded-[20px] border border-[#e8e6dc]/90 bg-white p-5 shadow-xs hover:border-[#e8e6dc] transition-all">
               <div class="flex items-center justify-between">
-                <dt class="text-xs font-bold uppercase tracking-wider text-neutral-500">Kartu Aktif Digunakan</dt>
-                <div class="size-9 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center border border-emerald-200/60">
+                <dt class="text-xs font-bold uppercase tracking-wider text-[#5f5f5a]">Kartu Aktif Digunakan</dt>
+                <div class="size-9 rounded-[14px] bg-emerald-50 text-amber-700 flex items-center justify-center border border-emerald-200/60">
                   <svg class="size-4.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
                 </div>
               </div>
-              <dd class="mt-3 text-3xl font-extrabold tracking-tight text-neutral-950 tabular-nums" id="statActiveCards">0</dd>
-              <div class="mt-3 flex items-center gap-1.5 text-xs text-neutral-500 font-medium border-t border-neutral-100 pt-3">
-                <span class="inline-flex items-center gap-0.5 text-emerald-600 font-bold" id="statActiveRatio">0%</span>
+              <dd class="mt-3 text-3xl font-extrabold tracking-tight text-[#141414] tabular-nums" id="statActiveCards">0</dd>
+              <div class="mt-3 flex items-center gap-1.5 text-xs text-[#5f5f5a] font-medium border-t border-neutral-100 pt-3">
+                <span class="inline-flex items-center gap-0.5 text-amber-600 font-bold" id="statActiveRatio">0%</span>
                 <span>kartu telah terhubung ulasan</span>
               </div>
             </div>
 
             <!-- Card 3: Kartu Kosong -->
-            <div class="relative overflow-hidden rounded-2xl border border-neutral-200/90 bg-white p-5 shadow-xs hover:border-neutral-300 transition-all">
+            <div class="relative overflow-hidden rounded-[20px] border border-[#e8e6dc]/90 bg-white p-5 shadow-xs hover:border-[#e8e6dc] transition-all">
               <div class="flex items-center justify-between">
-                <dt class="text-xs font-bold uppercase tracking-wider text-neutral-500">Stok Belum Aktivasi</dt>
-                <div class="size-9 rounded-xl bg-neutral-100 text-neutral-700 flex items-center justify-center border border-neutral-200/60">
+                <dt class="text-xs font-bold uppercase tracking-wider text-[#5f5f5a]">Stok Belum Aktivasi</dt>
+                <div class="size-9 rounded-[14px] bg-[#f7f7f4] text-[#444440] flex items-center justify-center border border-[#e8e6dc]/60">
                   <svg class="size-4.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
                 </div>
               </div>
-              <dd class="mt-3 text-3xl font-extrabold tracking-tight text-neutral-950 tabular-nums" id="statInactiveCards">0</dd>
-              <div class="mt-3 flex items-center gap-1.5 text-xs text-neutral-500 font-medium border-t border-neutral-100 pt-3">
+              <dd class="mt-3 text-3xl font-extrabold tracking-tight text-[#141414] tabular-nums" id="statInactiveCards">0</dd>
+              <div class="mt-3 flex items-center gap-1.5 text-xs text-[#5f5f5a] font-medium border-t border-neutral-100 pt-3">
                 <span class="inline-flex size-2 rounded-full bg-amber-400"></span>
                 <span>Siap dikirim ke pembeli</span>
               </div>
             </div>
 
             <!-- Card 4: Status Cloud Server -->
-            <div class="relative overflow-hidden rounded-2xl border border-neutral-200/90 bg-white p-5 shadow-xs hover:border-neutral-300 transition-all">
+            <div class="relative overflow-hidden rounded-[20px] border border-[#e8e6dc]/90 bg-white p-5 shadow-xs hover:border-[#e8e6dc] transition-all">
               <div class="flex items-center justify-between">
-                <dt class="text-xs font-bold uppercase tracking-wider text-neutral-500">Kesehatan Database</dt>
-                <div class="size-9 rounded-xl bg-zinc-950 text-white flex items-center justify-center">
+                <dt class="text-xs font-bold uppercase tracking-wider text-[#5f5f5a]">Kesehatan Database</dt>
+                <div class="size-9 rounded-[14px] bg-zinc-950 text-white flex items-center justify-center">
                   <svg class="size-4.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
                 </div>
               </div>
-              <dd class="mt-3 text-xl font-extrabold tracking-tight text-neutral-950">Normal (100%)</dd>
-              <div class="mt-3 flex items-center gap-1.5 text-xs text-neutral-500 font-medium border-t border-neutral-100 pt-3">
+              <dd class="mt-3 text-xl font-extrabold tracking-tight text-[#141414]">Normal (100%)</dd>
+              <div class="mt-3 flex items-center gap-1.5 text-xs text-[#5f5f5a] font-medium border-t border-neutral-100 pt-3">
                 <span class="inline-flex size-2 rounded-full bg-emerald-500"></span>
                 <span>Latency < 80ms · asia-south1</span>
               </div>
@@ -431,21 +447,21 @@ body {
           </dl>
 
           <!-- Section: Progress Bar & Distribusi Kartu -->
-          <div class="mt-6 rounded-2xl border border-neutral-200/90 bg-white p-6 shadow-xs">
+          <div class="mt-6 rounded-[20px] border border-[#e8e6dc]/90 bg-white p-6 shadow-xs">
             <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
               <div>
-                <h3 class="text-sm font-bold text-neutral-950">Rasio Aktivasi Kartu Pelanggan</h3>
-                <p class="text-xs text-neutral-500">Perbandingan kartu yang sudah di-pairing link Google Review vs kartu stok awal.</p>
+                <h3 class="text-sm font-bold text-[#141414]">Rasio Aktivasi Kartu Pelanggan</h3>
+                <p class="text-xs text-[#5f5f5a]">Perbandingan kartu yang sudah di-pairing link Google Review vs kartu stok awal.</p>
               </div>
-              <span class="text-xs font-bold text-neutral-900 bg-neutral-100 px-2.5 py-1 rounded-full border border-neutral-200" id="progressPercentageText">0% Teraktivasi</span>
+              <span class="text-xs font-bold text-[#141414] bg-[#f7f7f4] px-2.5 py-1 rounded-full border border-[#e8e6dc]" id="progressPercentageText">0% Teraktivasi</span>
             </div>
             
             <!-- Custom Progress Bar -->
-            <div class="w-full h-3 bg-neutral-100 rounded-full overflow-hidden p-0.5 border border-neutral-200/80">
+            <div class="w-full h-3 bg-[#f7f7f4] rounded-full overflow-hidden p-0.5 border border-[#e8e6dc]/80">
               <div id="activationProgressBar" class="h-full bg-zinc-950 rounded-full transition-all duration-500" style="width: 0%"></div>
             </div>
 
-            <div class="mt-3 flex items-center justify-between text-xs text-neutral-500 font-medium">
+            <div class="mt-3 flex items-center justify-between text-xs text-[#5f5f5a] font-medium">
               <span class="flex items-center gap-1.5">
                 <span class="size-2 rounded-full bg-zinc-950"></span>
                 <span id="labelBarActive">0 Kartu Aktif</span>
@@ -462,72 +478,72 @@ body {
             <!-- Kolom Kiri: 3 Jalur Alur Kerja (Workflow Cards) -->
             <div class="lg:col-span-7 flex flex-col gap-3">
               <div class="flex items-center justify-between pb-1">
-                <h3 class="text-sm font-bold text-neutral-950">Alur Kerja & Operasional</h3>
-                <span class="text-[11px] text-neutral-400 font-medium">Pintasan Cepat</span>
+                <h3 class="text-sm font-bold text-[#141414]">Alur Kerja & Operasional</h3>
+                <span class="text-[11px] text-[#8c8c84] font-medium">Pintasan Cepat</span>
               </div>
 
               <!-- Workflow 1 -->
-              <div onclick="switchNav('view-studio')" class="group flex items-start gap-4 p-4 rounded-xl border border-neutral-200/80 bg-white hover:border-neutral-950 hover:shadow-xs transition-all cursor-pointer">
-                <div class="size-10 rounded-lg bg-neutral-100 group-hover:bg-zinc-950 group-hover:text-white flex items-center justify-center text-neutral-900 transition-colors shrink-0">
+              <div onclick="switchNav('view-studio')" class="group flex items-start gap-4 p-4 rounded-[14px] border border-[#e8e6dc]/80 bg-white hover:border-neutral-950 hover:shadow-xs transition-all cursor-pointer">
+                <div class="size-10 rounded-lg bg-[#f7f7f4] group-hover:bg-zinc-950 group-hover:text-white flex items-center justify-center text-[#141414] transition-colors shrink-0">
                   <svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
                 </div>
                 <div class="flex-1 min-w-0">
                   <div class="flex items-center justify-between">
-                    <h4 class="text-xs font-bold text-neutral-900 group-hover:text-black">1. Generator Desain Kartu (10 x 10 cm)</h4>
-                    <svg class="size-4 text-neutral-400 group-hover:translate-x-0.5 group-hover:text-neutral-900 transition-all" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                    <h4 class="text-xs font-bold text-[#141414] group-hover:text-black">1. Generator Desain Kartu (10 x 10 cm)</h4>
+                    <svg class="size-4 text-[#8c8c84] group-hover:translate-x-0.5 group-hover:text-[#141414] transition-all" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
                   </div>
-                  <p class="mt-1 text-xs text-neutral-500 leading-relaxed">Cetak kartu NFC & QR Code otomatis menempati posisi template resmi tanpa perlu edit grafis manual.</p>
+                  <p class="mt-1 text-xs text-[#5f5f5a] leading-relaxed">Cetak kartu NFC & QR Code otomatis menempati posisi template resmi tanpa perlu edit grafis manual.</p>
                 </div>
               </div>
 
               <!-- Workflow 2 -->
-              <div onclick="switchNav('view-cards')" class="group flex items-start gap-4 p-4 rounded-xl border border-neutral-200/80 bg-white hover:border-neutral-950 hover:shadow-xs transition-all cursor-pointer">
-                <div class="size-10 rounded-lg bg-neutral-100 group-hover:bg-zinc-950 group-hover:text-white flex items-center justify-center text-neutral-900 transition-colors shrink-0">
+              <div onclick="switchNav('view-cards')" class="group flex items-start gap-4 p-4 rounded-[14px] border border-[#e8e6dc]/80 bg-white hover:border-neutral-950 hover:shadow-xs transition-all cursor-pointer">
+                <div class="size-10 rounded-lg bg-[#f7f7f4] group-hover:bg-zinc-950 group-hover:text-white flex items-center justify-center text-[#141414] transition-colors shrink-0">
                   <svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
                 </div>
                 <div class="flex-1 min-w-0">
                   <div class="flex items-center justify-between">
-                    <h4 class="text-xs font-bold text-neutral-900 group-hover:text-black">2. Manajemen Database & Download ZIP</h4>
-                    <svg class="size-4 text-neutral-400 group-hover:translate-x-0.5 group-hover:text-neutral-900 transition-all" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                    <h4 class="text-xs font-bold text-[#141414] group-hover:text-black">2. Manajemen Database & Download ZIP</h4>
+                    <svg class="size-4 text-[#8c8c84] group-hover:translate-x-0.5 group-hover:text-[#141414] transition-all" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
                   </div>
-                  <p class="mt-1 text-xs text-neutral-500 leading-relaxed">Periksa seluruh status kartu, tes link ulasan pelanggan, atau unduh paket file ZIP semua kartu sekaligus.</p>
+                  <p class="mt-1 text-xs text-[#5f5f5a] leading-relaxed">Periksa seluruh status kartu, tes link ulasan pelanggan, atau unduh paket file ZIP semua kartu sekaligus.</p>
                 </div>
               </div>
 
               <!-- Workflow 3 -->
-              <div onclick="switchNav('view-reset')" class="group flex items-start gap-4 p-4 rounded-xl border border-neutral-200/80 bg-white hover:border-neutral-950 hover:shadow-xs transition-all cursor-pointer">
-                <div class="size-10 rounded-lg bg-neutral-100 group-hover:bg-zinc-950 group-hover:text-white flex items-center justify-center text-neutral-900 transition-colors shrink-0">
+              <div onclick="switchNav('view-reset')" class="group flex items-start gap-4 p-4 rounded-[14px] border border-[#e8e6dc]/80 bg-white hover:border-neutral-950 hover:shadow-xs transition-all cursor-pointer">
+                <div class="size-10 rounded-lg bg-[#f7f7f4] group-hover:bg-zinc-950 group-hover:text-white flex items-center justify-center text-[#141414] transition-colors shrink-0">
                   <svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
                 </div>
                 <div class="flex-1 min-w-0">
                   <div class="flex items-center justify-between">
-                    <h4 class="text-xs font-bold text-neutral-900 group-hover:text-black">3. Pemulihan & Reset Kartu Bekas</h4>
-                    <svg class="size-4 text-neutral-400 group-hover:translate-x-0.5 group-hover:text-neutral-900 transition-all" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                    <h4 class="text-xs font-bold text-[#141414] group-hover:text-black">3. Pemulihan & Reset Kartu Bekas</h4>
+                    <svg class="size-4 text-[#8c8c84] group-hover:translate-x-0.5 group-hover:text-[#141414] transition-all" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
                   </div>
-                  <p class="mt-1 text-xs text-neutral-500 leading-relaxed">Kosongkan tautan bisnis lama dan reset PIN kartu agar siap dipindahtangankan ke klien baru.</p>
+                  <p class="mt-1 text-xs text-[#5f5f5a] leading-relaxed">Kosongkan tautan bisnis lama dan reset PIN kartu agar siap dipindahtangankan ke klien baru.</p>
                 </div>
               </div>
             </div>
 
             <!-- Kolom Kanan: Kartu Terakhir Ditambahkan (Recent Added) -->
-            <div class="lg:col-span-5 rounded-2xl border border-neutral-200/90 bg-white p-5 shadow-xs flex flex-col justify-between">
+            <div class="lg:col-span-5 rounded-[20px] border border-[#e8e6dc]/90 bg-white p-5 shadow-xs flex flex-col justify-between">
               <div>
                 <div class="flex items-center justify-between pb-3 border-b border-neutral-100">
-                  <h3 class="text-sm font-bold text-neutral-950">Kartu Terbaru Terdaftar</h3>
-                  <button type="button" onclick="switchNav('view-cards')" class="text-xs text-neutral-500 hover:text-neutral-950 font-semibold">Lihat Semua →</button>
+                  <h3 class="text-sm font-bold text-[#141414]">Kartu Terbaru Terdaftar</h3>
+                  <button type="button" onclick="switchNav('view-cards')" class="text-xs text-[#5f5f5a] hover:text-[#141414] font-semibold">Lihat Semua →</button>
                 </div>
 
                 <div class="mt-3 divide-y divide-neutral-100" id="overviewRecentCards">
-                  <div class="py-6 text-center text-xs text-neutral-400">
+                  <div class="py-6 text-center text-xs text-[#8c8c84]">
                     Memuat data kartu...
                   </div>
                 </div>
               </div>
 
               <!-- Banner Info Edukatif -->
-              <div class="mt-4 rounded-xl border border-neutral-200 bg-neutral-50 p-3 flex items-center gap-3">
+              <div class="mt-4 rounded-[14px] border border-[#e8e6dc] bg-[#fafaf7] p-3 flex items-center gap-3">
                 <span class="flex size-7 shrink-0 items-center justify-center rounded-lg bg-zinc-950 text-white text-xs font-bold">💡</span>
-                <p class="text-[11px] text-neutral-600 leading-tight">
+                <p class="text-[11px] text-[#5f5f5a] leading-tight">
                   Kartu NFC & QR dapat langsung ditempelkan smartphone oleh pelanggan tanpa perlu install aplikasi apapun.
                 </p>
               </div>
@@ -541,10 +557,10 @@ body {
         <!-- HEADER TEMPLATE DESAIN SESUAI SCREENSHOT USER -->
         <div class="mb-6 flex flex-wrap items-center justify-between gap-4">
           <div>
-            <h1 class="text-xl font-bold tracking-tight text-neutral-950">Template Desain</h1>
-            <p class="text-xs text-neutral-500 mt-0.5"><span id="templateCountBadge">1 template</span> tersedia untuk cetak kartu review NFC</p>
+            <h1 class="text-xl font-bold tracking-tight text-[#141414]">Template Desain</h1>
+            <p class="text-xs text-[#5f5f5a] mt-0.5"><span id="templateCountBadge">1 template</span> tersedia untuk cetak kartu review NFC</p>
           </div>
-          <button type="button" id="btnOpenAddTemplateModal" class="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-xs font-bold text-white shadow-sm hover:bg-blue-700 transition-colors">
+          <button type="button" id="btnOpenAddTemplateModal" class="inline-flex items-center gap-2 rounded-[14px] bg-blue-600 px-4 py-2.5 text-xs font-bold text-white shadow-sm hover:bg-blue-700 transition-colors">
             <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             Tambah template
           </button>
@@ -556,66 +572,66 @@ body {
         </div>
 
         <!-- DIVIDER / SECTION GENERATOR KARTU -->
-        <div class="pt-4 border-t border-neutral-200">
+        <div class="pt-4 border-t border-[#e8e6dc]">
           <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
             <!-- Control Panel -->
-            <div class="lg:col-span-5 rounded-xl border border-neutral-200/80 bg-white p-6 shadow-xs">
+            <div class="lg:col-span-5 rounded-[14px] border border-[#e8e6dc]/80 bg-white p-6 shadow-xs">
               <div class="flex items-center justify-between">
-                <h2 class="text-base font-bold text-neutral-950">Generator Desain Kartu (10 x 10 cm)</h2>
+                <h2 class="text-base font-bold text-[#141414]">Generator Desain Kartu (10 x 10 cm)</h2>
                 <span class="inline-flex items-center rounded-full bg-blue-50 px-2.5 py-0.5 text-[11px] font-bold text-blue-700" id="currentActiveTemplateBadge">Template: Default</span>
               </div>
-              <p class="mt-1 text-xs text-neutral-500">QR Code digenerate dan otomatis menempati posisi QR template secara presisi.</p>
+              <p class="mt-1 text-xs text-[#5f5f5a]">QR Code digenerate dan otomatis menempati posisi QR template secara presisi.</p>
 
-              <div id="studioMsgOk" class="hidden mt-4 rounded-lg border border-neutral-900 bg-neutral-100 p-3 text-xs font-semibold text-neutral-950"></div>
-              <div id="studioMsgErr" class="hidden mt-4 rounded-lg border border-dashed border-neutral-900 bg-neutral-50 p-3 text-xs font-semibold text-neutral-950"></div>
+              <div id="studioMsgOk" class="hidden mt-4 rounded-lg border border-neutral-900 bg-[#f7f7f4] p-3 text-xs font-semibold text-[#141414]"></div>
+              <div id="studioMsgErr" class="hidden mt-4 rounded-lg border border-dashed border-neutral-900 bg-[#fafaf7] p-3 text-xs font-semibold text-[#141414]"></div>
 
               <div class="mt-5 space-y-4">
                 <!-- PILIH TEMPLATE UNTUK DIGUNAKAN -->
                 <div>
-                  <label class="block text-xs font-bold text-neutral-900 mb-1.5">Pilih Template Cetak</label>
-                  <select id="selectedTemplateSelect" class="w-full rounded-lg border border-neutral-300 bg-neutral-50/50 px-3.5 py-2.5 text-xs font-medium text-neutral-900 focus:border-zinc-950 focus:bg-white focus:outline-none">
+                  <label class="block text-xs font-bold text-[#141414] mb-1.5">Pilih Template Cetak</label>
+                  <select id="selectedTemplateSelect" class="w-full rounded-lg border border-[#e8e6dc] bg-[#fafaf7]/50 px-3.5 py-2.5 text-xs font-medium text-[#141414] focus:border-zinc-950 focus:bg-white focus:outline-none">
                     <!-- Option template dinamis -->
                   </select>
                 </div>
 
                 <div>
-                  <label class="block text-xs font-bold text-neutral-900 mb-1.5">Mode Pembuatan</label>
-                  <select id="genMode" class="w-full rounded-lg border border-neutral-300 bg-neutral-50/50 px-3.5 py-2.5 text-xs font-medium text-neutral-900 focus:border-zinc-950 focus:bg-white focus:outline-none">
+                  <label class="block text-xs font-bold text-[#141414] mb-1.5">Mode Pembuatan</label>
+                  <select id="genMode" class="w-full rounded-lg border border-[#e8e6dc] bg-[#fafaf7]/50 px-3.5 py-2.5 text-xs font-medium text-[#141414] focus:border-zinc-950 focus:bg-white focus:outline-none">
                     <option value="batch">Generate Kartu Baru (Simpan ke Firestore)</option>
                     <option value="custom">Preview / Kartu Tunggal Kustom</option>
                   </select>
                 </div>
 
                 <div id="batchFields">
-                  <label class="block text-xs font-bold text-neutral-900 mb-1.5">Jumlah Kartu</label>
-                  <input type="number" id="batchQty" value="4" min="1" max="50" class="w-full rounded-lg border border-neutral-300 bg-neutral-50/50 px-3.5 py-2.5 text-xs font-medium text-neutral-900 focus:border-zinc-950 focus:bg-white focus:outline-none">
-                  <p class="mt-1 text-[11px] text-neutral-500">ID acak unik dibuat otomatis dan tersimpan di database.</p>
+                  <label class="block text-xs font-bold text-[#141414] mb-1.5">Jumlah Kartu</label>
+                  <input type="number" id="batchQty" value="4" min="1" max="50" class="w-full rounded-lg border border-[#e8e6dc] bg-[#fafaf7]/50 px-3.5 py-2.5 text-xs font-medium text-[#141414] focus:border-zinc-950 focus:bg-white focus:outline-none">
+                  <p class="mt-1 text-[11px] text-[#5f5f5a]">ID acak unik dibuat otomatis dan tersimpan di database.</p>
                 </div>
 
                 <div id="customFields" style="display:none">
-                  <label class="block text-xs font-bold text-neutral-900 mb-1.5">Card ID Kustom</label>
-                  <input type="text" id="customId" placeholder="Contoh: CARD01" maxlength="12" class="w-full rounded-lg border border-neutral-300 bg-neutral-50/50 px-3.5 py-2.5 text-xs font-medium text-neutral-900 focus:border-zinc-950 focus:bg-white focus:outline-none uppercase font-mono">
+                  <label class="block text-xs font-bold text-[#141414] mb-1.5">Card ID Kustom</label>
+                  <input type="text" id="customId" placeholder="Contoh: CARD01" maxlength="12" class="w-full rounded-lg border border-[#e8e6dc] bg-[#fafaf7]/50 px-3.5 py-2.5 text-xs font-medium text-[#141414] focus:border-zinc-950 focus:bg-white focus:outline-none uppercase font-mono">
                 </div>
 
                 <button type="button" class="w-full rounded-lg bg-zinc-950 py-2.5 text-xs font-bold text-white shadow-xs hover:bg-zinc-800 transition-colors" id="btnRunGenerate">
                   Generate Desain Kartu
                 </button>
 
-                <div id="studioLog" class="rounded-lg border border-dashed border-neutral-300 bg-neutral-50 p-3 text-[11px] text-neutral-500 max-h-28 overflow-y-auto font-mono">
+                <div id="studioLog" class="rounded-lg border border-dashed border-[#e8e6dc] bg-[#fafaf7] p-3 text-[11px] text-[#5f5f5a] max-h-28 overflow-y-auto font-mono">
                   Siap. Pilih template dan jumlah kartu lalu klik Generate.
                 </div>
               </div>
             </div>
 
             <!-- Catalog Result -->
-            <div class="lg:col-span-7 rounded-xl border border-neutral-200/80 bg-white p-6 shadow-xs">
-              <div class="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-neutral-200">
+            <div class="lg:col-span-7 rounded-[14px] border border-[#e8e6dc]/80 bg-white p-6 shadow-xs">
+              <div class="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-[#e8e6dc]">
                 <div>
-                  <h2 class="text-base font-bold text-neutral-950">Hasil Desain Kartu (<span id="totalStudioCards">0</span>)</h2>
-                  <p class="text-xs text-neutral-500">Desain kartu siap cetak (Ukuran 10 x 10 cm).</p>
+                  <h2 class="text-base font-bold text-[#141414]">Hasil Desain Kartu (<span id="totalStudioCards">0</span>)</h2>
+                  <p class="text-xs text-[#5f5f5a]">Desain kartu siap cetak (Ukuran 10 x 10 cm).</p>
                 </div>
                 <div class="flex gap-2" id="batchActionButtons">
-                  <button type="button" class="inline-flex items-center gap-1.5 rounded-lg border border-neutral-300 bg-white px-3 py-1.5 text-xs font-bold text-neutral-800 hover:bg-neutral-50 shadow-xs" id="btnDownloadZip">
+                  <button type="button" class="inline-flex items-center gap-1.5 rounded-lg border border-[#e8e6dc] bg-white px-3 py-1.5 text-xs font-bold text-[#2a2a28] hover:bg-[#fafaf7] shadow-xs" id="btnDownloadZip">
                     Download ZIP (2 Foto)
                   </button>
                   <button type="button" class="inline-flex items-center gap-1.5 rounded-lg bg-zinc-950 px-3 py-1.5 text-xs font-bold text-white hover:bg-zinc-800 shadow-xs" onclick="window.print()">
@@ -625,9 +641,9 @@ body {
               </div>
 
               <div class="cards-catalog" id="cardsCatalog">
-                <div id="studioEmptyState" class="col-span-full py-12 text-center border-2 border-dashed border-neutral-200 rounded-xl bg-neutral-50/50">
-                  <p class="text-sm font-bold text-neutral-800">Belum Ada Kartu yang Dibuat</p>
-                  <p class="mt-1 text-xs text-neutral-500">Tentukan jumlah kartu di panel kiri lalu klik tombol Generate.</p>
+                <div id="studioEmptyState" class="col-span-full py-12 text-center border-2 border-dashed border-[#e8e6dc] rounded-[14px] bg-[#fafaf7]/50">
+                  <p class="text-sm font-bold text-[#2a2a28]">Belum Ada Kartu yang Dibuat</p>
+                  <p class="mt-1 text-xs text-[#5f5f5a]">Tentukan jumlah kartu di panel kiri lalu klik tombol Generate.</p>
                 </div>
               </div>
             </div>
@@ -637,39 +653,52 @@ body {
 
       <!-- VIEW 3: MANAJEMEN KARTU FIRESTORE -->
       <section class="tab-view" id="view-cards">
-        <div class="rounded-2xl border border-neutral-200/80 bg-white p-4 sm:p-6 shadow-xs">
+        <div class="rounded-[20px] border border-[#e8e6dc]/80 bg-white p-4 sm:p-6 shadow-xs">
           <!-- Header & Tombol Aksi -->
           <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-5">
             <div>
-              <h2 class="text-base sm:text-lg font-bold text-neutral-950">Daftar Semua Kartu di Firestore</h2>
-              <p class="text-xs text-neutral-500 mt-0.5">Data kartu tersimpan, status aktivasi, dan tujuan Google Maps.</p>
+              <h2 class="text-base sm:text-lg font-bold text-[#141414]">Daftar Semua Kartu di Firestore</h2>
+              <p class="text-xs text-[#5f5f5a] mt-0.5">Data kartu tersimpan, status aktivasi, dan tujuan Google Maps.</p>
             </div>
             <div class="flex flex-wrap items-center gap-2">
-              <button type="button" class="flex-1 sm:flex-initial inline-flex justify-center items-center gap-1.5 rounded-xl bg-zinc-950 px-3.5 py-2 text-xs font-bold text-white hover:bg-zinc-800 shadow-xs transition-colors" id="btnDownloadAllTableZip">
+              <button type="button" class="flex-1 sm:flex-initial inline-flex justify-center items-center gap-1.5 rounded-[14px] bg-zinc-950 px-3.5 py-2 text-xs font-bold text-white hover:bg-zinc-800 shadow-xs transition-colors" id="btnDownloadAllTableZip">
                 <svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                 Download Semua ZIP
               </button>
-              <button type="button" class="inline-flex items-center gap-1.5 rounded-xl border border-neutral-300 bg-white px-3.5 py-2 text-xs font-bold text-neutral-800 hover:bg-neutral-50 shadow-xs transition-colors" id="btnReloadTable">
+              <button type="button" class="inline-flex items-center gap-1.5 rounded-[14px] border border-[#e8e6dc] bg-white px-3.5 py-2 text-xs font-bold text-[#2a2a28] hover:bg-[#fafaf7] shadow-xs transition-colors" id="btnReloadTable">
                 Refresh
               </button>
-              <button type="button" class="inline-flex items-center gap-1.5 rounded-xl border border-red-200 bg-red-50 px-3.5 py-2 text-xs font-bold text-red-700 hover:bg-red-100 shadow-xs transition-colors" id="btnResetAllFirestore">
-                <svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-                Reset Nol
-              </button>
+            </div>
+          </div>
+
+          <!-- PENCARIAN & FILTER KARTU NFC -->
+          <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 mb-4">
+            <div class="sm:col-span-8">
+              <div class="relative">
+                <input type="text" id="inputSearchCards" placeholder="Cari ID kartu, nama bisnis, atau URL..." class="w-full rounded-[14px] border border-[#e8e6dc] bg-white pl-9 pr-3.5 py-2 text-xs text-[#141414] focus:border-[#f5b400] focus:outline-none">
+                <svg class="size-4 text-[#8c8c84] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              </div>
+            </div>
+            <div class="sm:col-span-4">
+              <select id="selectFilterCardStatus" class="w-full rounded-[14px] border border-[#e8e6dc] bg-white px-3 py-2 text-xs text-[#141414] focus:border-[#f5b400] focus:outline-none">
+                <option value="ALL">Semua Status (Aktif & Belum)</option>
+                <option value="ACTIVE">✓ Kartu Aktif Saja</option>
+                <option value="INACTIVE">○ Kartu Belum Aktif Saja</option>
+              </select>
             </div>
           </div>
 
           <!-- Tampilan Mobile (Card List) untuk layar kecil (< md) -->
           <div class="block md:hidden space-y-3" id="mobileCardsContainer">
-            <div class="p-6 text-center text-xs text-neutral-400 bg-neutral-50 rounded-xl border border-dashed border-neutral-200">
+            <div class="p-6 text-center text-xs text-[#8c8c84] bg-[#fafaf7] rounded-[14px] border border-dashed border-[#e8e6dc]">
               Memuat data kartu...
             </div>
           </div>
 
           <!-- Tampilan Desktop (Tabel) untuk layar menengah ke atas (>= md) -->
-          <div class="hidden md:block overflow-x-auto rounded-xl border border-neutral-200">
+          <div class="hidden md:block overflow-x-auto rounded-[14px] border border-[#e8e6dc]">
             <table class="w-full text-left text-xs min-w-[650px]">
-              <thead class="bg-neutral-50 border-b border-neutral-200 text-neutral-700 font-bold">
+              <thead class="bg-[#fafaf7] border-b border-[#e8e6dc] text-[#444440] font-bold">
                 <tr>
                   <th class="p-3.5">ID Kartu</th>
                   <th class="p-3.5">Status</th>
@@ -681,7 +710,7 @@ body {
               </thead>
               <tbody id="tableCardsBody" class="divide-y divide-neutral-200 font-medium">
                 <tr>
-                  <td colspan="6" class="p-6 text-center text-neutral-500">Memuat data kartu...</td>
+                  <td colspan="6" class="p-6 text-center text-[#5f5f5a]">Memuat data kartu...</td>
                 </tr>
               </tbody>
             </table>
@@ -695,45 +724,45 @@ body {
           <!-- Kolom Kiri: Form Konfigurasi Ukuran & Kartu -->
           <div class="lg:col-span-5 space-y-5">
             <!-- Box 1: Template & Kartu -->
-            <div class="rounded-xl border border-neutral-200/80 bg-white p-5 shadow-xs space-y-4">
-              <h3 class="text-sm font-bold text-neutral-950">Template & kartu</h3>
+            <div class="rounded-[14px] border border-[#e8e6dc]/80 bg-white p-5 shadow-xs space-y-4">
+              <h3 class="text-sm font-bold text-[#141414]">Template & kartu</h3>
               
               <div>
-                <label class="block text-xs font-medium text-neutral-700 mb-1">Template desain</label>
-                <select id="lsTemplateSelect" class="w-full rounded-lg border border-neutral-300 bg-white px-3.5 py-2 text-xs font-semibold text-neutral-900 focus:border-zinc-950 focus:outline-none">
+                <label class="block text-xs font-medium text-[#444440] mb-1">Template desain</label>
+                <select id="lsTemplateSelect" class="w-full rounded-lg border border-[#e8e6dc] bg-white px-3.5 py-2 text-xs font-semibold text-[#141414] focus:border-zinc-950 focus:outline-none">
                   <!-- Diisi dinamis dari daftar template -->
                 </select>
               </div>
 
               <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div>
-                  <label class="block text-xs font-medium text-neutral-700 mb-1">Kartu</label>
-                  <select id="lsCardScope" class="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-xs font-medium text-neutral-900 focus:border-zinc-950 focus:outline-none">
+                  <label class="block text-xs font-medium text-[#444440] mb-1">Kartu</label>
+                  <select id="lsCardScope" class="w-full rounded-lg border border-[#e8e6dc] bg-white px-3 py-2 text-xs font-medium text-[#141414] focus:border-zinc-950 focus:outline-none">
                     <option value="all">Semua kartu</option>
                     <option value="range">Rentang ID</option>
                   </select>
                 </div>
                 <div>
-                  <label class="block text-xs font-medium text-neutral-700 mb-1">Dari ID</label>
-                  <input type="text" id="lsStartId" placeholder="awal" class="w-full rounded-lg border border-neutral-300 bg-neutral-50/50 px-3 py-2 text-xs font-mono text-neutral-900 focus:border-zinc-950 focus:bg-white focus:outline-none uppercase">
+                  <label class="block text-xs font-medium text-[#444440] mb-1">Dari ID</label>
+                  <input type="text" id="lsStartId" placeholder="awal" class="w-full rounded-lg border border-[#e8e6dc] bg-[#fafaf7]/50 px-3 py-2 text-xs font-mono text-[#141414] focus:border-zinc-950 focus:bg-white focus:outline-none uppercase">
                 </div>
                 <div>
-                  <label class="block text-xs font-medium text-neutral-700 mb-1">Sampai ID</label>
-                  <input type="text" id="lsEndId" placeholder="akhir" class="w-full rounded-lg border border-neutral-300 bg-neutral-50/50 px-3 py-2 text-xs font-mono text-neutral-900 focus:border-zinc-950 focus:bg-white focus:outline-none uppercase">
+                  <label class="block text-xs font-medium text-[#444440] mb-1">Sampai ID</label>
+                  <input type="text" id="lsEndId" placeholder="akhir" class="w-full rounded-lg border border-[#e8e6dc] bg-[#fafaf7]/50 px-3 py-2 text-xs font-mono text-[#141414] focus:border-zinc-950 focus:bg-white focus:outline-none uppercase">
                 </div>
               </div>
-              <p class="text-[11px] text-neutral-500 leading-relaxed">
+              <p class="text-[11px] text-[#5f5f5a] leading-relaxed">
                 Setiap sticker memakai QR kartunya sendiri. Maksimal 300 kartu per unduhan; pakai rentang ID untuk sisanya.
               </p>
             </div>
 
             <!-- Box 2: Ukuran (cm) & Tata Letak Grid -->
-            <div class="rounded-xl border border-neutral-200/80 bg-white p-5 shadow-xs space-y-4">
-              <h3 class="text-sm font-bold text-neutral-950">Ukuran (cm)</h3>
+            <div class="rounded-[14px] border border-[#e8e6dc]/80 bg-white p-5 shadow-xs space-y-4">
+              <h3 class="text-sm font-bold text-[#141414]">Ukuran (cm)</h3>
 
               <div>
-                <label class="block text-xs font-medium text-neutral-700 mb-1">Canvas</label>
-                <select id="lsCanvasPreset" class="w-full rounded-lg border border-neutral-300 bg-white px-3.5 py-2 text-xs font-medium text-neutral-900 focus:border-zinc-950 focus:outline-none">
+                <label class="block text-xs font-medium text-[#444440] mb-1">Canvas</label>
+                <select id="lsCanvasPreset" class="w-full rounded-lg border border-[#e8e6dc] bg-white px-3.5 py-2 text-xs font-medium text-[#141414] focus:border-zinc-950 focus:outline-none">
                   <option value="a4" selected>A4 (21 x 29,7)</option>
                   <option value="a3">A3 (29,7 x 42)</option>
                   <option value="f4">F4 / Folio (21,5 x 33)</option>
@@ -743,76 +772,76 @@ body {
 
               <div class="grid grid-cols-2 gap-3">
                 <div>
-                  <label class="block text-xs font-medium text-neutral-700 mb-1">Lebar canvas (cm)</label>
-                  <input type="number" step="0.1" id="lsCanvasW" value="21" class="w-full rounded-lg border border-neutral-300 px-3 py-2 text-xs font-semibold text-neutral-900 focus:border-zinc-950 focus:outline-none">
+                  <label class="block text-xs font-medium text-[#444440] mb-1">Lebar canvas (cm)</label>
+                  <input type="number" step="0.1" id="lsCanvasW" value="21" class="w-full rounded-lg border border-[#e8e6dc] px-3 py-2 text-xs font-semibold text-[#141414] focus:border-zinc-950 focus:outline-none">
                 </div>
                 <div>
-                  <label class="block text-xs font-medium text-neutral-700 mb-1">Tinggi canvas (cm)</label>
-                  <input type="number" step="0.1" id="lsCanvasH" value="29.7" class="w-full rounded-lg border border-neutral-300 px-3 py-2 text-xs font-semibold text-neutral-900 focus:border-zinc-950 focus:outline-none">
+                  <label class="block text-xs font-medium text-[#444440] mb-1">Tinggi canvas (cm)</label>
+                  <input type="number" step="0.1" id="lsCanvasH" value="29.7" class="w-full rounded-lg border border-[#e8e6dc] px-3 py-2 text-xs font-semibold text-[#141414] focus:border-zinc-950 focus:outline-none">
                 </div>
               </div>
 
-              <button type="button" id="btnSwapCanvasDims" class="rounded-lg border border-neutral-300 bg-white px-3 py-1.5 text-xs font-semibold text-neutral-800 hover:bg-neutral-50 shadow-xs transition-colors">
+              <button type="button" id="btnSwapCanvasDims" class="rounded-lg border border-[#e8e6dc] bg-white px-3 py-1.5 text-xs font-semibold text-[#2a2a28] hover:bg-[#fafaf7] shadow-xs transition-colors">
                 Tukar lebar & tinggi
               </button>
 
               <div class="grid grid-cols-2 gap-3 pt-1">
                 <div>
-                  <label class="block text-xs font-medium text-neutral-700 mb-1">Lebar sticker (cm)</label>
-                  <input type="number" step="0.1" id="lsStickerW" value="5" class="w-full rounded-lg border border-neutral-300 px-3 py-2 text-xs font-semibold text-neutral-900 focus:border-zinc-950 focus:outline-none">
+                  <label class="block text-xs font-medium text-[#444440] mb-1">Lebar sticker (cm)</label>
+                  <input type="number" step="0.1" id="lsStickerW" value="5" class="w-full rounded-lg border border-[#e8e6dc] px-3 py-2 text-xs font-semibold text-[#141414] focus:border-zinc-950 focus:outline-none">
                 </div>
                 <div>
-                  <label class="block text-xs font-medium text-neutral-700 mb-1">Tinggi sticker (cm)</label>
-                  <input type="number" step="0.1" id="lsStickerH" value="5" class="w-full rounded-lg border border-neutral-300 px-3 py-2 text-xs font-semibold text-neutral-900 focus:border-zinc-950 focus:outline-none">
+                  <label class="block text-xs font-medium text-[#444440] mb-1">Tinggi sticker (cm)</label>
+                  <input type="number" step="0.1" id="lsStickerH" value="5" class="w-full rounded-lg border border-[#e8e6dc] px-3 py-2 text-xs font-semibold text-[#141414] focus:border-zinc-950 focus:outline-none">
                 </div>
               </div>
 
               <div class="grid grid-cols-2 gap-3">
                 <div>
-                  <label class="block text-xs font-medium text-neutral-700 mb-1">Jarak antar sticker (cm)</label>
-                  <input type="number" step="0.1" id="lsGap" value="0.2" class="w-full rounded-lg border border-neutral-300 px-3 py-2 text-xs font-semibold text-neutral-900 focus:border-zinc-950 focus:outline-none">
+                  <label class="block text-xs font-medium text-[#444440] mb-1">Jarak antar sticker (cm)</label>
+                  <input type="number" step="0.1" id="lsGap" value="0.2" class="w-full rounded-lg border border-[#e8e6dc] px-3 py-2 text-xs font-semibold text-[#141414] focus:border-zinc-950 focus:outline-none">
                 </div>
                 <div>
-                  <label class="block text-xs font-medium text-neutral-700 mb-1">Orientasi / Susunan</label>
-                  <select id="lsGridMode" class="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-xs font-medium text-neutral-900 focus:border-zinc-950 focus:outline-none">
+                  <label class="block text-xs font-medium text-[#444440] mb-1">Orientasi / Susunan</label>
+                  <select id="lsGridMode" class="w-full rounded-lg border border-[#e8e6dc] bg-white px-3 py-2 text-xs font-medium text-[#141414] focus:border-zinc-950 focus:outline-none">
                     <option value="auto">Otomatis (muat terbanyak)</option>
                   </select>
                 </div>
               </div>
 
               <div>
-                <label class="block text-xs font-medium text-neutral-700 mb-1">Jika rasio berbeda</label>
-                <select id="lsFitMode" class="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-xs font-medium text-neutral-900 focus:border-zinc-950 focus:outline-none">
+                <label class="block text-xs font-medium text-[#444440] mb-1">Jika rasio berbeda</label>
+                <select id="lsFitMode" class="w-full rounded-lg border border-[#e8e6dc] bg-white px-3 py-2 text-xs font-medium text-[#141414] focus:border-zinc-950 focus:outline-none">
                   <option value="contain">Tampilkan utuh</option>
                   <option value="cover">Penuhi area (potong tepi)</option>
                 </select>
               </div>
 
               <div class="flex items-center gap-2 pt-1">
-                <input type="checkbox" id="lsCutLines" class="size-4 rounded border-neutral-300 accent-neutral-950">
-                <label for="lsCutLines" class="text-xs text-neutral-700 cursor-pointer">Garis potong tipis di tepi sticker</label>
+                <input type="checkbox" id="lsCutLines" class="size-4 rounded border-[#e8e6dc] accent-neutral-950">
+                <label for="lsCutLines" class="text-xs text-[#444440] cursor-pointer">Garis potong tipis di tepi sticker</label>
               </div>
             </div>
           </div>
 
           <!-- Kolom Kanan: Pratinjau Lembar & Tombol Unduh -->
-          <div class="lg:col-span-7 rounded-xl border border-neutral-200/80 bg-white p-5 shadow-xs space-y-4 flex flex-col justify-between">
+          <div class="lg:col-span-7 rounded-[14px] border border-[#e8e6dc]/80 bg-white p-5 shadow-xs space-y-4 flex flex-col justify-between">
             <div>
               <div class="flex items-center justify-between pb-2 border-b border-neutral-100">
                 <div>
-                  <h3 class="text-base font-bold text-neutral-950">Pratinjau lembar</h3>
-                  <p class="text-xs font-medium text-neutral-600 mt-0.5" id="lsCapacitySummary">
+                  <h3 class="text-base font-bold text-[#141414]">Pratinjau lembar</h3>
+                  <p class="text-xs font-medium text-[#5f5f5a] mt-0.5" id="lsCapacitySummary">
                     Muat 3 kolom x 5 baris = 15 sticker per lembar.
                   </p>
                 </div>
-                <span class="inline-flex items-center rounded-full bg-neutral-100 px-2.5 py-1 text-[11px] font-bold text-neutral-800" id="lsTotalCardsCount">0 Kartu Terpilih</span>
+                <span class="inline-flex items-center rounded-full bg-[#f7f7f4] px-2.5 py-1 text-[11px] font-bold text-[#2a2a28]" id="lsTotalCardsCount">0 Kartu Terpilih</span>
               </div>
 
               <!-- AREA CANVAS PRATINJAU LEMBAR -->
-              <div class="mt-4 flex items-center justify-center rounded-xl bg-neutral-100/80 border border-neutral-200/90 p-4 min-h-[380px] max-h-[580px] overflow-auto">
+              <div class="mt-4 flex items-center justify-center rounded-[14px] bg-[#f7f7f4]/80 border border-[#e8e6dc]/90 p-4 min-h-[380px] max-h-[580px] overflow-auto">
                 <canvas id="lsPreviewCanvas" class="shadow-lg bg-white rounded transition-transform max-w-full max-h-[520px] object-contain"></canvas>
               </div>
-              <p class="mt-3 text-[11px] text-neutral-500 leading-relaxed">
+              <p class="mt-3 text-[11px] text-[#5f5f5a] leading-relaxed">
                 QR di pratinjau hanya contoh; saat diunduh, tiap sticker memakai QR kartu masing-masing.
               </p>
             </div>
@@ -821,25 +850,25 @@ body {
             <div class="pt-4 border-t border-neutral-100 space-y-3">
               <div class="grid grid-cols-2 gap-3">
                 <div>
-                  <label class="block text-xs font-medium text-neutral-700 mb-1">Resolusi</label>
-                  <select id="lsDpiSelect" class="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-xs font-semibold text-neutral-900 focus:border-zinc-950 focus:outline-none">
+                  <label class="block text-xs font-medium text-[#444440] mb-1">Resolusi</label>
+                  <select id="lsDpiSelect" class="w-full rounded-lg border border-[#e8e6dc] bg-white px-3 py-2 text-xs font-semibold text-[#141414] focus:border-zinc-950 focus:outline-none">
                     <option value="300" selected>300 DPI (cetak)</option>
                     <option value="150">150 DPI (standar)</option>
                   </select>
                 </div>
                 <div>
-                  <label class="block text-xs font-medium text-neutral-700 mb-1">Format</label>
-                  <select id="lsFormatSelect" class="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-xs font-semibold text-neutral-900 focus:border-zinc-950 focus:outline-none">
+                  <label class="block text-xs font-medium text-[#444440] mb-1">Format</label>
+                  <select id="lsFormatSelect" class="w-full rounded-lg border border-[#e8e6dc] bg-white px-3 py-2 text-xs font-semibold text-[#141414] focus:border-zinc-950 focus:outline-none">
                     <option value="pdf" selected>PDF (ukuran asli)</option>
                     <option value="png">PNG per lembar</option>
                   </select>
                 </div>
               </div>
 
-              <button type="button" id="btnDownloadLayout" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-6 py-2.5 text-xs font-bold text-white shadow-sm hover:bg-blue-700 transition-colors">
+              <button type="button" id="btnDownloadLayout" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-[14px] bg-blue-600 px-6 py-2.5 text-xs font-bold text-white shadow-sm hover:bg-blue-700 transition-colors">
                 Unduh layout
               </button>
-              <p class="text-[11px] text-neutral-500">
+              <p class="text-[11px] text-[#5f5f5a]">
                 Saat mencetak PDF, pilih skala 100% (Actual size) agar ukuran sticker sesuai. Pengaturan ukuran diingat per template di browser ini.
               </p>
             </div>
@@ -849,46 +878,46 @@ body {
 
       <!-- VIEW 5: RESET KARTU -->
       <section class="tab-view" id="view-reset">
-        <div class="max-w-lg rounded-2xl border border-neutral-200/90 bg-white p-6 shadow-sm mx-auto my-4">
+        <div class="max-w-lg rounded-[20px] border border-[#e8e6dc]/90 bg-white p-6 shadow-sm mx-auto my-4">
           <!-- Logo & Brand Header -->
           <div class="flex items-center gap-2 mb-4" id="resetLogoHeader">
-            <span class="flex size-9 shrink-0 items-center justify-center rounded-xl bg-zinc-950 text-white font-bold">
+            <span class="flex size-9 shrink-0 items-center justify-center rounded-[14px] bg-zinc-950 text-white font-bold">
               <svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12a10 10 0 0 1 10-10"/><path d="M2 12a10 10 0 0 0 10 10"/><path d="M12 2a10 10 0 0 1 10 10"/><path d="M12 22a10 10 0 0 0 10-10"/></svg>
             </span>
-            <span class="text-lg font-bold text-neutral-950" id="resetAppTitle">Ulasankuu</span>
+            <span class="text-lg font-bold text-[#141414]" id="resetAppTitle">Ulasankuu</span>
           </div>
 
-          <h2 class="text-base font-bold text-neutral-950" id="resetHeaderTitle">Reset Kartu</h2>
-          <p class="mt-1 text-xs text-neutral-500 leading-relaxed">
+          <h2 class="text-base font-bold text-[#141414]" id="resetHeaderTitle">Reset Kartu</h2>
+          <p class="mt-1 text-xs text-[#5f5f5a] leading-relaxed">
             Scan QR kartu atau ketik ID kartu, lalu masukkan PIN untuk mereset kartu. Semua pengaturan kartu akan dihapus dan kartu perlu diaktivasi ulang.
           </p>
 
-          <div id="resetMsgOk" class="hidden mt-4 rounded-lg border border-neutral-900 bg-neutral-100 p-3 text-xs font-semibold text-neutral-950"></div>
+          <div id="resetMsgOk" class="hidden mt-4 rounded-lg border border-neutral-900 bg-[#f7f7f4] p-3 text-xs font-semibold text-[#141414]"></div>
           <div id="resetMsgErr" class="hidden mt-4 rounded-lg border border-dashed border-red-500 bg-red-50 p-3 text-xs font-semibold text-red-900"></div>
 
           <form id="resetForm" class="mt-5 space-y-4">
             <div>
-              <label class="block text-xs font-semibold text-neutral-900 mb-1">ID Kartu</label>
+              <label class="block text-xs font-semibold text-[#141414] mb-1">ID Kartu</label>
               <div class="relative flex items-center">
-                <input type="text" id="resetCardId" placeholder="Contoh: NPT2746Z6K" required maxlength="16" class="w-full rounded-xl border border-neutral-300 bg-white px-3.5 py-2.5 pr-10 text-xs font-mono font-bold text-neutral-900 uppercase tracking-wider focus:border-zinc-950 focus:outline-none">
-                <button type="button" id="btnScanResetQR" class="absolute right-2.5 p-1 rounded-md text-neutral-400 hover:text-neutral-950 hover:bg-neutral-100 transition-colors" title="Scan QR dengan kamera">
+                <input type="text" id="resetCardId" placeholder="Contoh: NPT2746Z6K" required maxlength="16" class="w-full rounded-[14px] border border-[#e8e6dc] bg-white px-3.5 py-2.5 pr-10 text-xs font-mono font-bold text-[#141414] uppercase tracking-wider focus:border-zinc-950 focus:outline-none">
+                <button type="button" id="btnScanResetQR" class="absolute right-2.5 p-1 rounded-md text-[#8c8c84] hover:text-[#141414] hover:bg-[#f7f7f4] transition-colors" title="Scan QR dengan kamera">
                   <svg class="size-4.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/></svg>
                 </button>
               </div>
-              <p class="mt-1 text-[11px] text-neutral-500">Ketik ID kartu atau tempel link kartu. ID akan diambil otomatis.</p>
+              <p class="mt-1 text-[11px] text-[#5f5f5a]">Ketik ID kartu atau tempel link kartu. ID akan diambil otomatis.</p>
             </div>
 
             <div>
-              <label class="block text-xs font-semibold text-neutral-900 mb-1">PIN</label>
-              <input type="password" id="resetPinInput" placeholder="6 digit angka" maxlength="8" class="w-full rounded-xl border border-neutral-300 bg-white px-3.5 py-2.5 text-xs font-mono text-neutral-900 tracking-widest focus:border-zinc-950 focus:outline-none">
+              <label class="block text-xs font-semibold text-[#141414] mb-1">PIN</label>
+              <input type="password" id="resetPinInput" placeholder="6 digit angka" maxlength="8" class="w-full rounded-[14px] border border-[#e8e6dc] bg-white px-3.5 py-2.5 text-xs font-mono text-[#141414] tracking-widest focus:border-zinc-950 focus:outline-none">
               <div class="mt-2 flex items-center gap-2">
-                <input type="checkbox" id="toggleShowResetPin" class="size-3.5 rounded border-neutral-300 accent-neutral-950 cursor-pointer">
-                <label for="toggleShowResetPin" class="text-xs text-neutral-600 cursor-pointer select-none">Tampilkan PIN</label>
+                <input type="checkbox" id="toggleShowResetPin" class="size-3.5 rounded border-[#e8e6dc] accent-neutral-950 cursor-pointer">
+                <label for="toggleShowResetPin" class="text-xs text-[#5f5f5a] cursor-pointer select-none">Tampilkan PIN</label>
               </div>
             </div>
 
             <div class="pt-2">
-              <button type="submit" class="w-full rounded-xl bg-red-600 py-3 text-xs font-bold text-white shadow-sm hover:bg-red-700 transition-colors" id="btnConfirmReset">
+              <button type="submit" class="w-full rounded-[14px] bg-red-600 py-3 text-xs font-bold text-white shadow-sm hover:bg-red-700 transition-colors" id="btnConfirmReset">
                 Reset Kartu
               </button>
             </div>
@@ -896,28 +925,89 @@ body {
         </div>
       </section>
 
-      <!-- VIEW 6: KELOLA AKUN ADMIN -->
+      <!-- VIEW 7: AUDIT LOG -->
+      <section class="tab-view" id="view-audit-logs">
+        <div class="rounded-[20px] border border-[#e8e6dc]/90 bg-white p-4 sm:p-6 shadow-xs space-y-5">
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-neutral-100">
+            <div>
+              <h2 class="text-base sm:text-lg font-bold text-[#141414] flex items-center gap-2">
+                <span class="size-7 rounded-lg bg-emerald-50 text-amber-700 flex items-center justify-center font-bold text-sm">📋</span>
+                Audit Log Sistem
+              </h2>
+              <p class="text-xs text-[#5f5f5a] mt-0.5">Catatan riwayat seluruh aktivitas penting: aktivasi kartu, ganti URL review, update PIN, dan aksi admin.</p>
+            </div>
+            <button type="button" id="btnRefreshAuditLogs" class="inline-flex items-center gap-1.5 rounded-[14px] border border-[#e8e6dc] bg-white px-3.5 py-2 text-xs font-bold text-[#2a2a28] hover:bg-[#fafaf7] shadow-xs transition-colors">
+              <svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/></svg>
+              Segarkan Log
+            </button>
+          </div>
+
+          <!-- Filter & Search Controls -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div>
+              <label for="searchAuditLog" class="block text-[11px] font-bold text-[#5f5f5a] mb-1">Cari Aktivitas / ID Kartu</label>
+              <input type="text" id="searchAuditLog" placeholder="Ketik kata kunci atau ID kartu..." class="w-full rounded-[14px] border border-[#e8e6dc] bg-white px-3.5 py-2 text-xs text-[#141414] focus:border-[#f5b400] focus:outline-none">
+            </div>
+            <div>
+              <label for="filterAuditType" class="block text-[11px] font-bold text-[#5f5f5a] mb-1">Jenis Aktivitas</label>
+              <select id="filterAuditType" class="w-full rounded-[14px] border border-[#e8e6dc] bg-white px-3.5 py-2 text-xs text-[#141414] focus:border-[#f5b400] focus:outline-none">
+                <option value="ALL">Semua Aktivitas</option>
+                <option value="ACTIVATION">Aktivasi Kartu</option>
+                <option value="CHANGE_URL">Ganti URL Review</option>
+                <option value="CHANGE_PIN">Ganti PIN</option>
+                <option value="RESET_CARD">Reset Kartu</option>
+                <option value="ADMIN_ACTION">Aksi Admin</option>
+              </select>
+            </div>
+            <div>
+              <label for="filterAuditDate" class="block text-[11px] font-bold text-[#5f5f5a] mb-1">Filter Tanggal</label>
+              <input type="date" id="filterAuditDate" class="w-full rounded-[14px] border border-[#e8e6dc] bg-white px-3.5 py-2 text-xs text-[#141414] focus:border-[#f5b400] focus:outline-none">
+            </div>
+          </div>
+
+          <!-- Tabel Audit Log -->
+          <div class="overflow-x-auto rounded-[14px] border border-[#e8e6dc]">
+            <table class="w-full text-left text-xs min-w-[700px]">
+              <thead class="bg-[#fafaf7] border-b border-[#e8e6dc] text-[#444440] font-bold">
+                <tr>
+                  <th class="p-3.5">Waktu</th>
+                  <th class="p-3.5">Jenis Aktivitas</th>
+                  <th class="p-3.5">ID Kartu</th>
+                  <th class="p-3.5">Pelaku</th>
+                  <th class="p-3.5">Keterangan Aktivitas</th>
+                  <th class="p-3.5 text-right">Status</th>
+                </tr>
+              </thead>
+              <tbody id="auditLogsTableBody" class="divide-y divide-neutral-200 font-medium">
+                <tr><td colspan="6" class="p-6 text-center text-[#8c8c84]">Memuat audit log...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- VIEW 8: KELOLA AKUN ADMIN -->
       <section class="tab-view" id="view-admins">
-        <div class="max-w-3xl rounded-2xl border border-neutral-200/90 bg-white p-6 shadow-xs space-y-5">
+        <div class="max-w-3xl rounded-[20px] border border-[#e8e6dc]/90 bg-white p-6 shadow-xs space-y-5">
           <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-neutral-100">
             <div>
-              <h2 class="text-base font-bold text-neutral-950">Kelola Akun Admin</h2>
-              <p class="text-xs text-neutral-500 mt-0.5">Daftar akun pengelola yang memiliki wewenang akses login ke dashboard ini.</p>
+              <h2 class="text-base font-bold text-[#141414]">Kelola Akun Admin</h2>
+              <p class="text-xs text-[#5f5f5a] mt-0.5">Daftar akun pengelola yang memiliki wewenang akses login ke dashboard ini.</p>
             </div>
-            <button type="button" id="btnOpenAddAdminModal" class="inline-flex items-center gap-1.5 rounded-xl bg-blue-600 px-4 py-2 text-xs font-bold text-white shadow-xs hover:bg-blue-700 transition-colors">
+            <button type="button" id="btnOpenAddAdminModal" class="inline-flex items-center gap-1.5 rounded-[14px] bg-blue-600 px-4 py-2 text-xs font-bold text-white shadow-xs hover:bg-blue-700 transition-colors">
               <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
               Tambah Admin
             </button>
           </div>
 
           <!-- Alert Pesan Sukses / Error -->
-          <div id="adminMsgOk" class="hidden p-3 rounded-xl border border-neutral-900 bg-neutral-100 text-xs font-semibold text-neutral-950"></div>
-          <div id="adminMsgErr" class="hidden p-3 rounded-xl border border-dashed border-red-500 bg-red-50 text-xs font-semibold text-red-900"></div>
+          <div id="adminMsgOk" class="hidden p-3 rounded-[14px] border border-neutral-900 bg-[#f7f7f4] text-xs font-semibold text-[#141414]"></div>
+          <div id="adminMsgErr" class="hidden p-3 rounded-[14px] border border-dashed border-red-500 bg-red-50 text-xs font-semibold text-red-900"></div>
 
           <!-- Tabel List Admin -->
-          <div class="overflow-hidden rounded-xl border border-neutral-200">
+          <div class="overflow-hidden rounded-[14px] border border-[#e8e6dc]">
             <table class="w-full text-left text-xs">
-              <thead class="bg-neutral-50 border-b border-neutral-200 text-neutral-700 font-bold">
+              <thead class="bg-[#fafaf7] border-b border-[#e8e6dc] text-[#444440] font-bold">
                 <tr>
                   <th class="p-3.5">Username / Admin</th>
                   <th class="p-3.5">Nama Lengkap</th>
@@ -936,72 +1026,72 @@ body {
 
       <!-- VIEW 6: PENGATURAN APLIKASI (GANTI NAMA, LOGO, DAN DISPLAY) -->
       <section class="tab-view" id="view-settings">
-        <div class="max-w-2xl rounded-xl border border-neutral-200/80 bg-white p-6 shadow-xs">
-          <h2 class="text-lg font-bold text-neutral-950">Pengaturan Aplikasi</h2>
-          <p class="mt-1 text-xs text-neutral-500">Ubah identitas merek, logo, dan preferensi tampilan nama aplikasi.</p>
+        <div class="max-w-2xl rounded-[14px] border border-[#e8e6dc]/80 bg-white p-6 shadow-xs">
+          <h2 class="text-lg font-bold text-[#141414]">Pengaturan Aplikasi</h2>
+          <p class="mt-1 text-xs text-[#5f5f5a]">Ubah identitas merek, logo, dan preferensi tampilan nama aplikasi.</p>
 
-          <div id="settingsMsgOk" class="hidden mt-4 rounded-lg border border-neutral-900 bg-neutral-100 p-3 text-xs font-semibold text-neutral-950"></div>
+          <div id="settingsMsgOk" class="hidden mt-4 rounded-lg border border-neutral-900 bg-[#f7f7f4] p-3 text-xs font-semibold text-[#141414]"></div>
 
           <form id="settingsForm" class="mt-5 space-y-5">
             <!-- Nama Aplikasi -->
             <div>
-              <label class="block text-xs font-bold text-neutral-900 mb-1.5" for="settingAppName">Nama Aplikasi</label>
-              <input type="text" id="settingAppName" value="Ulasankuu" required class="w-full rounded-lg border border-neutral-300 bg-neutral-50/50 px-3.5 py-2.5 text-xs font-semibold text-neutral-900 focus:border-zinc-950 focus:bg-white focus:outline-none">
-              <p class="mt-1 text-[11px] text-neutral-500">Tampil di sidebar, judul halaman browser, dan halaman login.</p>
+              <label class="block text-xs font-bold text-[#141414] mb-1.5" for="settingAppName">Nama Aplikasi</label>
+              <input type="text" id="settingAppName" value="Ulasankuu" required class="w-full rounded-lg border border-[#e8e6dc] bg-[#fafaf7]/50 px-3.5 py-2.5 text-xs font-semibold text-[#141414] focus:border-zinc-950 focus:bg-white focus:outline-none">
+              <p class="mt-1 text-[11px] text-[#5f5f5a]">Tampil di sidebar, judul halaman browser, dan halaman login.</p>
             </div>
 
             <!-- Logo Aplikasi -->
             <div>
-              <label class="block text-xs font-bold text-neutral-900 mb-1.5">Logo Aplikasi</label>
+              <label class="block text-xs font-bold text-[#141414] mb-1.5">Logo Aplikasi</label>
               
               <!-- Box Preview Logo Saat Ini -->
-              <div class="flex items-center gap-3 rounded-lg border border-neutral-200 bg-neutral-50/60 p-3 mb-2">
-                <div id="settingsLogoPreviewBox" class="size-10 rounded-lg bg-zinc-950 flex items-center justify-center text-white overflow-hidden shrink-0 border border-neutral-300">
+              <div class="flex items-center gap-3 rounded-lg border border-[#e8e6dc] bg-[#fafaf7]/60 p-3 mb-2">
+                <div id="settingsLogoPreviewBox" class="size-10 rounded-lg bg-zinc-950 flex items-center justify-center text-white overflow-hidden shrink-0 border border-[#e8e6dc]">
                   <svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><rect width="18" height="18" x="3" y="3" rx="2" /><path d="M7 7h.01M17 7h.01M7 17h.01M17 17h.01" /></svg>
                 </div>
                 <div class="text-xs">
-                  <p class="font-bold text-neutral-900" id="currentLogoLabel">Logo saat ini: Ikon Bawaan</p>
-                  <p class="text-[11px] text-neutral-500">Format PNG, JPG, atau WebP transparan (Maks. 2 MB)</p>
+                  <p class="font-bold text-[#141414]" id="currentLogoLabel">Logo saat ini: Ikon Bawaan</p>
+                  <p class="text-[11px] text-[#5f5f5a]">Format PNG, JPG, atau WebP transparan (Maks. 2 MB)</p>
                 </div>
               </div>
 
               <!-- Input File Upload Logo -->
-              <input type="file" id="settingLogoFile" accept="image/png, image/jpeg, image/webp" class="block w-full text-xs text-neutral-600 file:mr-3 file:py-2 file:px-3.5 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-neutral-950 file:text-white hover:file:bg-neutral-800 file:cursor-pointer cursor-pointer border border-neutral-300 rounded-lg bg-neutral-50/40 p-1.5">
+              <input type="file" id="settingLogoFile" accept="image/png, image/jpeg, image/webp" class="block w-full text-xs text-[#5f5f5a] file:mr-3 file:py-2 file:px-3.5 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-neutral-950 file:text-white hover:file:bg-neutral-800 file:cursor-pointer cursor-pointer border border-[#e8e6dc] rounded-lg bg-[#fafaf7]/40 p-1.5">
               
               <div class="mt-2 flex items-center gap-2">
-                <input type="checkbox" id="settingRemoveLogo" class="size-4 rounded border-neutral-300 accent-neutral-950">
-                <label for="settingRemoveLogo" class="text-xs text-neutral-700 cursor-pointer">Hapus custom logo (kembali ke ikon bawaan)</label>
+                <input type="checkbox" id="settingRemoveLogo" class="size-4 rounded border-[#e8e6dc] accent-neutral-950">
+                <label for="settingRemoveLogo" class="text-xs text-[#444440] cursor-pointer">Hapus custom logo (kembali ke ikon bawaan)</label>
               </div>
             </div>
 
             <!-- Mode Tampilan di Navigasi -->
             <div>
-              <label class="block text-xs font-bold text-neutral-900 mb-2">Tampilan di Navigasi & Login</label>
+              <label class="block text-xs font-bold text-[#141414] mb-2">Tampilan di Navigasi & Login</label>
               <div class="space-y-2">
                 <!-- Option 1: Logo + teks -->
-                <label class="flex items-start gap-3 p-3 rounded-lg border border-neutral-200 bg-neutral-50/40 hover:bg-neutral-50 cursor-pointer transition-colors">
+                <label class="flex items-start gap-3 p-3 rounded-lg border border-[#e8e6dc] bg-[#fafaf7]/40 hover:bg-[#fafaf7] cursor-pointer transition-colors">
                   <input type="radio" name="displayMode" value="both" checked class="mt-0.5 size-4 accent-neutral-950">
                   <div>
-                    <span class="block text-xs font-bold text-neutral-900">Logo + teks</span>
-                    <span class="block text-[11px] text-neutral-500">Logo di samping nama aplikasi (Rekomendasi).</span>
+                    <span class="block text-xs font-bold text-[#141414]">Logo + teks</span>
+                    <span class="block text-[11px] text-[#5f5f5a]">Logo di samping nama aplikasi (Rekomendasi).</span>
                   </div>
                 </label>
 
                 <!-- Option 2: Logo saja -->
-                <label class="flex items-start gap-3 p-3 rounded-lg border border-neutral-200 bg-neutral-50/40 hover:bg-neutral-50 cursor-pointer transition-colors">
+                <label class="flex items-start gap-3 p-3 rounded-lg border border-[#e8e6dc] bg-[#fafaf7]/40 hover:bg-[#fafaf7] cursor-pointer transition-colors">
                   <input type="radio" name="displayMode" value="logo-only" class="mt-0.5 size-4 accent-neutral-950">
                   <div>
-                    <span class="block text-xs font-bold text-neutral-900">Logo saja</span>
-                    <span class="block text-[11px] text-neutral-500">Hanya gambar logo; teks nama aplikasi disembunyikan.</span>
+                    <span class="block text-xs font-bold text-[#141414]">Logo saja</span>
+                    <span class="block text-[11px] text-[#5f5f5a]">Hanya gambar logo; teks nama aplikasi disembunyikan.</span>
                   </div>
                 </label>
 
                 <!-- Option 3: Teks saja -->
-                <label class="flex items-start gap-3 p-3 rounded-lg border border-neutral-200 bg-neutral-50/40 hover:bg-neutral-50 cursor-pointer transition-colors">
+                <label class="flex items-start gap-3 p-3 rounded-lg border border-[#e8e6dc] bg-[#fafaf7]/40 hover:bg-[#fafaf7] cursor-pointer transition-colors">
                   <input type="radio" name="displayMode" value="text-only" class="mt-0.5 size-4 accent-neutral-950">
                   <div>
-                    <span class="block text-xs font-bold text-neutral-900">Teks saja</span>
-                    <span class="block text-[11px] text-neutral-500">Hanya menampilkan teks nama aplikasi tanpa logo.</span>
+                    <span class="block text-xs font-bold text-[#141414]">Teks saja</span>
+                    <span class="block text-[11px] text-[#5f5f5a]">Hanya menampilkan teks nama aplikasi tanpa logo.</span>
                   </div>
                 </label>
               </div>
@@ -1009,10 +1099,10 @@ body {
 
             <!-- Prefix Kode Kartu -->
             <div>
-              <label class="block text-xs font-bold text-neutral-900 mb-1.5" for="settingCardPrefix">Prefix Kode Kartu</label>
-              <input type="text" id="settingCardPrefix" placeholder="Contoh: NPT" maxlength="8" class="w-full rounded-lg border border-neutral-300 bg-neutral-50/50 px-3.5 py-2.5 text-xs font-mono font-bold uppercase tracking-wider text-neutral-900 focus:border-zinc-950 focus:bg-white focus:outline-none">
-              <p class="mt-1 text-[11px] text-neutral-500">
-                Opsional (2-8 karakter huruf/angka). Contoh jika diisi <b class="text-neutral-900">NPT</b>, kartu akan dibuat dengan format <b class="text-neutral-900 font-mono">NPT-AB12CD</b> (tetap memakai 6-digit acak unik). Kosongkan jika ingin 6-digit tanpa awalan.
+              <label class="block text-xs font-bold text-[#141414] mb-1.5" for="settingCardPrefix">Prefix Kode Kartu</label>
+              <input type="text" id="settingCardPrefix" placeholder="Contoh: NPT" maxlength="8" class="w-full rounded-lg border border-[#e8e6dc] bg-[#fafaf7]/50 px-3.5 py-2.5 text-xs font-mono font-bold uppercase tracking-wider text-[#141414] focus:border-zinc-950 focus:bg-white focus:outline-none">
+              <p class="mt-1 text-[11px] text-[#5f5f5a]">
+                Opsional (2-8 karakter huruf/angka). Contoh jika diisi <b class="text-[#141414]">NPT</b>, kartu akan dibuat dengan format <b class="text-[#141414] font-mono">NPT-AB12CD</b> (tetap memakai 6-digit acak unik). Kosongkan jika ingin 6-digit tanpa awalan.
               </p>
             </div>
 
@@ -1031,39 +1121,39 @@ body {
 
 <!-- MODAL TAMBAH ADMIN BARU -->
 <div id="modalAddAdmin" class="fixed inset-0 z-50 hidden bg-neutral-950/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
-  <div class="bg-white rounded-2xl max-w-md w-full border border-neutral-200 shadow-2xl p-6 my-8 animate-in fade-in zoom-in-95 duration-150">
+  <div class="bg-white rounded-[20px] max-w-md w-full border border-[#e8e6dc] shadow-2xl p-6 my-8 animate-in fade-in zoom-in-95 duration-150">
     <div class="flex items-center justify-between pb-3 border-b border-neutral-100">
       <div class="flex items-center gap-2">
         <span class="flex size-8 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
           <svg class="size-4.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
         </span>
-        <h3 class="text-base font-bold text-neutral-950">Tambah Akun Admin Baru</h3>
+        <h3 class="text-base font-bold text-[#141414]">Tambah Akun Admin Baru</h3>
       </div>
-      <button type="button" id="btnCloseAddAdminModal" class="rounded-lg p-1 text-neutral-400 hover:text-neutral-950 hover:bg-neutral-100 transition-colors">
+      <button type="button" id="btnCloseAddAdminModal" class="rounded-lg p-1 text-[#8c8c84] hover:text-[#141414] hover:bg-[#f7f7f4] transition-colors">
         <svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
       </button>
     </div>
 
     <form id="formAddAdmin" class="mt-4 space-y-4">
       <div>
-        <label class="block text-xs font-semibold text-neutral-900 mb-1.5">Username Admin</label>
-        <input type="text" id="adminNewUsername" placeholder="mis. admin2 atau namauser" required class="w-full rounded-xl border border-neutral-300 bg-white px-3.5 py-2.5 text-xs font-medium text-neutral-900 placeholder:text-neutral-400 focus:border-zinc-950 focus:outline-none">
-        <p class="mt-1 text-[11px] text-neutral-500">Huruf kecil tanpa spasi. Digunakan untuk login ke dashboard.</p>
+        <label class="block text-xs font-semibold text-[#141414] mb-1.5">Username Admin</label>
+        <input type="text" id="adminNewUsername" placeholder="mis. admin2 atau namauser" required class="w-full rounded-[14px] border border-[#e8e6dc] bg-white px-3.5 py-2.5 text-xs font-medium text-[#141414] placeholder:text-[#8c8c84] focus:border-zinc-950 focus:outline-none">
+        <p class="mt-1 text-[11px] text-[#5f5f5a]">Huruf kecil tanpa spasi. Digunakan untuk login ke dashboard.</p>
       </div>
 
       <div>
-        <label class="block text-xs font-semibold text-neutral-900 mb-1.5">Nama Lengkap</label>
-        <input type="text" id="adminNewFullName" placeholder="mis. Muhammad Raihan" required class="w-full rounded-xl border border-neutral-300 bg-white px-3.5 py-2.5 text-xs font-medium text-neutral-900 placeholder:text-neutral-400 focus:border-zinc-950 focus:outline-none">
+        <label class="block text-xs font-semibold text-[#141414] mb-1.5">Nama Lengkap</label>
+        <input type="text" id="adminNewFullName" placeholder="mis. Muhammad Raihan" required class="w-full rounded-[14px] border border-[#e8e6dc] bg-white px-3.5 py-2.5 text-xs font-medium text-[#141414] placeholder:text-[#8c8c84] focus:border-zinc-950 focus:outline-none">
       </div>
 
       <div>
-        <label class="block text-xs font-semibold text-neutral-900 mb-1.5">Password</label>
-        <input type="password" id="adminNewPassword" placeholder="Minimal 6 karakter" required minlength="6" class="w-full rounded-xl border border-neutral-300 bg-white px-3.5 py-2.5 text-xs font-medium text-neutral-900 placeholder:text-neutral-400 focus:border-zinc-950 focus:outline-none">
+        <label class="block text-xs font-semibold text-[#141414] mb-1.5">Password</label>
+        <input type="password" id="adminNewPassword" placeholder="Minimal 6 karakter" required minlength="6" class="w-full rounded-[14px] border border-[#e8e6dc] bg-white px-3.5 py-2.5 text-xs font-medium text-[#141414] placeholder:text-[#8c8c84] focus:border-zinc-950 focus:outline-none">
       </div>
 
       <div>
-        <label class="block text-xs font-semibold text-neutral-900 mb-1.5">Peran / Role</label>
-        <select id="adminNewRole" class="w-full rounded-xl border border-neutral-300 bg-white px-3.5 py-2.5 text-xs font-semibold text-neutral-900 focus:border-zinc-950 focus:outline-none">
+        <label class="block text-xs font-semibold text-[#141414] mb-1.5">Peran / Role</label>
+        <select id="adminNewRole" class="w-full rounded-[14px] border border-[#e8e6dc] bg-white px-3.5 py-2.5 text-xs font-semibold text-[#141414] focus:border-zinc-950 focus:outline-none">
           <option value="Admin">Admin</option>
           <option value="Super Admin">Super Admin</option>
           <option value="Operator">Operator</option>
@@ -1071,10 +1161,10 @@ body {
       </div>
 
       <div class="pt-3 flex items-center justify-end gap-2 border-t border-neutral-100">
-        <button type="button" id="btnCancelAddAdmin" class="rounded-xl border border-neutral-300 bg-white px-4 py-2 text-xs font-semibold text-neutral-800 hover:bg-neutral-50 transition-colors">
+        <button type="button" id="btnCancelAddAdmin" class="rounded-[14px] border border-[#e8e6dc] bg-white px-4 py-2 text-xs font-semibold text-[#2a2a28] hover:bg-[#fafaf7] transition-colors">
           Batal
         </button>
-        <button type="submit" id="btnSaveAdmin" class="rounded-xl bg-blue-600 px-5 py-2 text-xs font-bold text-white hover:bg-blue-700 transition-colors shadow-xs">
+        <button type="submit" id="btnSaveAdmin" class="rounded-[14px] bg-blue-600 px-5 py-2 text-xs font-bold text-white hover:bg-blue-700 transition-colors shadow-xs">
           Simpan Admin
         </button>
       </div>
@@ -1082,60 +1172,60 @@ body {
   </div>
 </div>
 <div id="modalAddTemplate" class="fixed inset-0 z-50 hidden bg-neutral-950/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
-  <div class="bg-white rounded-2xl max-w-lg w-full border border-neutral-200 shadow-2xl p-6 my-8 animate-in fade-in zoom-in-95 duration-150">
+  <div class="bg-white rounded-[20px] max-w-lg w-full border border-[#e8e6dc] shadow-2xl p-6 my-8 animate-in fade-in zoom-in-95 duration-150">
     <div class="flex items-center justify-between pb-3 border-b border-neutral-100">
       <div class="flex items-center gap-2">
-        <svg class="size-5 text-neutral-800" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-        <h3 class="text-base font-bold text-neutral-950">Tambah Template</h3>
+        <svg class="size-5 text-[#2a2a28]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        <h3 class="text-base font-bold text-[#141414]">Tambah Template</h3>
       </div>
-      <button type="button" id="btnCloseAddTemplateModal" class="rounded-lg p-1 text-neutral-400 hover:text-neutral-950 hover:bg-neutral-100 transition-colors">
+      <button type="button" id="btnCloseAddTemplateModal" class="rounded-lg p-1 text-[#8c8c84] hover:text-[#141414] hover:bg-[#f7f7f4] transition-colors">
         <svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
       </button>
     </div>
 
     <form id="formAddTemplate" class="mt-4 space-y-4">
       <div>
-        <label class="block text-xs font-semibold text-neutral-900 mb-1.5">Nama template</label>
-        <input type="text" id="tplNameInput" placeholder="mis. Kartu Warkop Biru" required class="w-full rounded-lg border border-neutral-300 bg-white px-3.5 py-2.5 text-xs text-neutral-900 placeholder:text-neutral-400 focus:border-zinc-950 focus:outline-none">
+        <label class="block text-xs font-semibold text-[#141414] mb-1.5">Nama template</label>
+        <input type="text" id="tplNameInput" placeholder="mis. Kartu Warkop Biru" required class="w-full rounded-lg border border-[#e8e6dc] bg-white px-3.5 py-2.5 text-xs text-[#141414] placeholder:text-[#8c8c84] focus:border-zinc-950 focus:outline-none">
       </div>
 
       <div>
-        <label class="block text-xs font-semibold text-neutral-900 mb-1.5">Gambar desain</label>
-        <input type="file" id="tplFileInput" accept="image/png, image/jpeg, image/webp" required class="block w-full text-xs text-neutral-600 file:mr-3 file:py-2 file:px-3.5 file:rounded-lg file:border file:border-neutral-300 file:text-xs file:font-semibold file:bg-white file:text-neutral-800 hover:file:bg-neutral-50 file:cursor-pointer cursor-pointer border border-neutral-300 rounded-lg bg-white p-1.5">
-        <p class="mt-1.5 text-[11px] text-neutral-500 leading-relaxed">
+        <label class="block text-xs font-semibold text-[#141414] mb-1.5">Gambar desain</label>
+        <input type="file" id="tplFileInput" accept="image/png, image/jpeg, image/webp" required class="block w-full text-xs text-[#5f5f5a] file:mr-3 file:py-2 file:px-3.5 file:rounded-lg file:border file:border-[#e8e6dc] file:text-xs file:font-semibold file:bg-white file:text-[#2a2a28] hover:file:bg-[#fafaf7] file:cursor-pointer cursor-pointer border border-[#e8e6dc] rounded-lg bg-white p-1.5">
+        <p class="mt-1.5 text-[11px] text-[#5f5f5a] leading-relaxed">
           PNG, JPG, atau WebP, maksimal 10 MB (sekitar 4000 x 4000 px). Pakai resolusi cetak penuh; hasil unduhan berukuran sama dengan gambar ini.
         </p>
       </div>
 
       <!-- STATUS DETEKSI POSISI QR -->
-      <div id="tplDetectStatus" class="hidden p-3 rounded-xl text-xs font-medium border"></div>
+      <div id="tplDetectStatus" class="hidden p-3 rounded-[14px] text-xs font-medium border"></div>
 
       <!-- PREVIEW CANVAS DETEKSI -->
       <div id="tplCanvasPreviewWrap" class="hidden space-y-2">
         <div class="flex items-center justify-between">
-          <span class="text-xs font-bold text-neutral-800">Preview Posisi QR Template:</span>
-          <span class="text-[11px] text-neutral-500" id="tplDimsLabel">0 x 0 px</span>
+          <span class="text-xs font-bold text-[#2a2a28]">Preview Posisi QR Template:</span>
+          <span class="text-[11px] text-[#5f5f5a]" id="tplDimsLabel">0 x 0 px</span>
         </div>
-        <div class="relative max-h-64 w-full overflow-hidden rounded-xl border border-neutral-200 bg-neutral-100 flex items-center justify-center p-2">
+        <div class="relative max-h-64 w-full overflow-hidden rounded-[14px] border border-[#e8e6dc] bg-[#f7f7f4] flex items-center justify-center p-2">
           <canvas id="tplPreviewCanvas" class="max-h-56 max-w-full object-contain rounded-lg shadow-xs"></canvas>
         </div>
 
         <div class="grid grid-cols-4 gap-2 pt-1">
           <div>
-            <label class="block text-[11px] font-bold text-neutral-700 mb-0.5">X (%)</label>
-            <input type="number" step="0.1" id="tplQrX" class="w-full rounded border border-neutral-300 px-2 py-1 text-xs font-mono">
+            <label class="block text-[11px] font-bold text-[#444440] mb-0.5">X (%)</label>
+            <input type="number" step="0.1" id="tplQrX" class="w-full rounded border border-[#e8e6dc] px-2 py-1 text-xs font-mono">
           </div>
           <div>
-            <label class="block text-[11px] font-bold text-neutral-700 mb-0.5">Y (%)</label>
-            <input type="number" step="0.1" id="tplQrY" class="w-full rounded border border-neutral-300 px-2 py-1 text-xs font-mono">
+            <label class="block text-[11px] font-bold text-[#444440] mb-0.5">Y (%)</label>
+            <input type="number" step="0.1" id="tplQrY" class="w-full rounded border border-[#e8e6dc] px-2 py-1 text-xs font-mono">
           </div>
           <div>
-            <label class="block text-[11px] font-bold text-neutral-700 mb-0.5">Lebar W (%)</label>
-            <input type="number" step="0.1" id="tplQrW" class="w-full rounded border border-neutral-300 px-2 py-1 text-xs font-mono">
+            <label class="block text-[11px] font-bold text-[#444440] mb-0.5">Lebar W (%)</label>
+            <input type="number" step="0.1" id="tplQrW" class="w-full rounded border border-[#e8e6dc] px-2 py-1 text-xs font-mono">
           </div>
           <div>
-            <label class="block text-[11px] font-bold text-neutral-700 mb-0.5">Tinggi H (%)</label>
-            <input type="number" step="0.1" id="tplQrH" class="w-full rounded border border-neutral-300 px-2 py-1 text-xs font-mono">
+            <label class="block text-[11px] font-bold text-[#444440] mb-0.5">Tinggi H (%)</label>
+            <input type="number" step="0.1" id="tplQrH" class="w-full rounded border border-[#e8e6dc] px-2 py-1 text-xs font-mono">
           </div>
         </div>
       </div>
@@ -1144,7 +1234,7 @@ body {
         <button type="submit" id="btnSaveTemplate" class="rounded-lg bg-blue-600 px-5 py-2 text-xs font-bold text-white hover:bg-blue-700 transition-colors shadow-xs">
           Unggah
         </button>
-        <button type="button" id="btnCancelAddTemplate" class="rounded-lg border border-neutral-300 bg-white px-4 py-2 text-xs font-semibold text-neutral-800 hover:bg-neutral-50 transition-colors">
+        <button type="button" id="btnCancelAddTemplate" class="rounded-lg border border-[#e8e6dc] bg-white px-4 py-2 text-xs font-semibold text-[#2a2a28] hover:bg-[#fafaf7] transition-colors">
           Batal
         </button>
       </div>
@@ -1200,82 +1290,114 @@ function randId(){
 // ========================================================
 var allFirestoreCardsList = [];
 var cardsUnsubscribe = null;
+let currentSearchQuery = "";
+let currentFilterStatus = "ALL";
 
-function renderCardsData(cards) {
-  let total = cards.length;
-  let active = 0;
+function filterAndRenderCardsTable() {
+  const q = currentSearchQuery.toLowerCase();
+  const filtered = allFirestoreCardsList.filter(card => {
+    const id = (card.id || "").toLowerCase();
+    const name = (card.shopName || card.businessName || card.placeName || "").toLowerCase();
+    const dest = (card.destination || "").toLowerCase();
+    const matchesSearch = !q || id.includes(q) || name.includes(q) || dest.includes(q);
+
+    let matchesStatus = true;
+    if (currentFilterStatus === "ACTIVE") matchesStatus = card.active === true;
+    else if (currentFilterStatus === "INACTIVE") matchesStatus = card.active !== true;
+
+    return matchesSearch && matchesStatus;
+  });
+
   let html = "";
   let mobileHtml = "";
-  allFirestoreCardsList = cards;
 
-  cards.forEach(card => {
+  filtered.forEach(card => {
     const id = card.id;
     const isActive = card.active === true;
-    if (isActive) active++;
 
     // Baris Tabel Desktop
     html += `
-      <tr class="hover:bg-neutral-50/70 transition-colors">
-        <td class="p-3.5"><b class="font-mono tracking-wider font-bold text-neutral-900">${id}</b></td>
+      <tr class="hover:bg-[#fafaf7]/70 transition-colors">
+        <td class="p-3.5"><b class="font-mono tracking-wider font-bold text-[#141414]">${id}</b></td>
         <td class="p-3.5">
           <span class="badge-pill ${isActive ? 'badge-active' : 'badge-inactive'}">
             ${isActive ? '✓ Aktif' : '○ Kosong'}
           </span>
         </td>
-        <td class="p-3.5 text-neutral-800">${card.businessName || card.placeName || '<span class="text-neutral-400">-</span>'}</td>
+        <td class="p-3.5 text-[#2a2a28] font-semibold">${card.shopName || card.businessName || card.placeName || '<span class="text-[#8c8c84] font-normal">-</span>'}</td>
         <td class="p-3.5 max-w-[240px] truncate">
-          ${card.destination ? `<a href="${card.destination}" target="_blank" class="text-neutral-900 underline font-semibold hover:text-black">${card.destination}</a>` : '<span class="text-neutral-400">Belum diaktivasi</span>'}
+          ${card.destination ? `<a href="${card.destination}" target="_blank" class="text-amber-700 underline font-semibold hover:text-emerald-900">${card.destination}</a>` : '<span class="text-[#8c8c84]">Belum diaktivasi</span>'}
         </td>
         <td class="p-3.5">
           <div class="flex items-center gap-1.5">
-            <button type="button" class="inline-flex items-center gap-1 rounded-md border border-neutral-300 bg-white px-2.5 py-1 text-[11px] font-semibold text-neutral-800 hover:bg-neutral-50 shadow-xs" onclick="downloadCardById('${id}')" title="Unduh Kartu 10x10 cm">
+            <button type="button" class="inline-flex items-center gap-1 rounded-md border border-[#e8e6dc] bg-white px-2.5 py-1 text-[11px] font-semibold text-[#2a2a28] hover:bg-[#fafaf7] shadow-xs" onclick="downloadCardById('${id}')" title="Unduh Kartu 10x10 cm">
               <svg class="size-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
               Kartu
             </button>
-            <button type="button" class="inline-flex items-center gap-1 rounded-md border border-neutral-300 bg-white px-2.5 py-1 text-[11px] font-semibold text-neutral-800 hover:bg-neutral-50 shadow-xs" onclick="downloadQRById('${id}')" title="Unduh QR Code Saja">
+            <button type="button" class="inline-flex items-center gap-1 rounded-md border border-[#e8e6dc] bg-white px-2.5 py-1 text-[11px] font-semibold text-[#2a2a28] hover:bg-[#fafaf7] shadow-xs" onclick="downloadQRById('${id}')" title="Unduh QR Code Saja">
               <svg class="size-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 7h.01M17 7h.01M7 17h.01M17 17h.01"/></svg>
               QR
             </button>
           </div>
         </td>
         <td class="p-3.5 text-right">
-          <a href="${card.url}" target="_blank" class="inline-flex items-center rounded-md border border-neutral-200 bg-neutral-50 px-2.5 py-1 text-[11px] font-semibold text-neutral-800 hover:bg-neutral-100">Tes Link</a>
+          <a href="${card.url}" target="_blank" class="inline-flex items-center rounded-md border border-[#e8e6dc] bg-[#fafaf7] px-2.5 py-1 text-[11px] font-semibold text-[#2a2a28] hover:bg-[#f7f7f4]">Tes Link</a>
         </td>
       </tr>
     `;
 
     // Kartu Tampilan Mobile Card
     mobileHtml += `
-      <div class="rounded-xl border border-neutral-200 bg-neutral-50/50 p-3.5 space-y-3">
+      <div class="rounded-[14px] border border-[#e8e6dc] bg-[#fafaf7]/50 p-3.5 space-y-3">
         <div class="flex items-center justify-between gap-2">
           <div class="flex items-center gap-2">
-            <span class="font-mono font-bold text-sm text-neutral-950">${id}</span>
+            <span class="font-mono font-bold text-sm text-[#141414]">${id}</span>
             <span class="badge-pill ${isActive ? 'badge-active' : 'badge-inactive'} text-[10px] py-0.5 px-2">
               ${isActive ? '✓ Aktif' : '○ Kosong'}
             </span>
           </div>
-          <a href="${card.url}" target="_blank" class="inline-flex items-center rounded-lg border border-neutral-200 bg-white px-2 py-1 text-[11px] font-semibold text-neutral-700 hover:bg-neutral-50 shadow-xs">
+          <a href="${card.url}" target="_blank" class="inline-flex items-center rounded-lg border border-[#e8e6dc] bg-white px-2 py-1 text-[11px] font-semibold text-[#444440] hover:bg-[#fafaf7] shadow-xs">
             Tes Link ↗
           </a>
         </div>
 
         <div class="text-xs space-y-1">
-          <div class="text-neutral-500 text-[11px]">Bisnis: <span class="text-neutral-900 font-semibold">${card.businessName || card.placeName || 'Belum terhubung'}</span></div>
-          ${card.destination ? `<div class="truncate text-[11px] text-blue-600 underline font-medium"><a href="${card.destination}" target="_blank">${card.destination}</a></div>` : ''}
+          <div class="text-[#5f5f5a] text-[11px]">Bisnis: <span class="text-[#141414] font-semibold">${card.shopName || card.businessName || card.placeName || 'Belum terhubung'}</span></div>
+          ${card.destination ? `<div class="truncate text-[11px] text-amber-700 underline font-medium"><a href="${card.destination}" target="_blank">${card.destination}</a></div>` : ''}
         </div>
 
-        <div class="pt-2 border-t border-neutral-200/80 flex items-center gap-2">
+        <div class="pt-2 border-t border-[#e8e6dc]/80 flex items-center gap-2">
           <button type="button" onclick="downloadCardById('${id}')" class="flex-1 inline-flex justify-center items-center gap-1.5 rounded-lg bg-zinc-950 py-1.5 px-3 text-xs font-bold text-white shadow-xs hover:bg-zinc-800 transition-colors">
             <svg class="size-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
             Unduh Kartu
           </button>
-          <button type="button" onclick="downloadQRById('${id}')" class="flex-1 inline-flex justify-center items-center gap-1.5 rounded-lg border border-neutral-300 bg-white py-1.5 px-3 text-xs font-bold text-neutral-800 shadow-xs hover:bg-neutral-50 transition-colors">
+          <button type="button" onclick="downloadQRById('${id}')" class="flex-1 inline-flex justify-center items-center gap-1.5 rounded-lg border border-[#e8e6dc] bg-white py-1.5 px-3 text-xs font-bold text-[#2a2a28] shadow-xs hover:bg-[#fafaf7] transition-colors">
             <svg class="size-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 7h.01M17 7h.01M7 17h.01M17 17h.01"/></svg>
             Unduh QR
           </button>
         </div>
       </div>
     `;
+  });
+
+  const tbody = document.getElementById("tableCardsBody");
+  if (tbody) {
+    tbody.innerHTML = filtered.length > 0 ? html : `<tr><td colspan="6" class="p-8 text-center text-[#8c8c84] font-medium">Tidak ada kartu yang cocok dengan pencarian atau filter.</td></tr>`;
+  }
+
+  const mobileContainer = document.getElementById("mobileCardsContainer");
+  if (mobileContainer) {
+    mobileContainer.innerHTML = filtered.length > 0 ? mobileHtml : `<div class="p-8 text-center text-xs text-[#8c8c84] bg-[#fafaf7] rounded-[14px] border border-dashed border-[#e8e6dc]">Tidak ada kartu yang cocok dengan pencarian atau filter.</div>`;
+  }
+}
+
+function renderCardsData(cards) {
+  let total = cards.length;
+  let active = 0;
+  allFirestoreCardsList = cards;
+
+  cards.forEach(card => {
+    if (card.active === true) active++;
   });
 
   const totalCardsElem = document.getElementById("statTotalCards");
@@ -1304,7 +1426,7 @@ function renderCardsData(cards) {
   const recentContainer = document.getElementById("overviewRecentCards");
   if (recentContainer) {
     if (cards.length === 0) {
-      recentContainer.innerHTML = `<div class="py-6 text-center text-xs text-neutral-400">Belum ada kartu di database. Klik Buat Kartu Baru untuk memulai.</div>`;
+      recentContainer.innerHTML = `<div class="py-6 text-center text-xs text-[#8c8c84]">Belum ada kartu di database. Klik Buat Kartu Baru untuk memulai.</div>`;
     } else {
       const topRecent = cards.slice(-4).reverse();
       recentContainer.innerHTML = topRecent.map(c => `
@@ -1312,27 +1434,21 @@ function renderCardsData(cards) {
           <div class="flex items-center gap-2.5 min-w-0">
             <span class="size-2 rounded-full ${c.active ? 'bg-emerald-500' : 'bg-neutral-300'}"></span>
             <div class="min-w-0">
-              <p class="font-mono font-bold text-xs text-neutral-900 truncate">${c.id}</p>
-              <p class="text-[11px] text-neutral-500 truncate">${c.businessName || (c.active ? 'Aktif terhubung' : 'Stok Belum Terhubung')}</p>
+              <p class="font-mono font-bold text-xs text-[#141414] truncate">${c.id}</p>
+              <p class="text-[11px] text-[#5f5f5a] truncate">${c.shopName || c.businessName || (c.active ? 'Aktif terhubung' : 'Stok Belum Terhubung')}</p>
             </div>
           </div>
           <div class="flex items-center gap-1.5 shrink-0">
-            <button type="button" onclick="downloadCardById('${c.id}')" class="rounded border border-neutral-200 bg-white px-2 py-0.5 text-[10px] font-semibold text-neutral-700 hover:bg-neutral-50">Kartu</button>
-            <a href="${c.url}" target="_blank" class="rounded border border-neutral-200 bg-neutral-50 px-2 py-0.5 text-[10px] font-semibold text-neutral-700 hover:bg-neutral-100">Tes</a>
+            <button type="button" onclick="downloadCardById('${c.id}')" class="rounded border border-[#e8e6dc] bg-white px-2 py-0.5 text-[10px] font-semibold text-[#444440] hover:bg-[#fafaf7]">Kartu</button>
+            <a href="${c.url}" target="_blank" class="rounded border border-[#e8e6dc] bg-[#fafaf7] px-2 py-0.5 text-[10px] font-semibold text-[#444440] hover:bg-[#f7f7f4]">Tes</a>
           </div>
         </div>
       `).join("");
     }
   }
 
-  // Isi Tabel & Mobile Card List
-  const tbody = document.getElementById("tableCardsBody");
-  if (tbody) tbody.innerHTML = total > 0 ? html : `<tr><td colspan="6" class="p-6 text-center text-neutral-500">Belum ada kartu di database.</td></tr>`;
-
-  const mobileContainer = document.getElementById("mobileCardsContainer");
-  if (mobileContainer) {
-    mobileContainer.innerHTML = total > 0 ? mobileHtml : `<div class="p-6 text-center text-xs text-neutral-400 bg-neutral-50 rounded-xl border border-dashed border-neutral-200">Belum ada kartu di database.</div>`;
-  }
+  // Render Tabel dengan Filter Aktif
+  filterAndRenderCardsTable();
 
   // Sinkronkan pratinjau layout sticker jika sedang dibuka
   if (typeof renderLayoutStickerPreview === "function") {
@@ -1428,6 +1544,7 @@ window.switchNav = function(viewId) {
     'view-studio': ['Template Desain', 'Koleksi template & generator cetak kartu Google Review'],
     'view-layout-sticker': ['Layout Sticker', 'Cetak multi-sticker lembar A4/A3/Kustom PDF & PNG'],
     'view-reset': ['QR Reset Kartu', 'Hapus kaitan bisnis agar kartu dapat diaktivasi ulang'],
+    'view-audit-logs': ['Audit Log Sistem', 'Catatan riwayat perubahan kartu, aktivasi, dan aksi penting'],
     'view-admins': ['Kelola Admin', 'Daftar pengelola akun administrator'],
     'view-settings': ['Pengaturan', 'Nama aplikasi, logo kustom, dan mode tampilan']
   };
@@ -1437,6 +1554,10 @@ window.switchNav = function(viewId) {
   if (topTitle) topTitle.textContent = cur[0];
   const sub = document.getElementById("topbarSub");
   if (sub) sub.textContent = cur[1];
+
+  if (viewId === 'view-audit-logs') {
+    loadAuditLogs();
+  }
 };
 
 // Delegasi event klik ke document untuk memastikan semua tombol sb-nav-link selalu responsif
@@ -1448,6 +1569,109 @@ document.addEventListener("click", (e) => {
   }
 });
 
+// Event Listener untuk Search & Filter NFC Cards
+const inputSearchCards = document.getElementById("inputSearchCards");
+if (inputSearchCards) {
+  inputSearchCards.addEventListener("input", (e) => {
+    currentSearchQuery = e.target.value.trim();
+    filterAndRenderCardsTable();
+  });
+}
+
+const selectFilterCardStatus = document.getElementById("selectFilterCardStatus");
+if (selectFilterCardStatus) {
+  selectFilterCardStatus.addEventListener("change", (e) => {
+    currentFilterStatus = e.target.value;
+    filterAndRenderCardsTable();
+  });
+}
+
+// AUDIT LOG MANAGEMENT
+let allAuditLogsList = [];
+
+async function loadAuditLogs() {
+  const tbody = document.getElementById("auditLogsTableBody");
+  if (!tbody) return;
+  tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-[#8c8c84] font-medium">Memuat audit log dari server...</td></tr>`;
+
+  try {
+    const res = await fetch("/api/audit-log");
+    const data = await res.json();
+    if (!res.ok || !data.success) throw new Error(data.error || "Gagal mengambil log");
+
+    allAuditLogsList = data.logs || [];
+    renderAuditLogsTable();
+  } catch (err) {
+    console.error("Gagal load audit logs:", err);
+    tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-red-500 font-medium">Gagal memuat log: ${err.message}</td></tr>`;
+  }
+}
+
+function renderAuditLogsTable() {
+  const tbody = document.getElementById("auditLogsTableBody");
+  if (!tbody) return;
+
+  const search = (document.getElementById("searchAuditLog")?.value || "").toLowerCase().trim();
+  const typeFilter = document.getElementById("filterAuditType")?.value || "ALL";
+  const dateFilter = document.getElementById("filterAuditDate")?.value || "";
+
+  const filtered = allAuditLogsList.filter(log => {
+    const matchesSearch = !search ||
+      (log.cardId && log.cardId.toLowerCase().includes(search)) ||
+      (log.details && log.details.toLowerCase().includes(search)) ||
+      (log.actor && log.actor.toLowerCase().includes(search));
+
+    const matchesType = typeFilter === "ALL" || log.actionType === typeFilter;
+
+    let matchesDate = true;
+    if (dateFilter && log.timestamp) {
+      matchesDate = log.timestamp.startsWith(dateFilter);
+    }
+
+    return matchesSearch && matchesType && matchesDate;
+  });
+
+  if (filtered.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-[#8c8c84] font-medium">Tidak ada aktivitas audit log yang cocok.</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = filtered.map(log => {
+    const d = new Date(log.timestamp);
+    const timeFormatted = isNaN(d) ? (log.timestamp || "-") : d.toLocaleString("id-ID", { dateStyle: "short", timeStyle: "medium" });
+
+    let badgeClass = "bg-[#f7f7f4] text-[#2a2a28]";
+    if (log.actionType === "ACTIVATION") badgeClass = "bg-emerald-100 text-emerald-800 font-bold";
+    else if (log.actionType === "CHANGE_URL") badgeClass = "bg-blue-100 text-blue-800 font-bold";
+    else if (log.actionType === "CHANGE_PIN") badgeClass = "bg-amber-100 text-amber-800 font-bold";
+    else if (log.actionType === "RESET_CARD") badgeClass = "bg-purple-100 text-purple-800 font-bold";
+
+    return `
+      <tr class="hover:bg-[#fafaf7]/70 transition-colors">
+        <td class="p-3.5 text-[#5f5f5a] whitespace-nowrap font-mono text-[11px]">${timeFormatted}</td>
+        <td class="p-3.5">
+          <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] ${badgeClass}">
+            ${log.actionType || 'LOG'}
+          </span>
+        </td>
+        <td class="p-3.5 font-mono font-bold text-[#141414]">${log.cardId || '-'}</td>
+        <td class="p-3.5 text-[#444440] font-medium text-[11px]">${log.actor || 'System'}</td>
+        <td class="p-3.5 text-[#2a2a28] text-[11px] max-w-xs break-words">${log.details || '-'}</td>
+        <td class="p-3.5 text-right">
+          <span class="inline-flex items-center gap-1 text-[11px] font-bold ${log.status === 'success' ? 'text-amber-700' : 'text-red-600'}">
+            ${log.status === 'success' ? '✓ Sukses' : '✕ Gagal'}
+          </span>
+        </td>
+      </tr>
+    `;
+  }).join("");
+}
+
+document.getElementById("btnRefreshAuditLogs")?.addEventListener("click", loadAuditLogs);
+document.getElementById("searchAuditLog")?.addEventListener("input", renderAuditLogsTable);
+document.getElementById("filterAuditType")?.addEventListener("change", renderAuditLogsTable);
+document.getElementById("filterAuditDate")?.addEventListener("change", renderAuditLogsTable);
+
 // 1. AUTHENTICATION & LOGIN CHECK
 const userEmailBadge = document.getElementById("userEmailBadge");
 const activeAdminEmailDisplay = document.getElementById("activeAdminEmailDisplay");
@@ -1457,7 +1681,13 @@ function getAdminSession() {
   const sessionStr = localStorage.getItem("ulasankuu_admin_session");
   if (sessionStr) {
     try {
-      return JSON.parse(sessionStr);
+      const parsed = JSON.parse(sessionStr);
+      // Validasi sesi 24 jam (86400 detik)
+      if (parsed.expiresAt && Date.now() > parsed.expiresAt) {
+        localStorage.removeItem("ulasankuu_admin_session");
+        return null;
+      }
+      return parsed;
     } catch(e){}
   }
   return null;
@@ -1578,45 +1808,6 @@ document.getElementById("btnDownloadAllTableZip").addEventListener("click", asyn
   }
 });
 
-// TOMBOL RESET / HAPUS SEMUA KARTU DARI NOL
-document.getElementById("btnResetAllFirestore").addEventListener("click", async () => {
-  const confirmFirst = confirm("PERINGATAN: Apakah Anda yakin ingin MENGHAPUS SEMUA kartu di database Firestore sehingga kembali dari NOL (0)? Tindakan ini tidak dapat dibatalkan.");
-  if (!confirmFirst) return;
-
-  const confirmText = prompt("Ketik kata 'RESET' untuk mengonfirmasi reset total:");
-  if (confirmText !== "RESET") {
-    alert("Konfirmasi dibatalkan. Kata kunci tidak cocok.");
-    return;
-  }
-
-  const btn = document.getElementById("btnResetAllFirestore");
-  btn.disabled = true;
-  btn.innerHTML = `<div class="spinner" style="border-top-color:#141414;border-color:rgba(0,0,0,0.2)"></div> Menghapus...`;
-
-  try {
-    const snap = await getDocs(collection(db, "cards"));
-    let count = 0;
-    const deletes = [];
-    snap.forEach(docSnap => {
-      count++;
-      deletes.push(deleteDoc(doc(db, "cards", docSnap.id)));
-    });
-
-    await Promise.all(deletes);
-    alert(`Berhasil! Sebanyak ${count} kartu telah dihapus dari database. Seluruh data sekarang kembali dari nol.`);
-    await loadOverviewAndTable();
-  } catch (err) {
-    console.error("Gagal reset total kartu:", err);
-    alert("Gagal menghapus kartu: " + err.message);
-  } finally {
-    btn.disabled = false;
-    btn.innerHTML = `
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
-      Hapus / Reset Semua Kartu (Nol)
-    `;
-  }
-});
-
 // ==========================================
 // TEMPLATE DESAIN MANAGEMENT & AUTO QR DETECTION
 // ==========================================
@@ -1690,9 +1881,9 @@ function renderTemplateGrid() {
   grid.innerHTML = templates.map(tpl => {
     const isActive = tpl.id === activeTpl.id;
     return `
-      <div class="group relative flex flex-col rounded-2xl border ${isActive ? 'border-blue-600 ring-2 ring-blue-600/20 bg-blue-50/20' : 'border-neutral-200/90 bg-white hover:border-neutral-400'} p-4 shadow-xs transition-all">
+      <div class="group relative flex flex-col rounded-[20px] border ${isActive ? 'border-blue-600 ring-2 ring-blue-600/20 bg-blue-50/20' : 'border-[#e8e6dc]/90 bg-white hover:border-neutral-400'} p-4 shadow-xs transition-all">
         <!-- Thumbnail Container -->
-        <div class="relative aspect-square w-full overflow-hidden rounded-xl bg-neutral-100 flex items-center justify-center border border-neutral-200/60 mb-3">
+        <div class="relative aspect-square w-full overflow-hidden rounded-[14px] bg-[#f7f7f4] flex items-center justify-center border border-[#e8e6dc]/60 mb-3">
           <img src="${tpl.imageUrl}" alt="${tpl.name}" class="h-full w-full object-contain">
           <!-- Bounding Box Indicator -->
           <div class="absolute border-2 border-dashed border-red-500 bg-red-500/10 pointer-events-none rounded" style="top:${tpl.qrY}%;left:${tpl.qrX}%;width:${tpl.qrW}%;height:${tpl.qrH}%;">
@@ -1704,8 +1895,8 @@ function renderTemplateGrid() {
         <!-- Info Template -->
         <div class="flex items-center justify-between">
           <div class="min-w-0 flex-1">
-            <h4 class="font-bold text-sm text-neutral-900 truncate">${tpl.name}</h4>
-            <p class="text-xs text-neutral-500">${tpl.width} x ${tpl.height} px</p>
+            <h4 class="font-bold text-sm text-[#141414] truncate">${tpl.name}</h4>
+            <p class="text-xs text-[#5f5f5a]">${tpl.width} x ${tpl.height} px</p>
           </div>
         </div>
 
@@ -1721,7 +1912,7 @@ function renderTemplateGrid() {
             </span>
           `}
           ${!tpl.isDefault ? `
-            <button type="button" onclick="window.deleteTemplate('${tpl.id}')" class="rounded-lg p-1.5 text-neutral-400 hover:text-red-600 hover:bg-red-50 transition-colors" title="Hapus Template">
+            <button type="button" onclick="window.deleteTemplate('${tpl.id}')" class="rounded-lg p-1.5 text-[#8c8c84] hover:text-red-600 hover:bg-red-50 transition-colors" title="Hapus Template">
               <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
             </button>
           ` : ''}
@@ -1865,7 +2056,7 @@ function drawTemplatePreview(xPct, yPct, wPct, hPct) {
 
 function detectQrOnImage(img) {
   tplDetectStatus.classList.remove("hidden");
-  tplDetectStatus.className = "p-3 rounded-xl text-xs font-semibold border border-blue-200 bg-blue-50 text-blue-900";
+  tplDetectStatus.className = "p-3 rounded-[14px] text-xs font-semibold border border-blue-200 bg-blue-50 text-blue-900";
   tplDetectStatus.innerHTML = `🔍 Memindai gambar untuk mendeteksi posisi QR Code...`;
 
   const offCanvas = document.createElement("canvas");
@@ -1911,13 +2102,13 @@ function detectQrOnImage(img) {
     finalW = Number((((maxX - minX) / offCanvas.width) * 100).toFixed(1));
     finalH = Number((((maxY - minY) / offCanvas.height) * 100).toFixed(1));
 
-    tplDetectStatus.className = "p-3 rounded-xl text-xs font-semibold border border-emerald-200 bg-emerald-50 text-emerald-900";
+    tplDetectStatus.className = "p-3 rounded-[14px] text-xs font-semibold border border-emerald-200 bg-emerald-50 text-emerald-900";
     tplDetectStatus.innerHTML = `
       ✓ <b>QR Code Berhasil Terdeteksi Otomatis!</b><br>
       Isi QR: <span class="font-mono text-[11px]">${detected.data || 'Terbaca'}</span> | Posisi: X=${finalX}%, Y=${finalY}%, W=${finalW}%, H=${finalH}%. Area ini akan ditimpa dengan QR kartu baru saat digenerate.
     `;
   } else {
-    tplDetectStatus.className = "p-3 rounded-xl text-xs font-semibold border border-amber-200 bg-amber-50 text-amber-900";
+    tplDetectStatus.className = "p-3 rounded-[14px] text-xs font-semibold border border-amber-200 bg-amber-50 text-amber-900";
     tplDetectStatus.innerHTML = `
       ℹ️ QR Code bawaan tidak terdeteksi otomatis pada gambar ini. Sistem menetapkan koordinat perkiraan default (X=60%, Y=57%). Anda dapat menggeser / mengubah nilai koordinat di bawah.
     `;
@@ -2021,12 +2212,12 @@ function renderCardPreview(cardData) {
 
     <div class="flex items-center justify-between w-full">
       <span class="card-id-badge">ID: ${id}</span>
-      <span class="text-[11px] text-neutral-500 font-medium truncate max-w-[120px]" title="${activeTpl.name}">${activeTpl.name}</span>
+      <span class="text-[11px] text-[#5f5f5a] font-medium truncate max-w-[120px]" title="${activeTpl.name}">${activeTpl.name}</span>
     </div>
 
     <div class="grid grid-cols-2 gap-2 w-full">
       <button type="button" class="inline-flex justify-center items-center rounded-lg bg-zinc-950 px-3 py-1.5 text-xs font-bold text-white hover:bg-zinc-800 transition-colors shadow-xs" id="dl-png-${id}" title="Download Kartu Desain Google Review (10x10 cm)">Unduh Kartu</button>
-      <button type="button" class="inline-flex justify-center items-center rounded-lg border border-neutral-300 bg-white px-3 py-1.5 text-xs font-bold text-neutral-800 hover:bg-neutral-50 transition-colors shadow-xs" id="dl-qr-${id}" title="Download Gambar QR Code saja">Unduh QR Saja</button>
+      <button type="button" class="inline-flex justify-center items-center rounded-lg border border-[#e8e6dc] bg-white px-3 py-1.5 text-xs font-bold text-[#2a2a28] hover:bg-[#fafaf7] transition-colors shadow-xs" id="dl-qr-${id}" title="Download Gambar QR Code saja">Unduh QR Saja</button>
     </div>
   `;
 
@@ -2705,7 +2896,7 @@ function loadAppSettings() {
     appName: "Ulasankuu",
     appSubtitle: "Google Review Card",
     logoData: null,
-    displayMode: "both", // 'both' | 'logo-only' | 'text-only'
+    displayMode: "logo-only", // 'both' | 'logo-only' | 'text-only'
     cardPrefix: ""
   };
 
@@ -2732,6 +2923,10 @@ function loadAppSettings() {
 }
 
 function applyBranding(cfg) {
+  // Paksa default agar logo resmi Ulasankuu tampil full tanpa tulisan terpisah
+  if (!cfg.displayMode || cfg.displayMode === "both") {
+    cfg.displayMode = "logo-only";
+  }
   const titleDisplay = document.getElementById("brandTitleDisplay");
   const textWrap = document.getElementById("brandTextWrap");
   const logoBox = document.getElementById("brandLogoContainer");
@@ -2749,7 +2944,7 @@ function applyBranding(cfg) {
   document.title = (cfg.appName || "Ulasankuu") + " | Admin Dashboard";
 
   // Atur Logo Preview di Navigasi & Form
-  const defaultSvg = `<svg class="size-8 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17l6-6 4 4 6-6"/><path d="M12 3a9 9 0 0 1 9 9"/><path d="M12 7a5 5 0 0 1 5 5"/></svg>`;
+  const defaultSvg = `<img src="/logo.png" alt="Ulasankuu" class="h-9 max-h-10 w-auto object-contain">`;
 
   if (cfg.logoData) {
     if (logoBox) {
@@ -2765,15 +2960,15 @@ function applyBranding(cfg) {
         <div class="h-9 max-w-[140px] flex items-center overflow-hidden">
           <img src="${cfg.logoData}" alt="${cfg.appName}" class="max-h-9 w-auto object-contain">
         </div>
-        ${cfg.displayMode !== "logo-only" ? `<span class="text-lg font-bold text-neutral-950">${cfg.appName || "Ulasankuu"}</span>` : ''}
+        ${cfg.displayMode !== "logo-only" ? `<span class="text-lg font-bold text-[#141414]">${cfg.appName || "Ulasankuu"}</span>` : ''}
       `;
     }
     if (settingsLogoPreview) settingsLogoPreview.innerHTML = `<img src="${cfg.logoData}" alt="${cfg.appName}" class="size-full object-contain p-0.5">`;
     if (currentLogoLabel) currentLogoLabel.textContent = "Logo saat ini: Custom Logo Aktif ✓";
   } else {
     if (logoBox) {
-      logoBox.className = "flex size-9 shrink-0 items-center justify-center overflow-hidden";
-      logoBox.innerHTML = defaultSvg;
+      logoBox.className = "flex h-10 w-full max-w-[200px] items-center";
+      logoBox.innerHTML = `<img src="/logo.png" alt="Ulasankuu" class="h-9 max-h-10 w-auto object-contain">`;
     }
     if (settingsLogoPreview) settingsLogoPreview.innerHTML = defaultSvg;
     if (currentLogoLabel) currentLogoLabel.textContent = "Logo saat ini: Ikon Bawaan";
@@ -2907,26 +3102,26 @@ async function loadAdminsList() {
     const isSuper = a.role === "Super Admin" || a.username === "zinatxd";
 
     return `
-      <tr class="hover:bg-neutral-50/70 transition-colors">
+      <tr class="hover:bg-[#fafaf7]/70 transition-colors">
         <td class="p-3.5">
           <div class="flex items-center gap-2">
             <span class="flex size-7 shrink-0 items-center justify-center rounded-lg bg-zinc-950 text-white font-bold text-xs uppercase">
               ${a.username.slice(0, 2)}
             </span>
             <div>
-              <span class="font-bold text-neutral-900 block">${a.username}</span>
+              <span class="font-bold text-[#141414] block">${a.username}</span>
               ${isCurrent ? '<span class="text-[10px] text-blue-600 font-bold">Akun Anda</span>' : ''}
             </div>
           </div>
         </td>
-        <td class="p-3.5 text-neutral-800 font-medium">${a.fullName || a.username}</td>
+        <td class="p-3.5 text-[#2a2a28] font-medium">${a.fullName || a.username}</td>
         <td class="p-3.5">
           <span class="badge-pill ${isSuper ? 'badge-active' : 'badge-inactive'}">
             ${a.role || 'Admin'}
           </span>
         </td>
         <td class="p-3.5">
-          <span class="inline-flex items-center gap-1.5 text-[11px] font-semibold text-emerald-600">
+          <span class="inline-flex items-center gap-1.5 text-[11px] font-semibold text-amber-600">
             <span class="size-2 rounded-full bg-emerald-500"></span>
             Aktif
           </span>
@@ -2938,7 +3133,7 @@ async function loadAdminsList() {
               Hapus
             </button>
           ` : `
-            <span class="text-[11px] text-neutral-400 font-medium">Bawaan</span>
+            <span class="text-[11px] text-[#8c8c84] font-medium">Bawaan</span>
           `}
         </td>
       </tr>

@@ -626,7 +626,8 @@ form.addEventListener("submit", async (e) => {
       username: username,
       fullName: "Super Admin",
       role: "Super Admin",
-      loginAt: new Date().toISOString()
+      loginAt: new Date().toISOString(),
+      expiresAt: Date.now() + (24 * 60 * 60 * 1000) // 24 jam
     };
     localStorage.setItem("ulasankuu_admin_session", JSON.stringify(sessionData));
 
@@ -650,7 +651,8 @@ form.addEventListener("submit", async (e) => {
           username: adminData.username || username,
           fullName: adminData.fullName || username,
           role: adminData.role || "Admin",
-          loginAt: new Date().toISOString()
+          loginAt: new Date().toISOString(),
+          expiresAt: Date.now() + (24 * 60 * 60 * 1000) // 24 jam
         };
         localStorage.setItem("ulasankuu_admin_session", JSON.stringify(sessionData));
         window.location.replace("/dashboard");

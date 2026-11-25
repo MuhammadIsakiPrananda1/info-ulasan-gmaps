@@ -3,8 +3,18 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     
+    // Koleksi cards
     match /cards/{cardId} {
-      // Allow all read/write - no security, no validation
+      allow read, write: if true;
+    }
+
+    // Koleksi audit_logs
+    match /audit_logs/{logId} {
+      allow read, write: if true;
+    }
+
+    // Koleksi events (tracking tap & redirect)
+    match /events/{eventId} {
       allow read, write: if true;
     }
     

@@ -161,7 +161,7 @@ module.exports = async (req, res) => {
   const session = verifyToken(token);
 
   if (!session || !session.cardId || session.role !== "owner") {
-    return res.status(401).json({ success: false, error: "Sesi login tidak valid atau sudah kedaluwarsa (24 jam). Silakan login kembali." });
+    return res.status(401).json({ success: false, error: "Sesi login tidak valid. Silakan login kembali." });
   }
 
   const cardId = session.cardId;

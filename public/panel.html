@@ -11,23 +11,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Chart.js CDN for statistics visualization -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-  <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
-  import { getFirestore, doc, getDoc, updateDoc, collection, query, where, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyAt46l97-gXPI3SAWKc6ZgpiTisSG7gmDs",
-    authDomain: "review-gmaps.firebaseapp.com",
-    projectId: "review-gmaps",
-    storageBucket: "review-gmaps.firebasestorage.app",
-    messagingSenderId: "551162625736",
-    appId: "1:551162625736:web:260b1f7c02b3ac72fc6ffd",
-    measurementId: "G-GC50YZR59G"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-
+  <script>
     tailwind.config = {
       darkMode: 'class',
       theme: {
@@ -619,29 +603,44 @@
       alertErr.classList.add("hidden");
 
       const session = getSession();
-      if (!session) return clearSession();
+      if (!session || !session.cardId) return clearSession();
 
       const newDestination = document.getElementById("newDestInput").value.trim();
+      if (!newDestination) {
+        alertErr.textContent = "URL tujuan Google Review wajib diisi.";
+        alertErr.classList.remove("hidden");
+        return;
+      }
+
       btn.disabled = true;
       btn.textContent = "Menyimpan...";
 
       try {
-        const res = await fetch("/api/panel?action=update-destination", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": "Bearer " + session.token
-          },
-          body: JSON.stringify({ destination: newDestination })
+        const cardRef = doc(db, "cards", session.cardId);
+        await updateDoc(cardRef, {
+          destination: newDestination,
+          updatedAt: new Date().toISOString()
         });
-        const data = await res.json();
-        if (!res.ok || !data.success) throw new Error(data.error || "Gagal mengubah URL");
 
-        alertOk.textContent = "✓ " + data.message;
+        // Catat ke Audit Log
+        try {
+          await addDoc(collection(db, "audit_logs"), {
+            actionType: "CHANGE_URL",
+            cardId: session.cardId,
+            actor: "Pemilik Kartu",
+            details: `Mengubah URL tujuan ulasan ke: ${newDestination}`,
+            timestamp: new Date().toISOString(),
+            status: "success"
+          });
+        } catch (logErr) {
+          console.warn("Gagal mencatat audit log:", logErr);
+        }
+
+        alertOk.textContent = "✓ URL tujuan ulasan berhasil diperbarui!";
         alertOk.classList.remove("hidden");
         document.getElementById("currentDestInput").value = newDestination;
       } catch (err) {
-        alertErr.textContent = err.message;
+        alertErr.textContent = "Gagal memperbarui URL: " + err.message;
         alertErr.classList.remove("hidden");
       } finally {
         btn.disabled = false;
@@ -659,28 +658,70 @@
       alertErr.classList.add("hidden");
 
       const session = getSession();
-      if (!session) return clearSession();
+      if (!session || !session.cardId) return clearSession();
 
       const oldPin = document.getElementById("oldPinInput").value.trim();
       const newPin = document.getElementById("newPinInput").value.trim();
       const confirmPin = document.getElementById("confirmPinInput").value.trim();
 
+      if (!oldPin || !newPin) {
+        alertErr.textContent = "PIN lama dan PIN baru wajib diisi.";
+        alertErr.classList.remove("hidden");
+        return;
+      }
+
+      if (newPin !== confirmPin) {
+        alertErr.textContent = "Konfirmasi PIN baru tidak cocok.";
+        alertErr.classList.remove("hidden");
+        return;
+      }
+
       btn.disabled = true;
       btn.textContent = "Menyimpan PIN...";
 
       try {
-        const res = await fetch("/api/panel?action=change-pin", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": "Bearer " + session.token
-          },
-          body: JSON.stringify({ oldPin, newPin, confirmPin })
-        });
-        const data = await res.json();
-        if (!res.ok || !data.success) throw new Error(data.error || "Gagal mengubah PIN");
+        const cardRef = doc(db, "cards", session.cardId);
+        const snap = await getDoc(cardRef);
+        if (!snap.exists()) throw new Error("Data kartu tidak ditemukan.");
 
-        alertOk.textContent = "✓ " + data.message;
+        const cardData = snap.data();
+        const salt = cardData.pinSalt || "ulasankuu_salt_2026";
+        const hashedOld = await sha256(oldPin + ":" + salt);
+
+        let isOldValid = false;
+        if (cardData.pinHash) {
+          isOldValid = (cardData.pinHash === hashedOld);
+        } else if (cardData.pin) {
+          isOldValid = (String(cardData.pin) === String(oldPin));
+        }
+
+        if (!isOldValid) {
+          throw new Error("PIN lama yang Anda masukkan salah.");
+        }
+
+        const hashedNew = await sha256(newPin + ":" + salt);
+        await updateDoc(cardRef, {
+          pin: newPin,
+          pinHash: hashedNew,
+          pinSalt: salt,
+          updatedAt: new Date().toISOString()
+        });
+
+        // Catat ke Audit Log
+        try {
+          await addDoc(collection(db, "audit_logs"), {
+            actionType: "CHANGE_PIN",
+            cardId: session.cardId,
+            actor: "Pemilik Kartu",
+            details: "Pemilik kartu berhasil memperbarui PIN pengaman.",
+            timestamp: new Date().toISOString(),
+            status: "success"
+          });
+        } catch (logErr) {
+          console.warn("Gagal mencatat audit log:", logErr);
+        }
+
+        alertOk.textContent = "✓ PIN pengaman kartu berhasil diperbarui!";
         alertOk.classList.remove("hidden");
         document.getElementById("formChangePin").reset();
       } catch (err) {

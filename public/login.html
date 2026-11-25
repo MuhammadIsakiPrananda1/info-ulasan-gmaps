@@ -543,7 +543,7 @@ body {
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
-import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+import { getFirestore, doc, getDoc, collection, addDoc } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAt46l97-gXPI3SAWKc6ZgpiTisSG7gmDs",
@@ -607,6 +607,22 @@ togglePwd.addEventListener("click", () => {
   }
 });
 
+
+async function logAdminLogin(user, status = "success", note = "Login administrator berhasil") {
+  try {
+    await addDoc(collection(db, "audit_logs"), {
+      actionType: "ADMIN_LOGIN",
+      actor: user || "Admin",
+      cardId: "-",
+      details: note,
+      timestamp: new Date().toISOString(),
+      status: status
+    });
+  } catch (e) {
+    console.warn("Audit log error:", e);
+  }
+}
+
 const form = document.getElementById("loginForm");
 const loginMsg = document.getElementById("loginMsg");
 const btnSubmit = document.getElementById("btnSubmit");
@@ -636,6 +652,7 @@ form.addEventListener("submit", async (e) => {
       await signInWithEmailAndPassword(auth, emailFallback, password).catch(() => null);
     } catch (_) {}
 
+    await logAdminLogin(username, "success", "Super Admin berhasil login ke sistem.");
     window.location.replace("/dashboard");
     return;
   }
@@ -655,6 +672,7 @@ form.addEventListener("submit", async (e) => {
           expiresAt: Date.now() + (24 * 60 * 60 * 1000) // 24 jam
         };
         localStorage.setItem("ulasankuu_admin_session", JSON.stringify(sessionData));
+        await logAdminLogin(adminData.username || username, "success", "Admin berhasil login ke sistem.");
         window.location.replace("/dashboard");
         return;
       }
@@ -675,6 +693,7 @@ form.addEventListener("submit", async (e) => {
         loginAt: new Date().toISOString()
       };
       localStorage.setItem("ulasankuu_admin_session", JSON.stringify(sessionData));
+      await logAdminLogin(matched.username, "success", "Admin lokal berhasil login ke sistem.");
       window.location.replace("/dashboard");
       return;
     }

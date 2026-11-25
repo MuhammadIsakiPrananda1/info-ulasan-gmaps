@@ -637,7 +637,7 @@
     <!-- FIREBASE SDK & APPLICATION LOGIC -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
-        import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, setDoc, collection, addDoc } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
         const firebaseConfig = {
     apiKey: "AIzaSyAt46l97-gXPI3SAWKc6ZgpiTisSG7gmDs",
@@ -977,6 +977,20 @@
                 };
 
                 await setDoc(cardRef, cardData, { merge: true });
+
+                try {
+                  await addDoc(collection(db, "audit_logs"), {
+                    actionType: "ACTIVATION",
+                    cardId: currentCardId,
+                    shopName: name,
+                    actor: "Pemilik Kartu",
+                    details: "Aktivasi kartu perdana untuk bisnis: " + name,
+                    timestamp: new Date().toISOString(),
+                    status: "success"
+                  });
+                } catch (logErr) {
+                  console.warn("Gagal catat log aktivasi:", logErr);
+                }
 
                 currentCardData = cardData;
 

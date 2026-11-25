@@ -189,8 +189,8 @@ body {
     <div class="flex items-center justify-between px-4 pt-5 pb-3">
       <a href="/dashboard" aria-label="Ulasankuu Management" class="flex min-w-0 flex-1 items-center text-left">
         <!-- Logo Container: Full Logo Resmi Tanpa Teks Terpisah -->
-        <div id="brandLogoContainer" class="flex h-10 w-full max-w-[200px] items-center">
-          <img src="/logo.png" alt="Ulasankuu" class="h-9 max-h-10 w-auto object-contain" id="sidebarLogoImg">
+        <div id="brandLogoContainer" class="flex h-14 w-full items-center py-1">
+          <img src="/logo.png" alt="Ulasankuu" class="h-11 max-h-12 w-auto object-contain" id="sidebarLogoImg">
         </div>
         <span class="hidden" id="brandTextWrap">
           <span class="block truncate text-xl font-bold tracking-tight text-[#141414]" id="brandTitleDisplay">Ulasankuu</span>
@@ -880,11 +880,11 @@ body {
       <section class="tab-view" id="view-reset">
         <div class="max-w-lg rounded-[20px] border border-[#e8e6dc]/90 bg-white p-6 shadow-sm mx-auto my-4">
           <!-- Logo & Brand Header -->
-          <div class="flex items-center gap-2 mb-4" id="resetLogoHeader">
-            <span class="flex size-9 shrink-0 items-center justify-center rounded-[14px] bg-zinc-950 text-white font-bold">
-              <svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12a10 10 0 0 1 10-10"/><path d="M2 12a10 10 0 0 0 10 10"/><path d="M12 2a10 10 0 0 1 10 10"/><path d="M12 22a10 10 0 0 0 10-10"/></svg>
-            </span>
-            <span class="text-lg font-bold text-[#141414]" id="resetAppTitle">Ulasankuu</span>
+          <div class="flex items-center justify-between gap-2 mb-5 pb-3 border-b border-[#e8e6dc]" id="resetLogoHeader">
+            <div class="h-10 flex items-center">
+              <img src="/logo.png" alt="Ulasankuu" class="h-9 w-auto object-contain">
+            </div>
+            <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-[#fff3c4] text-[#a16d00]">Reset Kartu NFC</span>
           </div>
 
           <h2 class="text-base font-bold text-[#141414]" id="resetHeaderTitle">Reset Kartu</h2>

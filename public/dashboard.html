@@ -1594,6 +1594,20 @@ async function loadAuditLogs() {
   if (!tbody) return;
   tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-[#8c8c84] font-medium">Memuat audit log...</td></tr>`;
 
+  // 1. Coba baca via Client SDK Firestore (menggunakan kredensial Web)
+  try {
+    const snap = await getDocs(collection(db, "audit_logs"));
+    const logs = [];
+    snap.forEach(d => logs.push({ id: d.id, ...d.data() }));
+    logs.sort((a, b) => new Date(b.timestamp || 0) - new Date(a.timestamp || 0));
+    allAuditLogsList = logs;
+    renderAuditLogsTable();
+    return;
+  } catch (fsErr) {
+    console.warn("Client Firestore audit_logs query:", fsErr);
+  }
+
+  // 2. Coba baca via Serverless API
   try {
     const res = await fetch("/api/audit-log");
     const data = await res.json();
@@ -1602,21 +1616,13 @@ async function loadAuditLogs() {
       renderAuditLogsTable();
       return;
     }
-    throw new Error(data.error || "Serverless error");
   } catch (apiErr) {
-    console.warn("Fetch /api/audit-log error, fallback direct client Firestore:", apiErr);
-    try {
-      const snap = await getDocs(collection(db, "audit_logs"));
-      const logs = [];
-      snap.forEach(d => logs.push({ id: d.id, ...d.data() }));
-      logs.sort((a, b) => new Date(b.timestamp || 0) - new Date(a.timestamp || 0));
-      allAuditLogsList = logs;
-      renderAuditLogsTable();
-    } catch (fsErr) {
-      console.error("Fallback direct Firestore audit_logs failed:", fsErr);
-      tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-red-500 font-medium">Gagal memuat log: ${fsErr.message}</td></tr>`;
-    }
+    console.warn("API audit-log query:", apiErr);
   }
+
+  // Jika belum ada log atau security rules sedang diperbarui di console
+  allAuditLogsList = [];
+  tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-[#8c8c84] font-medium">Belum ada riwayat aktivitas audit log yang tercatat.</td></tr>`;
 }
 
 function renderAuditLogsTable() {

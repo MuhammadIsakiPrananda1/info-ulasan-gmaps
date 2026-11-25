@@ -3092,7 +3092,8 @@ async function loadAdminsList() {
       admins.push({ id: d.id, ...d.data() });
     });
   } catch (err) {
-    console.warn("Gagal load admins dari Firestore, fallback ke localStorage:", err);
+    // Fallback tenang ke local admins jika di Firestore belum ada
+    // console.info("Using local admins configuration");
   }
 
   if (admins.length === 0) {

@@ -1594,7 +1594,7 @@ async function loadAuditLogs() {
   if (!tbody) return;
   tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-[#8c8c84] font-medium">Memuat audit log...</td></tr>`;
 
-  // 1. Coba baca via Client SDK Firestore (menggunakan kredensial Web)
+  // Langsung gunakan Firebase Client SDK (tidak perlu serverless API)
   try {
     const snap = await getDocs(collection(db, "audit_logs"));
     const logs = [];
@@ -1602,27 +1602,11 @@ async function loadAuditLogs() {
     logs.sort((a, b) => new Date(b.timestamp || 0) - new Date(a.timestamp || 0));
     allAuditLogsList = logs;
     renderAuditLogsTable();
-    return;
   } catch (fsErr) {
-    console.warn("Client Firestore audit_logs query:", fsErr);
+    console.warn("Audit logs query:", fsErr);
+    allAuditLogsList = [];
+    tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-[#8c8c84] font-medium">Belum ada riwayat aktivitas audit log yang tercatat.</td></tr>`;
   }
-
-  // 2. Coba baca via Serverless API
-  try {
-    const res = await fetch("/api/audit-log");
-    const data = await res.json();
-    if (res.ok && data.success && Array.isArray(data.logs)) {
-      allAuditLogsList = data.logs;
-      renderAuditLogsTable();
-      return;
-    }
-  } catch (apiErr) {
-    console.warn("API audit-log query:", apiErr);
-  }
-
-  // Jika belum ada log atau security rules sedang diperbarui di console
-  allAuditLogsList = [];
-  tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-[#8c8c84] font-medium">Belum ada riwayat aktivitas audit log yang tercatat.</td></tr>`;
 }
 
 function renderAuditLogsTable() {

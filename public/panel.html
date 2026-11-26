@@ -81,6 +81,7 @@
       transition: background-color 0.25s ease, color 0.25s ease;
     }
   </style>
+  <script src="/i18n.js"></script>
 </head>
 <body class="min-h-screen bg-[#fafaf7] dark:bg-[#121212] text-[#141414] dark:text-[#f5f5f5] flex flex-col justify-between antialiased transition-colors duration-200">
 
@@ -108,10 +109,12 @@
           <span class="size-2 rounded-full bg-[#f5b400] animate-pulse"></span>
           <span id="navCardIdBadge">ID: ------</span>
         </div>
+        <button type="button" onclick="window.toggleLang()" class="btn-toggle-lang inline-flex items-center gap-1 px-2.5 py-1.5 rounded-[12px] border border-[#e8e6dc] dark:border-[#2e2e2e] bg-white dark:bg-[#222222] text-xs font-mono font-bold text-[#141414] dark:text-[#f5f5f5] hover:bg-[#fafaf7] dark:hover:bg-[#2c2c2c] transition-colors shadow-xs cursor-pointer">ID / EN</button>
         <button type="button" id="btnLogout" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[14px] border border-[#e8e6dc] dark:border-[#2e2e2e] bg-white dark:bg-[#222222] hover:bg-rose-50 dark:hover:bg-rose-950/30 hover:border-rose-200 dark:hover:border-rose-900/40 hover:text-rose-600 dark:hover:text-rose-400 text-xs font-bold text-[#2a2a28] dark:text-[#e5e5e5] transition-colors shadow-xs cursor-pointer">
           <svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
           Keluar
         </button>
+        <div class="flex items-center gap-2"><button type="button" onclick="window.toggleLang()" class="btn-toggle-lang inline-flex items-center gap-1 px-2.5 py-1.5 rounded-[12px] border border-[#e8e6dc] dark:border-[#2e2e2e] bg-white dark:bg-[#222222] text-xs font-mono font-bold text-[#141414] dark:text-[#f5f5f5] hover:bg-[#fafaf7] dark:hover:bg-[#2c2c2c] transition-colors shadow-xs cursor-pointer">ID / EN</button></div>
       </div>
     </div>
   </header>

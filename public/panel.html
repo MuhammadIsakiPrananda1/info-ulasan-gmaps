@@ -89,7 +89,10 @@
     <div class="max-w-6xl mx-auto flex items-center justify-between">
       <a href="/panel" class="flex items-center gap-3 group">
         <div class="flex h-10 items-center">
-          <img src="/logo.png" alt="Ulasankuu Logo" class="h-8 sm:h-9 w-auto object-contain">
+          <!-- Logo Mode Terang (Default) -->
+          <img src="/logo.png" alt="Ulasankuu Logo" class="h-8 sm:h-9 w-auto object-contain block dark:hidden">
+          <!-- Logo Putih-Kuning Khusus Dark Mode (Terlihat Jelas di Latar Gelap) -->
+          <img src="/logo-dark.png" alt="Ulasankuu Logo" class="h-8 sm:h-9 w-auto object-contain hidden dark:block">
         </div>
         <div class="hidden sm:flex items-center gap-2 border-l border-[#e8e6dc] dark:border-[#2e2e2e] pl-3">
           <span class="inline-flex items-center gap-1.5 rounded-full border border-[#e8e6dc] dark:border-[#2e2e2e] bg-[#fafaf7] dark:bg-[#222222] px-2.5 py-0.5 text-[11px] font-bold text-[#5f5f5a] dark:text-[#a3a3a3]">

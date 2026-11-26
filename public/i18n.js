@@ -132,12 +132,7 @@ function getCurrentLang() {
 function setLang(lang) {
   localStorage.setItem(LANG_KEY, lang);
   applyTranslations();
-  updateLangButtonUI();
-}
-
-function toggleLang() {
-  const current = getCurrentLang();
-  setLang(current === "id" ? "en" : "id");
+  updateLangDropdownUI();
 }
 
 function t(text) {
@@ -151,7 +146,6 @@ function applyTranslations() {
   const lang = getCurrentLang();
   document.documentElement.lang = lang;
 
-  // 1. Terjemahkan elemen yang memiliki data-i18n atau text exact match
   const walkTextNodes = (element) => {
     for (const node of element.childNodes) {
       if (node.nodeType === Node.TEXT_NODE) {
@@ -177,13 +171,10 @@ function applyTranslations() {
   walkTextNodes(document.body);
 }
 
-function updateLangButtonUI() {
+function updateLangDropdownUI() {
   const lang = getCurrentLang();
-  document.querySelectorAll(".btn-toggle-lang").forEach(btn => {
-    btn.innerHTML = lang === "id" 
-      ? `<span class="font-bold text-amber-500">ID</span> <span class="text-neutral-400">/</span> <span class="opacity-60">EN</span>` 
-      : `<span class="opacity-60">ID</span> <span class="text-neutral-400">/</span> <span class="font-bold text-amber-500">EN</span>`;
-    btn.title = lang === "id" ? "Switch to English" : "Ganti ke Bahasa Indonesia";
+  document.querySelectorAll(".select-lang-dropdown").forEach(sel => {
+    sel.value = lang;
   });
 }
 
@@ -191,13 +182,12 @@ function updateLangButtonUI() {
 if (typeof window !== "undefined") {
   window.getCurrentLang = getCurrentLang;
   window.setLang = setLang;
-  window.toggleLang = toggleLang;
   window.t = t;
 
   document.addEventListener("DOMContentLoaded", () => {
-    updateLangButtonUI();
+    updateLangDropdownUI();
     if (getCurrentLang() === "en") {
-      setTimeout(applyTranslations, 50);
+      setTimeout(applyTranslations, 60);
     }
   });
 }

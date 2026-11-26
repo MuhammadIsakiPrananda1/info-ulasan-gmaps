@@ -966,10 +966,16 @@ body {
         <div class="rounded-[20px] border border-[#e8e6dc]/90 bg-white p-4 sm:p-6 shadow-xs space-y-5">
           <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-neutral-100">
             <div>
-              <h2 class="text-base sm:text-lg font-bold text-[#141414] flex items-center gap-2">
-                <span class="size-7 rounded-lg bg-emerald-50 text-amber-700 flex items-center justify-center font-bold text-sm">📋</span>
-                Audit Log Sistem
-              </h2>
+              <div class="flex items-center gap-3">
+                <h2 class="text-base sm:text-lg font-bold text-[#141414] flex items-center gap-2">
+                  <span class="size-7 rounded-lg bg-emerald-50 text-amber-700 flex items-center justify-center font-bold text-sm">📋</span>
+                  Audit Log Sistem
+                </h2>
+                <span class="inline-flex items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-0.5 text-[10px] font-bold text-emerald-800">
+                  <span class="size-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                  Real-time
+                </span>
+              </div>
               <p class="text-xs text-[#5f5f5a] mt-0.5">Catatan riwayat seluruh aktivitas penting: aktivasi kartu, ganti URL review, update PIN, dan aksi admin.</p>
             </div>
             <button type="button" id="btnRefreshAuditLogs" class="inline-flex items-center gap-1.5 rounded-[14px] border border-[#e8e6dc] bg-white px-3.5 py-2 text-xs font-bold text-[#2a2a28] hover:bg-[#fafaf7] shadow-xs transition-colors">
@@ -1282,7 +1288,7 @@ body {
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
-import { getFirestore, collection, doc, getDoc, getDocs, setDoc, updateDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+import { getFirestore, collection, doc, getDoc, getDocs, setDoc, updateDoc, deleteDoc, onSnapshot, addDoc } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAt46l97-gXPI3SAWKc6ZgpiTisSG7gmDs",
@@ -1778,26 +1784,42 @@ if (selectFilterCardStatus) {
   });
 }
 
-// AUDIT LOG MANAGEMENT
+// AUDIT LOG MANAGEMENT (REAL-TIME VIA FIRESTORE onSnapshot)
 let allAuditLogsList = [];
+let auditLogsUnsubscribe = null;
 
-async function loadAuditLogs() {
+function loadAuditLogs() {
   const tbody = document.getElementById("auditLogsTableBody");
   if (!tbody) return;
-  tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-[#8c8c84] font-medium">Memuat audit log...</td></tr>`;
 
-  // Langsung gunakan Firebase Client SDK (tidak perlu serverless API)
+  // Jika belum ada data yang tersimpan, tampilkan loading awal
+  if (allAuditLogsList.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-[#8c8c84] font-medium"><span class="inline-block animate-spin mr-1.5">⚪</span> Menghubungkan audit log real-time...</td></tr>`;
+  }
+
+  // Hentikan listener lama jika ada sebelum membuat listener baru
+  if (auditLogsUnsubscribe) {
+    auditLogsUnsubscribe();
+    auditLogsUnsubscribe = null;
+  }
+
   try {
-    const snap = await getDocs(collection(db, "audit_logs"));
-    const logs = [];
-    snap.forEach(d => logs.push({ id: d.id, ...d.data() }));
-    logs.sort((a, b) => new Date(b.timestamp || 0) - new Date(a.timestamp || 0));
-    allAuditLogsList = logs;
-    renderAuditLogsTable();
-  } catch (fsErr) {
-    console.warn("Audit logs query:", fsErr);
-    allAuditLogsList = [];
-    tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-[#8c8c84] font-medium">Belum ada riwayat aktivitas audit log yang tercatat.</td></tr>`;
+    const auditCol = collection(db, "audit_logs");
+    auditLogsUnsubscribe = onSnapshot(auditCol, (snap) => {
+      const logs = [];
+      snap.forEach(d => logs.push({ id: d.id, ...d.data() }));
+      // Urutkan dari aktivitas paling baru (newest first)
+      logs.sort((a, b) => new Date(b.timestamp || 0) - new Date(a.timestamp || 0));
+      allAuditLogsList = logs;
+      renderAuditLogsTable();
+    }, (fsErr) => {
+      console.warn("Audit logs realtime error:", fsErr);
+      if (allAuditLogsList.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-[#8c8c84] font-medium">Belum ada riwayat aktivitas audit log yang tercatat.</td></tr>`;
+      }
+    });
+  } catch (err) {
+    console.error("Gagal inisialisasi audit log realtime:", err);
   }
 }
 

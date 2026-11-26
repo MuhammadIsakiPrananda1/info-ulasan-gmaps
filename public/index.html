@@ -637,7 +637,7 @@
     <!-- FIREBASE SDK & APPLICATION LOGIC -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
-        import { getFirestore, doc, getDoc, setDoc, collection, addDoc } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, setDoc, updateDoc, increment, collection, addDoc } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
         const firebaseConfig = {
     apiKey: "AIzaSyAt46l97-gXPI3SAWKc6ZgpiTisSG7gmDs",
@@ -1050,8 +1050,36 @@
 
                 // KONDISI 1: KARTU SUDAH AKTIF -> LANGSUNG REDIRECT KE GOOGLE MAPS REVIEW (tanpa tampilan perantara)
                 if (currentCardData.active === true && currentCardData.destination) {
-                    // Redirect langsung tanpa menampilkan halaman perantara
-                    window.location.replace(currentCardData.destination);
+                    const destUrl = currentCardData.destination;
+                    const todayStr = new Date().toISOString().split('T')[0];
+                    const nowIso = new Date().toISOString();
+
+                    // Simpan event tap dan redirect secara realtime ke events & update kartu
+                    const recordTask = Promise.allSettled([
+                        addDoc(collection(db, "events"), {
+                            cardId: currentCardId,
+                            eventType: "tap",
+                            date: todayStr,
+                            timestamp: nowIso
+                        }),
+                        addDoc(collection(db, "events"), {
+                            cardId: currentCardId,
+                            eventType: "redirect",
+                            date: todayStr,
+                            timestamp: nowIso
+                        }),
+                        updateDoc(cardRef, {
+                            tapCount: increment(1),
+                            redirectCount: increment(1),
+                            lastTappedAt: nowIso
+                        })
+                    ]);
+
+                    // Redirect secepat mungkin begitu tercatat (timeout safety max 350ms agar responsif)
+                    const timeoutPromise = new Promise(resolve => setTimeout(resolve, 350));
+                    Promise.race([recordTask, timeoutPromise]).finally(() => {
+                        window.location.replace(destUrl);
+                    });
                     return;
                 }
 

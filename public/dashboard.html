@@ -903,38 +903,58 @@ body {
             <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-[#fff3c4] text-[#a16d00]">Reset Kartu NFC</span>
           </div>
 
-          <h2 class="text-base font-bold text-[#141414]" id="resetHeaderTitle">Reset Kartu</h2>
+          <h2 class="text-base font-bold text-[#141414]" id="resetHeaderTitle">Reset Kartu (Lupa PIN)</h2>
           <p class="mt-1 text-xs text-[#5f5f5a] leading-relaxed">
-            Scan QR kartu atau ketik ID kartu, lalu masukkan PIN untuk mereset kartu. Semua pengaturan kartu akan dihapus dan kartu perlu diaktivasi ulang.
+            Fitur pemulihan kartu jika pemilik kartu lupa PIN pengaman. Cukup masukkan ID Kartu atau scan QR, kartu akan otomatis dikembalikan ke status <b>Belum Aktif</b> agar dapat diaktivasi ulang secara bebas.
           </p>
 
           <div id="resetMsgOk" class="hidden mt-4 rounded-lg border border-neutral-900 bg-[#f7f7f4] p-3 text-xs font-semibold text-[#141414]"></div>
           <div id="resetMsgErr" class="hidden mt-4 rounded-lg border border-dashed border-red-500 bg-red-50 p-3 text-xs font-semibold text-red-900"></div>
 
+          <!-- Modal Scanner Kamera -->
+          <div id="modalResetQrScanner" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4">
+            <div class="bg-white rounded-[20px] max-w-sm w-full p-5 shadow-2xl space-y-4">
+              <div class="flex items-center justify-between border-b border-neutral-100 pb-3">
+                <h3 class="text-sm font-bold text-[#141414] flex items-center gap-2">
+                  <span>📷</span> Scan QR Kartu
+                </h3>
+                <button type="button" id="btnCloseResetScanner" class="p-1 rounded-md text-neutral-400 hover:text-neutral-900">
+                  <svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                </button>
+              </div>
+              <div class="relative w-full aspect-square bg-neutral-950 rounded-[14px] overflow-hidden flex items-center justify-center">
+                <video id="resetScannerVideo" class="w-full h-full object-cover" playsinline></video>
+                <canvas id="resetScannerCanvas" class="hidden"></canvas>
+                <div class="absolute inset-8 border-2 border-dashed border-[#f5b400] rounded-xl pointer-events-none"></div>
+              </div>
+              <p class="text-[11px] text-[#5f5f5a] text-center">Arahkan kamera ke QR Code fisik pada kartu NFC.</p>
+            </div>
+          </div>
+
           <form id="resetForm" class="mt-5 space-y-4">
             <div>
-              <label class="block text-xs font-semibold text-[#141414] mb-1">ID Kartu</label>
+              <label class="block text-xs font-bold text-[#141414] mb-1.5 uppercase tracking-wider">ID Kartu</label>
               <div class="relative flex items-center">
-                <input type="text" id="resetCardId" placeholder="Contoh: NPT2746Z6K" required maxlength="16" class="w-full rounded-[14px] border border-[#e8e6dc] bg-white px-3.5 py-2.5 pr-10 text-xs font-mono font-bold text-[#141414] uppercase tracking-wider focus:border-zinc-950 focus:outline-none">
-                <button type="button" id="btnScanResetQR" class="absolute right-2.5 p-1 rounded-md text-[#8c8c84] hover:text-[#141414] hover:bg-[#f7f7f4] transition-colors" title="Scan QR dengan kamera">
+                <input type="text" id="resetCardId" placeholder="Contoh: NPT2746Z6K" required maxlength="30" class="w-full rounded-[14px] border border-[#e8e6dc] bg-[#fafaf7] px-3.5 py-3 pr-10 text-xs font-mono font-bold text-[#141414] uppercase tracking-wider focus:border-[#f5b400] focus:bg-white focus:outline-none transition-all">
+                <button type="button" id="btnScanResetQR" class="absolute right-2.5 p-1.5 rounded-lg text-[#5f5f5a] hover:text-[#141414] hover:bg-neutral-200/60 transition-colors cursor-pointer" title="Scan QR Kartu dengan Kamera">
                   <svg class="size-4.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/></svg>
                 </button>
               </div>
-              <p class="mt-1 text-[11px] text-[#5f5f5a]">Ketik ID kartu atau tempel link kartu. ID akan diambil otomatis.</p>
+              <p class="mt-1.5 text-[11px] text-[#5f5f5a]">Masukkan ID Kartu atau scan QR fisik kartu. PIN tidak diperlukan.</p>
             </div>
 
-            <div>
-              <label class="block text-xs font-semibold text-[#141414] mb-1">PIN</label>
-              <input type="password" id="resetPinInput" placeholder="6 digit angka" maxlength="8" class="w-full rounded-[14px] border border-[#e8e6dc] bg-white px-3.5 py-2.5 text-xs font-mono text-[#141414] tracking-widest focus:border-zinc-950 focus:outline-none">
-              <div class="mt-2 flex items-center gap-2">
-                <input type="checkbox" id="toggleShowResetPin" class="size-3.5 rounded border-[#e8e6dc] accent-neutral-950 cursor-pointer">
-                <label for="toggleShowResetPin" class="text-xs text-[#5f5f5a] cursor-pointer select-none">Tampilkan PIN</label>
+            <!-- Notice Tanpa PIN -->
+            <div class="p-3.5 rounded-[14px] border border-amber-200/80 bg-[#fffbeb] text-amber-950 text-xs flex items-start gap-2.5">
+              <span class="text-base leading-none">💡</span>
+              <div class="leading-relaxed text-[11.5px]">
+                <b>Mode Reset Bebas PIN:</b> Semua data tautan bisnis, review URL, dan PIN lama akan langsung dihapus bersih dari Firestore, sehingga pemilik baru/lama dapat mengaktivasi kartu kembali.
               </div>
             </div>
 
             <div class="pt-2">
-              <button type="submit" class="w-full rounded-[14px] bg-red-600 py-3 text-xs font-bold text-white shadow-sm hover:bg-red-700 transition-colors" id="btnConfirmReset">
-                Reset Kartu
+              <button type="submit" class="w-full rounded-[14px] bg-red-600 hover:bg-red-700 py-3.5 text-xs font-bold text-white shadow-xs transition-colors flex items-center justify-center gap-2 cursor-pointer" id="btnConfirmReset">
+                <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>
+                <span>Reset Kartu (Bersihkan PIN & Data)</span>
               </button>
             </div>
           </form>
@@ -2639,33 +2659,100 @@ document.getElementById("btnDownloadZip").addEventListener("click", async () => 
   };
 });
 
-// RESET KARTU LOGIC DENGAN PIN & AUTODETEKSI ID DARI LINK/INPUT
+// RESET KARTU LOGIC (LUPA PIN / TANPA PIN - HANYA DENGAN ID KARTU)
 const resetForm = document.getElementById("resetForm");
 const resetCardId = document.getElementById("resetCardId");
-const resetPinInput = document.getElementById("resetPinInput");
-const toggleShowResetPin = document.getElementById("toggleShowResetPin");
 const resetMsgOk = document.getElementById("resetMsgOk");
 const resetMsgErr = document.getElementById("resetMsgErr");
 const btnConfirmReset = document.getElementById("btnConfirmReset");
+const btnScanResetQR = document.getElementById("btnScanResetQR");
+const modalResetQrScanner = document.getElementById("modalResetQrScanner");
+const btnCloseResetScanner = document.getElementById("btnCloseResetScanner");
+const resetScannerVideo = document.getElementById("resetScannerVideo");
+const resetScannerCanvas = document.getElementById("resetScannerCanvas");
 
-if (toggleShowResetPin && resetPinInput) {
-  toggleShowResetPin.addEventListener("change", () => {
-    resetPinInput.type = toggleShowResetPin.checked ? "text" : "password";
-  });
+let scannerStream = null;
+let scannerAnimFrame = null;
+
+// Scanner QR Kamera
+function startResetQrScanner() {
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    alert("Kamera tidak didukung oleh browser Anda.");
+    return;
+  }
+  modalResetQrScanner.classList.remove("hidden");
+  navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
+    .then(stream => {
+      scannerStream = stream;
+      resetScannerVideo.srcObject = stream;
+      resetScannerVideo.setAttribute("playsinline", true);
+      resetScannerVideo.play();
+      scannerAnimFrame = requestAnimationFrame(scanResetQrTick);
+    })
+    .catch(err => {
+      console.warn("Kamera error:", err);
+      alert("Gagal membuka kamera: " + err.message);
+      stopResetQrScanner();
+    });
 }
 
-// Otomatis ekstrak ID jika user menempel URL lengkap (mis: https://ulasankuu.my.id/NPT001 atau tap.nipantap.my.id/...)
+function stopResetQrScanner() {
+  if (scannerAnimFrame) {
+    cancelAnimationFrame(scannerAnimFrame);
+    scannerAnimFrame = null;
+  }
+  if (scannerStream) {
+    scannerStream.getTracks().forEach(track => track.stop());
+    scannerStream = null;
+  }
+  if (modalResetQrScanner) modalResetQrScanner.classList.add("hidden");
+}
+
+function scanResetQrTick() {
+  if (resetScannerVideo.readyState === resetScannerVideo.HAVE_ENOUGH_DATA) {
+    resetScannerCanvas.height = resetScannerVideo.videoHeight;
+    resetScannerCanvas.width = resetScannerVideo.videoWidth;
+    const ctx = resetScannerCanvas.getContext("2d");
+    ctx.drawImage(resetScannerVideo, 0, 0, resetScannerCanvas.width, resetScannerCanvas.height);
+    const imgData = ctx.getImageData(0, 0, resetScannerCanvas.width, resetScannerCanvas.height);
+    
+    if (typeof jsQR !== "undefined") {
+      const code = jsQR(imgData.data, imgData.width, imgData.height, { inversionAttempts: "dontInvert" });
+      if (code && code.data) {
+        let text = code.data.trim();
+        if (text.includes("/")) {
+          const parts = text.split("/").filter(Boolean);
+          text = parts[parts.length - 1];
+        }
+        resetCardId.value = text.toUpperCase();
+        stopResetQrScanner();
+        return;
+      }
+    }
+  }
+  scannerAnimFrame = requestAnimationFrame(scanResetQrTick);
+}
+
+if (btnScanResetQR) {
+  btnScanResetQR.addEventListener("click", startResetQrScanner);
+}
+if (btnCloseResetScanner) {
+  btnCloseResetScanner.addEventListener("click", stopResetQrScanner);
+}
+
+// Otomatis ekstrak ID jika admin menempel URL lengkap
 if (resetCardId) {
   resetCardId.addEventListener("input", () => {
     let val = resetCardId.value.trim();
     if (val.includes("/")) {
       const parts = val.split("/").filter(Boolean);
       val = parts[parts.length - 1];
-      resetCardId.value = val.toUpperCase();
     }
+    resetCardId.value = val.toUpperCase();
   });
 }
 
+// Submit Reset Kartu Tanpa PIN
 resetForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   resetMsgOk.classList.add("hidden");
@@ -2676,12 +2763,19 @@ resetForm.addEventListener("submit", async (e) => {
     const parts = id.split("/").filter(Boolean);
     id = parts[parts.length - 1];
   }
-  const pin = resetPinInput ? resetPinInput.value.trim() : "";
 
-  if (!id) return;
+  if (!id) {
+    resetMsgErr.textContent = "ID Kartu wajib diisi.";
+    resetMsgErr.classList.remove("hidden");
+    return;
+  }
+
+  if (!confirm(`Apakah Anda yakin ingin mereset kartu ${id}? Kartu ini akan kembali ke status BELUM AKTIF dan PIN lamanya dihapus.`)) {
+    return;
+  }
 
   btnConfirmReset.disabled = true;
-  btnConfirmReset.innerHTML = `<div class="spinner"></div> Mereset kartu...`;
+  btnConfirmReset.innerHTML = `<span class="inline-block animate-spin mr-2">⚪</span> Mereset kartu...`;
 
   try {
     const cardRef = doc(db, "cards", id);
@@ -2691,25 +2785,42 @@ resetForm.addEventListener("submit", async (e) => {
       throw new Error(`Kartu dengan ID "${id}" tidak ditemukan di database.`);
     }
 
-    const cardData = snap.data();
-    // Validasi PIN jika kartu memiliki PIN tersimpan dan user memasukkan PIN
-    if (cardData.pin && pin && String(cardData.pin) !== String(pin)) {
-      throw new Error(`PIN yang Anda masukkan salah. Tidak dapat mereset kartu.`);
-    }
+    const prevData = snap.data();
+    const prevShop = prevData.shopName || prevData.businessName || "-";
 
+    // Bersihkan link, pin, dan set kartu menjadi tidak aktif (siap aktivasi ulang)
     await updateDoc(cardRef, {
       destination: "",
+      url: "",
       active: false,
+      shopName: "",
       businessName: "",
       placeName: "",
+      address: "",
+      placeId: "",
       pin: "",
+      pinHash: "",
+      pinSalt: "",
       resetAt: new Date().toISOString()
     });
 
-    resetMsgOk.innerHTML = `✓ Kartu <b>${id}</b> berhasil di-reset menjadi KOSONG / BELUM AKTIF. Data link dan PIN telah dibersihkan.`;
+    // Catat ke Audit Log
+    try {
+      await addDoc(collection(db, "audit_logs"), {
+        actionType: "RESET_CARD",
+        cardId: id,
+        actor: currentAdminUser ? currentAdminUser.username : "Admin",
+        details: `Reset kartu ${id} (Pemulihan lupa PIN untuk bisnis: ${prevShop})`,
+        timestamp: new Date().toISOString(),
+        status: "success"
+      });
+    } catch (logErr) {
+      console.warn("Audit log error:", logErr);
+    }
+
+    resetMsgOk.innerHTML = `✓ Kartu <b>${id}</b> berhasil di-reset menjadi <b>BELUM AKTIF</b>. PIN lama dan link Google Review telah dibersihkan. Pemilik sekarang dapat mengaktivasi ulang kartu.`;
     resetMsgOk.classList.remove("hidden");
     resetCardId.value = "";
-    if (resetPinInput) resetPinInput.value = "";
     loadOverviewAndTable();
   } catch (err) {
     console.error("Gagal reset kartu:", err);
@@ -2717,7 +2828,7 @@ resetForm.addEventListener("submit", async (e) => {
     resetMsgErr.classList.remove("hidden");
   } finally {
     btnConfirmReset.disabled = false;
-    btnConfirmReset.innerHTML = `Reset Kartu`;
+    btnConfirmReset.innerHTML = `<svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg><span>Reset Kartu (Bersihkan PIN & Data)</span>`;
   }
 });
 

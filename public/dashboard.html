@@ -176,6 +176,50 @@ body {
   .card-preview-item { border: none; padding: 0; page-break-inside: avoid; }
   .nfc-card-frame { box-shadow: none; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
 }
+
+/* ENHANCED RESPONSIVE & POLISHED DASHBOARD UI */
+html, body {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+@media (max-width: 1024px) {
+  #sb-collapse-side {
+    position: fixed !important;
+    top: 0 !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    z-index: 50 !important;
+    height: 100vh !important;
+    max-height: 100vh !important;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+  }
+}
+
+/* Custom Smooth Scrollbar for Tables */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: #e8e6dc transparent;
+}
+.table-responsive::-webkit-scrollbar {
+  height: 6px;
+}
+.table-responsive::-webkit-scrollbar-thumb {
+  background: #e8e6dc;
+  border-radius: 9999px;
+}
+
+/* Card hover and smooth transition */
+.dashboard-card {
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+.dashboard-card:hover {
+  border-color: #d8d6cc;
+}
+
 </style>
   <script src="/i18n.js"></script>
 </head>
@@ -333,7 +377,7 @@ body {
   <main class="flex min-w-0 flex-1 flex-col bg-white lg:my-2 lg:mr-2 lg:rounded-[14px] lg:shadow-xs lg:ring-1 lg:ring-neutral-950/10">
     
     <!-- TOP HEADER / BREADCRUMB -->
-    <header class="flex h-14 shrink-0 items-center justify-between border-b border-[#e8e6dc] px-4 sm:px-6">
+    <header class="flex h-14 shrink-0 items-center justify-between border-b border-[#e8e6dc] px-4 sm:px-6 sticky top-0 z-30 bg-white/95 backdrop-blur-md">
       <div class="flex items-center gap-2">
         <button type="button" id="sb-collapse-open" aria-label="Menu" aria-expanded="false" aria-controls="sb-collapse-side" class="group -ml-2 inline-flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-lg text-[#141414] transition-colors duration-150 hover:bg-[#f7f7f4] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-950 lg:hidden">
           <svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -354,7 +398,16 @@ body {
           </ol>
         </nav>
       </div>
-      
+      <!-- LANGUAGE SELECTOR & USER ACTIONS -->
+      <div class="flex items-center gap-2">
+        <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-[12px] border border-[#e8e6dc] bg-[#fafaf7] hover:bg-white text-xs font-bold text-[#141414] shadow-xs transition-colors">
+          <span class="text-sm">🌐</span>
+          <select onchange="window.setLang(this.value)" class="select-lang-dropdown bg-transparent text-xs font-bold text-[#141414] focus:outline-none cursor-pointer border-none pr-1">
+            <option value="id" class="text-neutral-900 bg-white">ID (Indonesia)</option>
+            <option value="en" class="text-neutral-900 bg-white">EN (English)</option>
+          </select>
+        </div>
+      </div>
     </header>
 
     <!-- CONTENT BODY -->
@@ -732,6 +785,7 @@ body {
                 </tr>
               </tbody>
             </table>
+            </div>
           </div>
         </div>
       </section>
@@ -1049,8 +1103,9 @@ body {
           <div id="adminMsgErr" class="hidden p-3 rounded-[14px] border border-dashed border-red-500 bg-red-50 text-xs font-semibold text-red-900"></div>
 
           <!-- Tabel List Admin -->
-          <div class="overflow-hidden rounded-[14px] border border-[#e8e6dc]">
-            <table class="w-full text-left text-xs">
+          <div class="overflow-hidden rounded-[14px] border border-[#e8e6dc] shadow-xs">
+            <div class="table-responsive overflow-x-auto">
+              <table class="w-full text-left text-xs min-w-[500px]">
               <thead class="bg-[#fafaf7] border-b border-[#e8e6dc] text-[#444440] font-bold">
                 <tr>
                   <th class="p-3.5">Username / Admin</th>
@@ -1602,14 +1657,14 @@ function openMobileSidebar() {
   sbSide.classList.remove("max-lg:hidden");
   sbSide.classList.add("flex");
   sbScrim.removeAttribute("hidden");
-  document.body.classList.add("overflow-hidden");
+  document.body.style.overflow = "hidden";
 }
 function closeMobileSidebar() {
   if (!sbSide || !sbScrim) return;
   sbSide.classList.add("max-lg:hidden");
   sbSide.classList.remove("flex");
   sbScrim.setAttribute("hidden", "");
-  document.body.classList.remove("overflow-hidden");
+  document.body.style.overflow = "";
 }
 
 if (sbOpenBtn) sbOpenBtn.addEventListener("click", openMobileSidebar);

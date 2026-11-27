@@ -272,6 +272,9 @@ function applyTranslations(rootElement = document.body) {
 
   const lang = getCurrentLang();
   document.documentElement.lang = lang;
+  if (rootElement === document.body && document.title) {
+    document.title = translateString(document.title, lang);
+  }
 
   const walker = document.createTreeWalker(
     rootElement,
@@ -305,6 +308,10 @@ function applyTranslations(rootElement = document.body) {
       // Titles / Tooltips
       if (currentNode.title) {
         currentNode.title = translateString(currentNode.title, lang);
+      }
+      // Input button / submit values
+      if (currentNode.tagName === "INPUT" && (currentNode.type === "submit" || currentNode.type === "button") && currentNode.value) {
+        currentNode.value = translateString(currentNode.value, lang);
       }
     }
   }

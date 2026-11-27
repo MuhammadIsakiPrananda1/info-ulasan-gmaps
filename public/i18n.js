@@ -1,14 +1,16 @@
 /**
- * Ulasankuu Multi-Language (i18n) Engine
+ * Ulasankuu Comprehensive Multi-Language (i18n) Engine
  * Mendukung Bahasa Indonesia (id) dan Bahasa Inggris (en)
- * Tersimpan di localStorage: 'ulasankuu_lang'
+ * Menerjemahkan seluruh UI secara global, termasuk konten dinamis via MutationObserver.
  */
 
-const DICTIONARY = {
-  // Navigation & General
+const DICT_ID_TO_EN = {
+  // Navigation & Branding
+  "Admin Dashboard & Studio Kartu NFC | Ulasankuu": "Admin Dashboard & NFC Card Studio | Ulasankuu",
+  "Panel Pemilik Kartu | Ulasankuu": "Card Owner Panel | Ulasankuu",
+  "Panel Pemilik Kartu NFC | Ulasankuu": "NFC Card Owner Panel | Ulasankuu",
   "Panel Pemilik Kartu": "Card Owner Panel",
   "Dashboard": "Dashboard",
-  "Pusat Kendali Kartu Ulasankuu": "Ulasankuu Card Control Center",
   "NFC Cards": "NFC Cards",
   "Template Desain": "Design Templates",
   "Layout Sticker": "Sticker Layout",
@@ -16,17 +18,130 @@ const DICTIONARY = {
   "Audit Log": "Audit Log",
   "Audit Log Sistem": "System Audit Log",
   "Kelola Admin": "Manage Admins",
+  "Kelola Akun Admin": "Manage Admin Accounts",
   "Pengaturan": "Settings",
+  "Pengaturan Aplikasi": "Application Settings",
   "Keluar": "Logout",
   "Simpan": "Save",
   "Batal": "Cancel",
   "Hapus": "Delete",
   "Reset": "Reset",
+  "Kembali": "Back",
+  "Tutup": "Close",
+  "Sukses": "Success",
+  "Gagal": "Failed",
   "Sistem Online · Real-time Sync": "System Online · Real-time Sync",
+  "Pusat Kendali Kartu Ulasankuu": "Ulasankuu Card Control Center",
   "Monitoring distribusi kartu NFC, rasio ulasan Google aktif, dan performa merchant.": "Monitor NFC card distribution, active Google review ratio, and merchant performance.",
   "Sinkronkan Data": "Sync Data",
   "Buat Kartu Baru": "Create New Card",
   "Segarkan Log": "Refresh Logs",
+
+  // Overview Metrics
+  "Total Produksi Kartu": "Total Produced Cards",
+  "tercatat di Cloud Firestore": "recorded in Cloud Firestore",
+  "Kartu Aktif Digunakan": "Active Cards in Use",
+  "kartu telah terhubung ulasan": "cards linked to reviews",
+  "Stok Belum Aktivasi": "Inactive Stock",
+  "Siap dikirim ke pembeli": "Ready to ship to buyers",
+  "Kesehatan Database": "Database Health",
+  "Normal (100%)": "Normal (100%)",
+  "Rasio Aktivasi Kartu Pelanggan": "Customer Card Activation Ratio",
+  "Perbandingan kartu yang sudah di-pairing link Google Review vs kartu stok awal.": "Comparison of cards paired with Google Review link vs raw stock cards.",
+  "Teraktivasi": "Activated",
+  "Kartu Aktif": "Active Cards",
+  "Kartu Stok Awal": "Raw Stock Cards",
+  "Distribusi Status Kartu": "Card Status Distribution",
+  "Persentase kartu berstatus Aktif vs Belum Aktif": "Percentage of Active vs Inactive cards",
+  "Aktif": "Active",
+  "Belum Aktif": "Inactive",
+  "Aktivitas Terkini": "Recent Activity",
+
+  // Template Desain & Generator
+  "template tersedia untuk cetak kartu review NFC": "templates available for NFC review card printing",
+  "Tambah template": "Add template",
+  "Tambah Template": "Add Template",
+  "Tambah Template Baru": "Add New Template",
+  "Generator Desain Kartu (10 x 10 cm)": "Card Design Generator (10 x 10 cm)",
+  "QR Code digenerate dan otomatis menempati posisi QR template secara presisi.": "QR Code is generated and automatically fits the template QR spot precisely.",
+  "Pilih template desain": "Select design template",
+  "Pilih template": "Select template",
+  "Jumlah Kartu": "Card Quantity",
+  "Awalan ID (Prefix)": "ID Prefix",
+  "Gunakan ID acak unik": "Use unique random ID",
+  "Mulai Generate Kartu": "Start Generating Cards",
+  "Pratinjau Hasil Desain": "Design Preview",
+  "Download Semua (ZIP)": "Download All (ZIP)",
+  "Download PNG": "Download PNG",
+  "Download PDF": "Download PDF",
+  "Hapus Template": "Delete Template",
+  "Jadikan Template Default": "Set as Default Template",
+
+  // Layout Sticker
+  "Template & kartu": "Template & cards",
+  "Template desain": "Design template",
+  "Rentang ID": "ID Range",
+  "Semua kartu": "All cards",
+  "Dari ID": "From ID",
+  "Sampai ID": "To ID",
+  "Ukuran Kertas (Kanvas)": "Paper Size (Canvas)",
+  "Ukuran Sticker (cm)": "Sticker Size (cm)",
+  "Lebar": "Width",
+  "Tinggi": "Height",
+  "Jarak Antar Sticker (Gap cm)": "Gap Between Stickers (cm)",
+  "Tampilkan Garis Potong (Cut Lines)": "Show Cut Lines",
+  "Format Unduhan": "Download Format",
+  "Kapasitas Cetak:": "Print Capacity:",
+  "Unduh Layout Sticker": "Download Sticker Layout",
+
+  // NFC Cards Table
+  "Daftar Semua Kartu di Firestore": "List of All Cards in Firestore",
+  "Data kartu tersimpan, status aktivasi, dan tujuan Google Maps.": "Stored card data, activation status, and Google Maps destination.",
+  "Download Semua ZIP": "Download All ZIP",
+  "Refresh": "Refresh",
+  "Cari ID kartu, nama bisnis, atau URL...": "Search card ID, business name, or URL...",
+  "Semua Status": "All Status",
+  "Urutkan:": "Sort by:",
+  "Terbaru Dibuat": "Newest Created",
+  "Terlama": "Oldest",
+  "ID (A-Z)": "ID (A-Z)",
+  "Nama Bisnis (A-Z)": "Business Name (A-Z)",
+  "Hapus Terpilih": "Delete Selected",
+  "Nama Bisnis / Toko": "Business / Store Name",
+  "Tujuan Link Google Maps": "Google Maps Destination Link",
+  "Aksi": "Actions",
+  "Belum ada kartu": "No cards available yet",
+
+  // QR Reset Kartu
+  "Reset Kartu (Lupa PIN)": "Reset Card (Forgot PIN)",
+  "Reset Kartu": "Reset Card",
+  "Fitur pemulihan kartu jika pemilik kartu lupa PIN pengaman. Cukup masukkan ID Kartu atau scan QR, kartu akan otomatis dikembalikan ke status Belum Aktif agar dapat diaktivasi ulang secara bebas.": "Card recovery tool if the owner forgot the security PIN. Simply enter Card ID or scan QR code; the card will be set back to Inactive for fresh re-activation.",
+  "Scan QR Kartu dengan Kamera": "Scan Card QR with Camera",
+  "Scan QR Kartu": "Scan Card QR",
+  "Masukkan ID Kartu atau scan QR fisik kartu. PIN tidak diperlukan.": "Enter Card ID or scan physical QR. No PIN required.",
+  "Mode Reset Bebas PIN:": "PIN-Free Reset Mode:",
+  "Semua data tautan bisnis, review URL, dan PIN lama akan langsung dihapus bersih dari Firestore, sehingga pemilik baru/lama dapat mengaktivasi kartu kembali.": "All business links, review URLs, and old PINs will be wiped from Firestore, allowing anyone to re-activate the card.",
+  "Reset Kartu (Bersihkan PIN & Data)": "Reset Card (Clear PIN & Data)",
+  "Arahkan kamera ke QR Code fisik pada kartu NFC.": "Point the camera at the physical QR code on the NFC card.",
+
+  // Audit Logs
+  "Catatan riwayat seluruh aktivitas penting: aktivasi kartu, ganti URL review, update PIN, dan aksi admin.": "History of all critical activities: card activation, review URL change, PIN update, and admin actions.",
+  "Cari Aktivitas / ID Kartu": "Search Activity / Card ID",
+  "Ketik kata kunci atau ID kartu...": "Type keyword or card ID...",
+  "Jenis Aktivitas": "Activity Type",
+  "Semua Aktivitas": "All Activities",
+  "Waktu Aktivitas": "Activity Time",
+  "Pengguna": "Actor",
+  "Rincian Aktivitas": "Activity Details",
+  "Status": "Status",
+  "Sukses": "Success",
+
+  // Kelola Admin
+  "Daftar akun pengelola yang memiliki wewenang akses login ke dashboard ini.": "List of manager accounts authorized to log in to this dashboard.",
+  "Tambah Admin": "Add Admin",
+  "Username / Admin": "Username / Admin",
+  "Nama Lengkap": "Full Name",
+  "Role": "Role",
 
   // Panel Pemilik Kartu
   "Login Pemilik Kartu": "Card Owner Login",
@@ -67,17 +182,6 @@ const DICTIONARY = {
   "Konfirmasi PIN": "Confirm PIN",
   "Perbarui PIN Pengaman": "Update Security PIN",
 
-  // Reset Kartu
-  "Reset Kartu (Lupa PIN)": "Reset Card (Forgot PIN)",
-  "Reset Kartu": "Reset Card",
-  "Fitur pemulihan kartu jika pemilik kartu lupa PIN pengaman. Cukup masukkan ID Kartu atau scan QR, kartu akan otomatis dikembalikan ke status Belum Aktif agar dapat diaktivasi ulang secara bebas.": "Recovery tool if card owner forgot security PIN. Simply enter Card ID or scan QR code; the card will be set back to Inactive for fresh re-activation.",
-  "Scan QR Kartu dengan Kamera": "Scan Card QR with Camera",
-  "Scan QR Kartu": "Scan Card QR",
-  "Masukkan ID Kartu atau scan QR fisik kartu. PIN tidak diperlukan.": "Enter Card ID or scan physical QR. No PIN required.",
-  "Mode Reset Bebas PIN:": "PIN-Free Reset Mode:",
-  "Semua data tautan bisnis, review URL, dan PIN lama akan langsung dihapus bersih dari Firestore, sehingga pemilik baru/lama dapat mengaktivasi kartu kembali.": "All business links, review URLs, and old PINs will be wiped from Firestore, allowing anyone to re-activate the card.",
-  "Reset Kartu (Bersihkan PIN & Data)": "Reset Card (Clear PIN & Data)",
-
   // Halaman Aktivasi (index.html)
   "Mengalihkan ke halaman review": "Redirecting to review page",
   "Mohon tunggu sebentar...": "Please wait a moment...",
@@ -97,31 +201,24 @@ const DICTIONARY = {
   "Gagal Membaca Kartu": "Failed to Read Card",
   "Periksa koneksi internet Anda.": "Please check your internet connection.",
 
-  // Dashboard Overview & Stats
-  "Total Produksi Kartu": "Total Produced Cards",
-  "tercatat di Cloud Firestore": "recorded in Cloud Firestore",
-  "Kartu Aktif Digunakan": "Active Cards in Use",
-  "kartu telah terhubung ulasan": "cards linked to reviews",
-  "Stok Belum Aktivasi": "Inactive Stock",
-  "Siap dikirim ke pembeli": "Ready to ship to buyers",
-  "Kesehatan Database": "Database Health",
-  "Normal (100%)": "Normal (100%)",
+  // Login Page (login.html)
+  "Login Administrator": "Administrator Login",
+  "Masuk untuk mengelola kartu NFC, template, dan sistem Ulasankuu.": "Log in to manage NFC cards, templates, and Ulasankuu system.",
+  "Username / Email": "Username / Email",
+  "Kata Sandi": "Password",
+  "Masuk ke Dashboard": "Log in to Dashboard",
+  "Masuk": "Log in",
+  "Lupa kata sandi? Hubungi Super Admin": "Forgot password? Contact Super Admin",
 
-  // Audit Logs
-  "Catatan riwayat seluruh aktivitas penting: aktivasi kartu, ganti URL review, update PIN, dan aksi admin.": "History of all critical activities: card activation, review URL change, PIN update, and admin actions.",
-  "Cari Aktivitas / ID Kartu": "Search Activity / Card ID",
-  "Ketik kata kunci atau ID kartu...": "Type keyword or card ID...",
-  "Jenis Aktivitas": "Activity Type",
-  "Semua Aktivitas": "All Activities",
-  "Waktu Aktivitas": "Activity Time",
-  "Aksi": "Action",
-  "Pengguna": "Actor",
-  "Rincian Aktivitas": "Activity Details",
-  "Status": "Status",
-
-  // Footer
+  // General & Footer
   "Powered by": "Powered by"
 };
+
+// Buat Reverse Dictionary (EN -> ID) secara otomatis
+const DICT_EN_TO_ID = {};
+for (const [idText, enText] of Object.entries(DICT_ID_TO_EN)) {
+  DICT_EN_TO_ID[enText] = idText;
+}
 
 const LANG_KEY = "ulasankuu_lang";
 
@@ -135,40 +232,84 @@ function setLang(lang) {
   updateLangDropdownUI();
 }
 
-function t(text) {
-  const lang = getCurrentLang();
-  if (lang === "id") return text;
-  const clean = (text || "").trim();
-  return DICTIONARY[clean] || text;
+function toggleLang() {
+  setLang(getCurrentLang() === "id" ? "en" : "id");
 }
 
-function applyTranslations() {
+function t(text) {
+  const lang = getCurrentLang();
+  const clean = (text || "").trim();
+  if (lang === "en") {
+    return DICT_ID_TO_EN[clean] || text;
+  } else {
+    return DICT_EN_TO_ID[clean] || text;
+  }
+}
+
+// Function to translate a single node value
+function translateString(str, targetLang) {
+  if (!str) return str;
+  const trimmed = str.trim();
+  if (!trimmed) return str;
+
+  if (targetLang === "en") {
+    if (DICT_ID_TO_EN[trimmed]) {
+      return str.replace(trimmed, DICT_ID_TO_EN[trimmed]);
+    }
+  } else {
+    if (DICT_EN_TO_ID[trimmed]) {
+      return str.replace(trimmed, DICT_EN_TO_ID[trimmed]);
+    }
+  }
+  return str;
+}
+
+let isTranslating = false;
+
+function applyTranslations(rootElement = document.body) {
+  if (!rootElement || isTranslating) return;
+  isTranslating = true;
+
   const lang = getCurrentLang();
   document.documentElement.lang = lang;
 
-  const walkTextNodes = (element) => {
-    for (const node of element.childNodes) {
-      if (node.nodeType === Node.TEXT_NODE) {
-        const raw = node.nodeValue.trim();
-        if (raw && DICTIONARY[raw]) {
-          if (!node._originalText) node._originalText = raw;
-          node.nodeValue = node.nodeValue.replace(raw, lang === "en" ? DICTIONARY[raw] : node._originalText);
+  const walker = document.createTreeWalker(
+    rootElement,
+    NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT,
+    {
+      acceptNode(node) {
+        if (node.nodeType === Node.ELEMENT_NODE) {
+          const tag = node.tagName.toUpperCase();
+          if (tag === "SCRIPT" || tag === "STYLE" || tag === "NOSCRIPT" || node.classList.contains("select-lang-dropdown")) {
+            return NodeFilter.FILTER_REJECT;
+          }
         }
-      } else if (node.nodeType === Node.ELEMENT_NODE && node.tagName !== "SCRIPT" && node.tagName !== "STYLE") {
-        if (node.placeholder && DICTIONARY[node.placeholder.trim()]) {
-          if (!node._originalPlaceholder) node._originalPlaceholder = node.placeholder.trim();
-          node.placeholder = lang === "en" ? DICTIONARY[node._originalPlaceholder] : node._originalPlaceholder;
-        }
-        if (node.title && DICTIONARY[node.title.trim()]) {
-          if (!node._originalTitle) node._originalTitle = node.title.trim();
-          node.title = lang === "en" ? DICTIONARY[node._originalTitle] : node._originalTitle;
-        }
-        walkTextNodes(node);
+        return NodeFilter.FILTER_ACCEPT;
       }
     }
-  };
+  );
 
-  walkTextNodes(document.body);
+  let currentNode;
+  while ((currentNode = walker.nextNode())) {
+    if (currentNode.nodeType === Node.TEXT_NODE) {
+      const val = currentNode.nodeValue;
+      const translated = translateString(val, lang);
+      if (translated !== val) {
+        currentNode.nodeValue = translated;
+      }
+    } else if (currentNode.nodeType === Node.ELEMENT_NODE) {
+      // Placeholders
+      if (currentNode.placeholder) {
+        currentNode.placeholder = translateString(currentNode.placeholder, lang);
+      }
+      // Titles / Tooltips
+      if (currentNode.title) {
+        currentNode.title = translateString(currentNode.title, lang);
+      }
+    }
+  }
+
+  isTranslating = false;
 }
 
 function updateLangDropdownUI() {
@@ -178,16 +319,31 @@ function updateLangDropdownUI() {
   });
 }
 
-// Inisialisasi saat load
+// MutationObserver agar elemen yang di-render secara dinamis oleh JavaScript otomatis ter-translate!
+let mutationTimeout = null;
+const observer = new MutationObserver((mutations) => {
+  if (isTranslating) return;
+  clearTimeout(mutationTimeout);
+  mutationTimeout = setTimeout(() => {
+    applyTranslations();
+  }, 50);
+});
+
 if (typeof window !== "undefined") {
   window.getCurrentLang = getCurrentLang;
   window.setLang = setLang;
+  window.toggleLang = toggleLang;
   window.t = t;
 
   document.addEventListener("DOMContentLoaded", () => {
     updateLangDropdownUI();
-    if (getCurrentLang() === "en") {
-      setTimeout(applyTranslations, 60);
-    }
+    applyTranslations();
+
+    // Start observer for live dynamic updates
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+      characterData: true
+    });
   });
 }
